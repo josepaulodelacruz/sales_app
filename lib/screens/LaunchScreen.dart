@@ -21,6 +21,7 @@ class LaunchScreenState extends StatefulWidget {
 class _LaunchScreenState extends State<LaunchScreenState> {
 
   Widget _logoContainer () {
+    print('test');
     List<Color> _colors = [getColorFromHex('#48c6ef '), getColorFromHex('#6f86d6')];
     return Expanded(
       flex: 6,
