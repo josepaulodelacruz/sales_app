@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 //screens
 import 'package:sari_sales/screens/LaunchScreen.dart';
 import 'package:sari_sales/screens/RegisterScreen.dart';
+import 'package:sari_sales/screens/LoginScreen.dart';
 
 
-void main() => runApp(MyApp());
+void main() => runApp(MyApp(
+
+));
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -16,8 +20,9 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => LaunchScreen(),
-        '/register': (context) => RegisterScreen()
-      },
+        '/register': (context) => RegisterScreen(),
+        '/login': (context) => LoginScreen(),
+      }
     );
 
   }

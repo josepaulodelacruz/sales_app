@@ -19,10 +19,9 @@ class LaunchScreenState extends StatefulWidget {
 }
 
 class _LaunchScreenState extends State<LaunchScreenState> {
+  List<Color> _colors = [getColorFromHex('#5433FF '), getColorFromHex('#20BDFF')];
 
   Widget _logoContainer () {
-    print('test');
-    List<Color> _colors = [getColorFromHex('#48c6ef '), getColorFromHex('#6f86d6')];
     return Expanded(
       flex: 6,
       child: Hero(
@@ -31,16 +30,16 @@ class _LaunchScreenState extends State<LaunchScreenState> {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: _colors,
-              stops: [0.0, 0.9],
+              stops: [0, 0.7]
             ),
             borderRadius: BorderRadius.vertical(
               bottom: Radius.elliptical(MediaQuery.of(context).size.width, 100.0)
             ),
           ),
           child: Center(
-              child: Image.asset(
-                'images/Hero.png',
-              )
+            child: Image.asset(
+              'images/Hero.png',
+            )
           )
         )
       )
@@ -54,14 +53,51 @@ class _LaunchScreenState extends State<LaunchScreenState> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
           RaisedButton(
-            child: Text('Register'),
             onPressed: () {
               Navigator.pushNamed(context, '/register');
             },
+            textColor: Colors.white,
+            padding: const EdgeInsets.all(0.0),
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.40,
+              decoration: new BoxDecoration(
+                  gradient: new LinearGradient(
+                    colors: [
+                      Color.fromARGB(255, 148, 231, 225),
+                      Color.fromARGB(255, 62, 182, 226)
+                    ],
+                  )
+              ),
+              padding: const EdgeInsets.all(10.0),
+              child: Text(
+                "Register",
+                textAlign: TextAlign.center,
+              ),
+            ),
           ),
           RaisedButton(
-            child: Text('Login')
-          )
+            onPressed: () {
+              Navigator.pushNamed(context, '/login');
+            },
+            textColor: Colors.white,
+            padding: const EdgeInsets.all(0.0),
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.40,
+              decoration: new BoxDecoration(
+                  gradient: new LinearGradient(
+                    colors: [
+                      Color.fromARGB(255, 148, 231, 225),
+                      Color.fromARGB(255, 62, 182, 226)
+                    ],
+                  )
+              ),
+              padding: const EdgeInsets.all(10.0),
+              child: Text(
+                'Login',
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
         ],
       )
     );

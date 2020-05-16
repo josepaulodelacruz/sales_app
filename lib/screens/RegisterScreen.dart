@@ -19,6 +19,7 @@ class RegisterScreenState extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreenState> {
+  List<Color> _colors = [getColorFromHex('#5433FF '), getColorFromHex('#20BDFF')];
   CarouselController buttonCarouselController = CarouselController();
   List<String> personalInformation = ['Name', 'Address', 'Birthday', 'Age'];
   int _stepLevel = 1;
@@ -47,7 +48,6 @@ class _RegisterScreenState extends State<RegisterScreenState> {
 
   @override
   Widget _logoContainer(context) {
-    List<Color> _colors = [getColorFromHex('#48c6ef '), getColorFromHex('#6f86d6')];
     return Hero(
       tag: 'launch',
       child: Container(
@@ -189,9 +189,10 @@ class _RegisterScreenState extends State<RegisterScreenState> {
             child: AnimatedContainer(
               margin: EdgeInsets.only(top: fadeInCard),
               duration: Duration(milliseconds: 300),
-              child: _informationList(context),
+              child: _informationList(context)
+
             )
-          )
+          ),
         ],
       ),
     );
