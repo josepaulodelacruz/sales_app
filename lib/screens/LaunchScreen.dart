@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:sari_sales/screens/LoginScreen.dart';
 
 
 import '../utils/colorParser.dart';
@@ -20,6 +21,7 @@ class LaunchScreenState extends StatefulWidget {
 
 class _LaunchScreenState extends State<LaunchScreenState> {
   List<Color> _colors = [getColorFromHex('#5433FF '), getColorFromHex('#20BDFF')];
+  double curvedEdge = 100.0;
 
   Widget _logoContainer () {
     return Expanded(
@@ -33,7 +35,7 @@ class _LaunchScreenState extends State<LaunchScreenState> {
               stops: [0, 0.7]
             ),
             borderRadius: BorderRadius.vertical(
-              bottom: Radius.elliptical(MediaQuery.of(context).size.width, 100.0)
+              bottom: Radius.elliptical(MediaQuery.of(context).size.width, curvedEdge)
             ),
           ),
           child: Center(
@@ -77,7 +79,10 @@ class _LaunchScreenState extends State<LaunchScreenState> {
           ),
           RaisedButton(
             onPressed: () {
-              Navigator.pushNamed(context, '/login');
+              Navigator.push(context, PageRouteBuilder(
+                transitionDuration: Duration(milliseconds: 1000),
+                pageBuilder: (context, a1, a2) => LoginScreen(),
+              ));
             },
             textColor: Colors.white,
             padding: const EdgeInsets.all(0.0),
@@ -89,15 +94,16 @@ class _LaunchScreenState extends State<LaunchScreenState> {
                       Color.fromARGB(255, 148, 231, 225),
                       Color.fromARGB(255, 62, 182, 226)
                     ],
-                  )
-              ),
-              padding: const EdgeInsets.all(10.0),
-              child: Text(
-                'Login',
-                textAlign: TextAlign.center,
-              ),
+                  ),
+                ),
+                padding: const EdgeInsets.all(10.0),
+                child: Text(
+                  'Login',
+                  textAlign: TextAlign.center,
+                ),
+              )
             ),
-          ),
+
         ],
       )
     );
