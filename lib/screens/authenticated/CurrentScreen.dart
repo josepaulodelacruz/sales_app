@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sari_sales/components/TabNavigator.dart';
 import 'package:sari_sales/screens/authenticated/HomeScreen.dart';
@@ -34,6 +35,7 @@ class _CurrentScreenState extends State<CurrentScreenState> {
     super.initState();
   }
 
+
   @override
   Widget _backgroundContainer() {
     return Container(
@@ -51,46 +53,64 @@ class _CurrentScreenState extends State<CurrentScreenState> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        child: Stack(
-          children: <Widget>[
-            _backgroundContainer(),
-            Hero(
-              tag: 'login',
-              child: Container(
-                color: getColorFromHex('#f3f3f3'),
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 32),
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
-              )
-            ),
-            _activeWidget,
-          ],
-        ),
-      ),
-      bottomNavigationBar: _appearWidget ? TabNavigator(currentWidget: (val) {
+
+    return WillPopScope(
+      onWillPop: () async {
         setState(() {
-          _activeWidget = val;
+          _appearWidget = false;
         });
+        Navigator.of(context).pop();
       },
-      isActiveWidget: _activeWidget.toString(),
-      ) : null,
-      floatingActionButton: _appearWidget ? FloatingActionButton(
-        child: Container(
-            width: double.infinity,
-            height: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(30),
-              gradient: LinearGradient(
-                begin: Alignment.bottomLeft,
-                end: Alignment.topRight,
-                colors: _colors
+      child: Scaffold(
+        resizeToAvoidBottomPadding: true,
+        body: Container(
+          child: Stack(
+            children: <Widget>[
+              _backgroundContainer(),
+              Hero(
+                  tag: 'login',
+                  child: Container(
+                    color: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 32),
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                  )
               ),
-            ),
-            child: Icon(Icons.add)),
-      ) : null,
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+              AnimatedOpacity(
+                  duration: Duration(milliseconds: 300),
+                  opacity: _appearWidget ? 1 : 0,
+                  child: AnimatedContainer(
+                    duration: Duration(milliseconds: 300),
+                    margin: EdgeInsets.only(top: _appearWidget ? 0 : 50),
+                    child: _activeWidget,
+                  )
+              )
+            ],
+          ),
+        ),
+        bottomNavigationBar: _appearWidget ? TabNavigator(currentWidget: (val) {
+          setState(() {
+            _activeWidget = val;
+          });
+        },
+          isActiveWidget: _activeWidget.toString(),
+        ) : null,
+        floatingActionButton: _appearWidget ? FloatingActionButton(
+          child: Container(
+              width: double.infinity,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+                gradient: LinearGradient(
+                    begin: Alignment.bottomLeft,
+                    end: Alignment.topRight,
+                    colors: _colors
+                ),
+              ),
+              child: Icon(Icons.add)),
+        ) : null,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      )
     );
   }
 }
