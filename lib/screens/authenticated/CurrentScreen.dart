@@ -1,21 +1,23 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:sari_sales/components/TabNavigator.dart';
+import 'package:sari_sales/screens/authenticated/HomeScreen.dart';
 import 'package:sari_sales/utils/colorParser.dart';
 
-class HomeScreen extends StatelessWidget {
+class CurrentScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return HomeScreenState();
+    return CurrentScreenState();
   }
 }
 
-class HomeScreenState extends StatefulWidget {
+class CurrentScreenState extends StatefulWidget {
   @override
-  createState () => _HomeScreenState();
+  createState () => _CurrentScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreenState> {
+class _CurrentScreenState extends State<CurrentScreenState> {
+  Widget _activeWidget = HomeScreen();
   Timer _timer;
   bool _appearWidget = false;
   List<Color> _colors = [getColorFromHex('#5433FF '), getColorFromHex('#20BDFF')];
@@ -50,9 +52,6 @@ class _HomeScreenState extends State<HomeScreenState> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Home')
-      ),
       body: Container(
         child: Stack(
           children: <Widget>[
@@ -66,13 +65,30 @@ class _HomeScreenState extends State<HomeScreenState> {
                 width: MediaQuery.of(context).size.width,
               )
             ),
+            _activeWidget,
           ],
         ),
       ),
-      bottomNavigationBar: _appearWidget ? TabNavigator() : null,
+      bottomNavigationBar: _appearWidget ? TabNavigator(currentWidget: (val) {
+        setState(() {
+          _activeWidget = val;
+        });
+      },
+      isActiveWidget: _activeWidget.toString(),
+      ) : null,
       floatingActionButton: _appearWidget ? FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () {},
+        child: Container(
+            width: double.infinity,
+            height: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(30),
+              gradient: LinearGradient(
+                begin: Alignment.bottomLeft,
+                end: Alignment.topRight,
+                colors: _colors
+              ),
+            ),
+            child: Icon(Icons.add)),
       ) : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );

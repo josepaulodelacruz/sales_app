@@ -3,10 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../utils/colorParser.dart';
+import '../../utils/colorParser.dart';
 
 
-import 'package:sari_sales/screens/HomeScreen.dart';
+import 'file:///D:/Projects/sari_sales/lib/screens/authenticated/CurrentScreen.dart';
 
 class LoginScreen extends StatelessWidget {
   @override
@@ -185,7 +185,7 @@ class _LoginScreenState extends State<LoginScreenState> {
                   onPressed: () {
                     Navigator.push(context, PageRouteBuilder(
                       transitionDuration: Duration(milliseconds: 2000),
-                      pageBuilder: (context, a1, a2) => HomeScreen(),
+                      pageBuilder: (context, a1, a2) => CurrentScreen(),
                     ));
                   },
                   textColor: Colors.white,

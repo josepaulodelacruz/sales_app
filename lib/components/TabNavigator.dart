@@ -1,8 +1,17 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:sari_sales/screens/authenticated/HomeScreen.dart';
+import 'package:sari_sales/screens/authenticated/InvertoryScreen.dart';
+
+import '../utils/colorParser.dart';
 
 class TabNavigator extends StatefulWidget {
-  @override
+  final isActiveWidget;
+  Function currentWidget;
 
+  TabNavigator({Key key, this.currentWidget, this.isActiveWidget }) : super(key: key);
+
+  @override
   createState () => _TabNavigator();
 }
 
@@ -10,8 +19,10 @@ class _TabNavigator extends State<TabNavigator> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.isActiveWidget);
     return BottomAppBar(
       shape: CircularNotchedRectangle(),
+//      color: getColorFromHex('#373234'),
       notchMargin: 10,
       child: Container(
         height: 60,
@@ -24,16 +35,19 @@ class _TabNavigator extends State<TabNavigator> {
                 MaterialButton(
                   minWidth: 40,
                   onPressed: () {
+                    widget.currentWidget(HomeScreen());
                   },
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Icon(
                         Icons.dashboard,
+                        color: widget.isActiveWidget == 'HomeScreen' ? Colors.lightBlueAccent : Colors.black
                       ),
                       Text(
-                        'Dashboard',
+                        'Home',
                         style: TextStyle(
+                          color: widget.isActiveWidget == 'HomeScreen' ? Colors.lightBlueAccent : Colors.black
                         ),
                       ),
                     ],
@@ -42,17 +56,19 @@ class _TabNavigator extends State<TabNavigator> {
                 MaterialButton(
                   minWidth: 40,
                   onPressed: () {
-
+                    widget.currentWidget(InventoryScreen());
                   },
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Icon(
                         Icons.chat,
+                        color: widget.isActiveWidget == 'InventoryScreen' ? Colors.lightBlueAccent : Colors.black
                       ),
                       Text(
                         'Chats',
                         style: TextStyle(
+                          color: widget.isActiveWidget == 'InventoryScreen' ? Colors.lightBlueAccent : Colors.black
                         ),
                       ),
                     ],

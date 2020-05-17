@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:sari_sales/screens/LoginScreen.dart';
+import 'file:///D:/Projects/sari_sales/lib/screens/auth/LoginScreen.dart';
 
 
-import '../utils/colorParser.dart';
+import '../../utils/colorParser.dart';
 
 class LaunchScreen extends StatelessWidget {
 

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/animation.dart';
 
-import '../utils/colorParser.dart';
+import '../../utils/colorParser.dart';
 
 class RegisterScreen extends StatelessWidget {
   @override
