@@ -2,13 +2,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sari_sales/utils/colorParser.dart';
 
+//constant
+import '../../constants/categoriesList.dart';
+
+
 class HomeScreen extends StatefulWidget {
   @override
   createState () => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-//      color: getColorFromHex('#373234'),
+  int _isCategoryActive;
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +39,6 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: Icon(Icons.format_align_right),
           ),
-
         ],
       )
     );
@@ -67,41 +72,55 @@ class _HomeScreenState extends State<HomeScreen> {
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
-          children: <Widget>[
-            Container(
-              height: 150,
-              width: 120,
-              padding: EdgeInsets.symmetric(vertical: 10),
-              child: Card(
-                color: Colors.yellowAccent,
-                elevation: 10,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    Icon(Icons.card_travel, size: 40),
-                    Text('All', style: TextStyle(fontSize: 22,fontWeight: FontWeight.bold, color: Colors.black))
-                  ],
-                )
+          children: categories.map((cc) {
+            int cardIndex = categories.indexOf(cc);
+            return Transform.scale(
+              scale: _isCategoryActive == cardIndex ? 0.95 : 1,
+              child: AnimatedContainer(
+                duration: Duration(milliseconds: 300),
+                height: 150,
+                width: 120,
+                padding: EdgeInsets.symmetric(vertical: 10),
+                child: InkWell(
+                    onTap: () {
+                      setState(() {
+                        _isCategoryActive = cardIndex;
+                      });
+                    },
+                    child: Card(
+                      color: _isCategoryActive == cardIndex ? Colors.yellowAccent : Colors.white,
+                      elevation: _isCategoryActive == cardIndex ? 5 : 15,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          Text(cc, style: TextStyle(fontSize: 22,fontWeight: FontWeight.bold, color: Colors.black))
+                        ],
+                      ),
+                    )
+                ),
               )
-            ),
-            Container(
-              height: 150,
-              width: 120,
-              padding: EdgeInsets.symmetric(vertical: 10),
-              child: Card(
-                color: null,
-                elevation: 10,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    Icon(Icons.fastfood, size: 40),
-                    Text('Snacks', style: TextStyle(fontSize: 22,fontWeight: FontWeight.bold, color: Colors.black))
-                  ],
-                )
-              )
-            ),
+            );
+          }).toList(),
+//          <Widget>[
 
-          ],
+//            Container(
+//              height: 150,
+//              width: 120,
+//              padding: EdgeInsets.symmetric(vertical: 10),
+//              child: Card(
+//                color: null,
+//                elevation: 10,
+//                child: Column(
+//                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//                  children: <Widget>[
+//                    Icon(Icons.fastfood, size: 40),
+//                    Text('Snacks', style: TextStyle(fontSize: 22,fontWeight: FontWeight.bold, color: Colors.black))
+//                  ],
+//                )
+//              )
+//            ),
+//
+//          ],
         )
       )
     );

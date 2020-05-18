@@ -240,20 +240,20 @@ class _LoginScreenState extends State<LoginScreenState> {
                 )
               ),
               AnimatedOpacity(
-                  duration: Duration(milliseconds: 600),
-                  opacity: !cardOpacity ? 0 : 1,
-                  child: AnimatedContainer(
-                      duration: Duration(milliseconds: 700),
-                      margin: EdgeInsets.only(top: !cardOpacity ? 50 : 20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          _iconBackBtn(context),
-                          _textBanner(context),
-                          _loginForm(context)
-                        ],
-                      )
+                duration: Duration(milliseconds: 600),
+                opacity: !cardOpacity ? 0 : 1,
+                child: AnimatedContainer(
+                  duration: Duration(milliseconds: 700),
+                  margin: EdgeInsets.only(top: !cardOpacity ? 50 : 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      _iconBackBtn(context),
+                      _textBanner(context),
+                      _loginForm(context)
+                    ],
                   )
+                )
               )
             ],
           )
