@@ -14,8 +14,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _isCategoryActive;
 
-
-
   @override
   Widget build(BuildContext context) {
 
@@ -101,26 +99,6 @@ class _HomeScreenState extends State<HomeScreen> {
               )
             );
           }).toList(),
-//          <Widget>[
-
-//            Container(
-//              height: 150,
-//              width: 120,
-//              padding: EdgeInsets.symmetric(vertical: 10),
-//              child: Card(
-//                color: null,
-//                elevation: 10,
-//                child: Column(
-//                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                  children: <Widget>[
-//                    Icon(Icons.fastfood, size: 40),
-//                    Text('Snacks', style: TextStyle(fontSize: 22,fontWeight: FontWeight.bold, color: Colors.black))
-//                  ],
-//                )
-//              )
-//            ),
-//
-//          ],
         )
       )
     );

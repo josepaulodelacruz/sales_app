@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sari_sales/components/TabNavigator.dart';
 import 'package:sari_sales/screens/authenticated/HomeScreen.dart';
+import 'package:sari_sales/screens/authenticated/InvertoryScreen.dart';
 import 'package:sari_sales/utils/colorParser.dart';
 
 class CurrentScreen extends StatelessWidget {
@@ -38,16 +39,19 @@ class _CurrentScreenState extends State<CurrentScreenState> {
 
   @override
   Widget _backgroundContainer() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 32),
-      height: MediaQuery.of(context).size.height,
-      width: MediaQuery.of(context).size.width,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-            colors: _colors,
-            stops: [0, 0.7]
+    return Hero(
+      tag: 'background',
+      child:  Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 32),
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+              colors: _colors,
+              stops: [0, 0.7]
+          ),
         ),
-      ),
+      )
     );
   }
 

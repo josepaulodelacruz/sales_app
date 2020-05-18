@@ -21,6 +21,7 @@ class _TabNavigator extends State<TabNavigator> {
   Widget build(BuildContext context) {
     print(widget.isActiveWidget);
     return BottomAppBar(
+      color: Colors.white,
       shape: CircularNotchedRectangle(),
 //      color: getColorFromHex('#373234'),
       notchMargin: 10,
@@ -62,11 +63,11 @@ class _TabNavigator extends State<TabNavigator> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Icon(
-                        Icons.chat,
+                        Icons.library_books,
                         color: widget.isActiveWidget == 'InventoryScreen' ? Colors.lightBlueAccent : Colors.black
                       ),
                       Text(
-                        'Chats',
+                        'Inventory',
                         style: TextStyle(
                           color: widget.isActiveWidget == 'InventoryScreen' ? Colors.lightBlueAccent : Colors.black
                         ),
