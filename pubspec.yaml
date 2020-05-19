@@ -25,6 +25,9 @@ dependencies:
   cupertino_icons: ^0.1.2
   carousel_slider: ^2.1.0
   animations: ^1.0.0+5
+  barcode_scan: ^3.0.1
+  qr_code_scanner: ^0.0.13
+
 
 dev_dependencies:
   flutter_test:

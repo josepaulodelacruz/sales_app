@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sari_sales/components/TabNavigator.dart';
+import 'package:sari_sales/screens/authenticated/BarcodeScan.dart';
 import 'package:sari_sales/screens/authenticated/HomeScreen.dart';
 import 'package:sari_sales/screens/authenticated/InvertoryScreen.dart';
 import 'package:sari_sales/utils/colorParser.dart';
@@ -100,6 +101,13 @@ class _CurrentScreenState extends State<CurrentScreenState> {
           isActiveWidget: _activeWidget.toString(),
         ) : null,
         floatingActionButton: _appearWidget ? FloatingActionButton(
+          heroTag: 'barcode',
+          onPressed: () {
+            Navigator.push(context, PageRouteBuilder(
+              transitionDuration: Duration(milliseconds: 1000),
+              pageBuilder: (context, a1, a2) => BarcodeScan(),
+            ));
+          },
           child: Container(
               width: double.infinity,
               height: double.infinity,
@@ -111,7 +119,8 @@ class _CurrentScreenState extends State<CurrentScreenState> {
                     colors: _colors
                 ),
               ),
-              child: Icon(Icons.add)),
+              child: Icon(Icons.camera),
+          )
         ) : null,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       )
