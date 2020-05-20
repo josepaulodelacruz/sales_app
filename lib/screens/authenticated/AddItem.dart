@@ -2,6 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sari_sales/utils/colorParser.dart';
 
+//models
+import '../../models/Products.dart';
+
 class AddItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -17,6 +20,31 @@ class AddItemState extends StatefulWidget {
 }
 
 class _AddItemState extends State<AddItemState> {
+  final _productName = TextEditingController();
+  final _productCode = TextEditingController();
+  String _productCategory;
+  final _productPrice = TextEditingController();
+  final _productQuantity = TextEditingController();
+  final _productDescription = TextEditingController();
+  String _productExpiration;
+
+  @override
+  void _addProduct () {
+    Map<String, dynamic> productInfo = {
+      'pName': _productName.text,
+      'pCode': _productCode.text,
+      'pCategory': _productCategory,
+      'pPrice': _productPrice.text,
+      'pQuantity': _productQuantity.text,
+      'pDescription': _productDescription.text,
+      'pExpiration': _productExpiration,
+    };
+
+   final ProductInfo = Products.addProduct(productInfo);
+   print(ProductInfo.productName);
+   print(ProductInfo.productCode);
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,11 +60,13 @@ class _AddItemState extends State<AddItemState> {
                child: Column(
                  children: <Widget>[
                    TextField(
+                     controller: _productName,
                      decoration: InputDecoration(
                        labelText: 'Product Name'
                      )
                    ),
                    TextField(
+                     controller: _productCode,
                      decoration: InputDecoration(
                        labelText: 'Product Code'
                      )
@@ -99,6 +129,7 @@ class _AddItemState extends State<AddItemState> {
           Flexible(
             flex: 2,
             child: TextField(
+              controller: _productPrice,
               textAlign: TextAlign.end,
               decoration: InputDecoration(
                 hintText: '32.00',
@@ -121,6 +152,7 @@ class _AddItemState extends State<AddItemState> {
             Flexible(
                 flex: 2,
                 child: TextFormField(
+                  controller: _productQuantity,
                   textAlign: TextAlign.right,
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.all(8.0),
@@ -142,6 +174,7 @@ class _AddItemState extends State<AddItemState> {
         children: <Widget>[
           Text('Description:', style: TextStyle(fontSize: 18, color: Colors.grey[500])),
           TextField(
+            controller: _productDescription,
             decoration: InputDecoration(
               hintText: 'Input Description...',
               border: OutlineInputBorder()
@@ -213,6 +246,9 @@ class _AddItemState extends State<AddItemState> {
           ),
           RaisedButton(
             onPressed: () {
+              _addProduct();
+//              final itemInfo = Products.addProduct(_productName.text, _productCode.text, _productCategory, _productPrice.text, _productQuantity.text, _productDescription, _productExpiration);
+//              print(itemInfo.productName);
             },
             textColor: Colors.white,
             padding: const EdgeInsets.all(0.0),
