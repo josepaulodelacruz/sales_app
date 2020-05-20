@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sari_sales/constants/categoriesList.dart';
+import 'package:sari_sales/screens/authenticated/AddItem.dart';
 import '../../utils/colorParser.dart';
 
 //components
@@ -33,7 +34,7 @@ class _InventoryScreen extends State<InventoryScreen> {
     super.initState();
   }
 
-  Widget _textBanner () {
+  Widget _textBanner (context) {
     List _textShadow = <Shadow>[
       Shadow(
         offset: Offset(10.0, 5.0),
@@ -44,11 +45,22 @@ class _InventoryScreen extends State<InventoryScreen> {
 
     return Container(
         padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-        child:  Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child:  Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Text('Inventory List', textAlign: TextAlign.start, style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.black38, shadows: _textShadow)),
+            IconButton(
+              icon: Icon(Icons.add, color: Colors.black38),
+              onPressed: () {
+                Navigator.push(context, PageRouteBuilder(
+                  transitionDuration: Duration(seconds: 1),
+                  pageBuilder: (context, a1, a2) {
+                    return AddItem();
+                  },
+                ));
+              },
+            )
           ],
         )
     );
@@ -73,76 +85,79 @@ class _InventoryScreen extends State<InventoryScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              _textBanner(),
+              _textBanner(context),
               Expanded(
                 flex: 1,
-                child: Container(
-                  padding: EdgeInsets.only(top: 20, right: 20, left: 20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(50.0),
-                        topRight: Radius.circular(50.0)
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 5,
-                        blurRadius: 7,
-                        offset: Offset(0, 3), // changes position of shadow
+                child: Hero(
+                  tag: 'addItem',
+                  child: Container(
+                      padding: EdgeInsets.only(top: 20, right: 20, left: 20),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(50.0),
+                            topRight: Radius.circular(50.0)
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 5,
+                            blurRadius: 7,
+                            offset: Offset(0, 3), // changes position of shadow
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
 
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        height: 50,
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          children: categories.map((cc) {
-                            int sortIndex = categories.indexOf(cc);
-                            return AnimatedOpacity(
-                              duration: Duration(milliseconds: 300),
-                              opacity: _onMountAnimation ? 1 : 0,
-                              child: AnimatedContainer(
-                                duration: Duration(milliseconds: 1000),
-                                curve: Curves.ease,
-                                padding: EdgeInsets.only(left: _onMountAnimation ? 0 : 100),
-                                margin: EdgeInsets.symmetric(horizontal: 5, vertical: 0),
-                                child: RaisedButton(
-                                    child: Text(cc),
-                                    onPressed: ()  {
-                                    },
-                                    shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
-                                )
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                              height: 50,
+                              child: ListView(
+                                scrollDirection: Axis.horizontal,
+                                children: categories.map((cc) {
+                                  int sortIndex = categories.indexOf(cc);
+                                  return AnimatedOpacity(
+                                      duration: Duration(milliseconds: 300),
+                                      opacity: _onMountAnimation ? 1 : 0,
+                                      child: AnimatedContainer(
+                                          duration: Duration(milliseconds: 1000),
+                                          curve: Curves.ease,
+                                          padding: EdgeInsets.only(left: _onMountAnimation ? 0 : 100),
+                                          margin: EdgeInsets.symmetric(horizontal: 5, vertical: 0),
+                                          child: RaisedButton(
+                                              child: Text(cc),
+                                              onPressed: ()  {
+                                              },
+                                              shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
+                                          )
+                                      )
+                                  );
+                                }).toList(),
                               )
-                            );
-                          }).toList(),
-                        )
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: Container(
-                          child: ListView.builder(
-                            controller: _scrollController,
-                            itemCount: 20,
-                            itemBuilder: (context, int index) {
-                              return AnimatedOpacity(
-                                duration: Duration(milliseconds: 500),
-                                opacity: _onMountAnimation ? 1 : 0,
-                                child: AnimatedContainer(
-                                  duration: Duration(milliseconds: 1000),
-                                  margin: EdgeInsets.only(top: _onMountAnimation ? 0 : 20),
-                                  curve: Curves.ease,
-                                  child: ProductCard()
-                                )
-                              );
-                            },
+                          ),
+                          Expanded(
+                              flex: 1,
+                              child: Container(
+                                  child: ListView.builder(
+                                    controller: _scrollController,
+                                    itemCount: 20,
+                                    itemBuilder: (context, int index) {
+                                      return AnimatedOpacity(
+                                          duration: Duration(milliseconds: 500),
+                                          opacity: _onMountAnimation ? 1 : 0,
+                                          child: AnimatedContainer(
+                                              duration: Duration(milliseconds: 1000),
+                                              margin: EdgeInsets.only(top: _onMountAnimation ? 0 : 20),
+                                              curve: Curves.ease,
+                                              child: ProductCard()
+                                          )
+                                      );
+                                    },
+                                  )
+                              )
                           )
-                        )
+                        ],
                       )
-                    ],
                   )
                 )
               )
