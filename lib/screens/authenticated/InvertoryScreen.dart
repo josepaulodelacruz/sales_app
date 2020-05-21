@@ -69,7 +69,7 @@ class _InventoryScreen extends State<InventoryScreen> {
                 Navigator.push(context, PageRouteBuilder(
                   transitionDuration: Duration(seconds: 1),
                   pageBuilder: (context, a1, a2) {
-                    return AddItemState();
+                    return AddItemState(products: _products);
                   },
                 ));
               },
@@ -130,47 +130,47 @@ class _InventoryScreen extends State<InventoryScreen> {
                                 children: categories.map((cc) {
                                   int sortIndex = categories.indexOf(cc);
                                   return AnimatedOpacity(
-                                      duration: Duration(milliseconds: 300),
-                                      opacity: _onMountAnimation ? 1 : 0,
-                                      child: AnimatedContainer(
-                                          duration: Duration(milliseconds: 1000),
-                                          curve: Curves.ease,
-                                          padding: EdgeInsets.only(left: _onMountAnimation ? 0 : 100),
-                                          margin: EdgeInsets.symmetric(horizontal: 5, vertical: 0),
-                                          child: RaisedButton(
-                                              child: Text(cc),
-                                              onPressed: ()  {
-                                              },
-                                              shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
-                                          )
+                                    duration: Duration(milliseconds: 300),
+                                    opacity: _onMountAnimation ? 1 : 0,
+                                    child: AnimatedContainer(
+                                      duration: Duration(milliseconds: 1000),
+                                      curve: Curves.ease,
+                                      padding: EdgeInsets.only(left: _onMountAnimation ? 0 : 100),
+                                      margin: EdgeInsets.symmetric(horizontal: 5, vertical: 0),
+                                      child: RaisedButton(
+                                        child: Text(cc),
+                                        onPressed: ()  {
+                                        },
+                                        shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
                                       )
+                                    )
                                   );
                                 }).toList(),
                               )
                           ),
                           Expanded(
-                              flex: 1,
-                              child: Container(
-                                  child: ListView.builder(
-                                    controller: _scrollController,
-                                    itemCount: _products.length,
-                                    itemBuilder: (context, int index) {
-                                      return AnimatedOpacity(
-                                          duration: Duration(milliseconds: 500),
-                                          opacity: _onMountAnimation ? 1 : 0,
-                                          child: AnimatedContainer(
-                                              duration: Duration(milliseconds: 1000),
-                                              margin: EdgeInsets.only(top: _onMountAnimation ? 0 : 20),
-                                              curve: Curves.ease,
-                                              child: ProductCard(
-                                                productInfo: _products[index],
-                                                productIndex: index,
-                                              )
-                                          )
-                                      );
-                                    },
-                                  )
+                            flex: 1,
+                            child: Container(
+                              child: ListView.builder(
+                                controller: _scrollController,
+                                itemCount: _products.length,
+                                itemBuilder: (context, int index) {
+                                  return AnimatedOpacity(
+                                    duration: Duration(milliseconds: 500),
+                                    opacity: _onMountAnimation ? 1 : 0,
+                                    child: AnimatedContainer(
+                                      duration: Duration(milliseconds: 1000),
+                                      margin: EdgeInsets.only(top: _onMountAnimation ? 0 : 20),
+                                      curve: Curves.ease,
+                                      child: ProductCard(
+                                        productInfo: _products[index],
+                                        productIndex: index,
+                                      )
+                                    )
+                                  );
+                                },
                               )
+                            )
                           )
                         ],
                       )

@@ -20,6 +20,10 @@ import '../../components/TakePhoto.dart';
 import '../../models/Products.dart';
 
 class AddItemState extends StatefulWidget {
+  List products;
+
+  AddItemState({Key key, this.products }) : super(key: key);
+
   @override
   createState () => _AddItemState();
 }
@@ -39,17 +43,11 @@ class _AddItemState extends State<AddItemState> {
 
   @override
   void initState () {
-    _fetchLocalStorage();
-    super.initState();
-  }
-
-  _fetchLocalStorage () async {
-    final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
-    dynamic ListProducts = sharedPrefs.getString('ListProducts');
-    List decodedFiles = json.decode(ListProducts);
     setState(() {
-      _products = decodedFiles;
+      _products = widget.products;
     });
+
+    super.initState();
   }
 
   @override

@@ -32,7 +32,7 @@ class _ProductCardState extends State<ProductCard> {
       child: Column(
         children: <Widget>[
           Container(
-            height: 150,
+            height: 175,
             width: MediaQuery.of(context).size.width  ,
             margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
             child: Card(
