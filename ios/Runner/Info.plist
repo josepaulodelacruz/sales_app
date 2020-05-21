@@ -43,5 +43,7 @@
 	<false/>
 	<key>NSCameraUsageDescription</key>
     <string>Camera permission is required for barcode scanning.</string>
+    <key>NSCameraUsageDescription</key>
+    <string>Explanation on why the camera access is needed.</string>
 </dict>
 </plist>

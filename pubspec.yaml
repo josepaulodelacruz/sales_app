@@ -27,6 +27,12 @@ dependencies:
   animations: ^1.0.0+5
   barcode_scan: ^3.0.1
   qr_code_scanner: ^0.0.13
+  intl: ^0.16.1
+  camera: ^0.5.8+1
+  path_provider: ^1.6.8
+  path: ^1.6.4
+  uuid: 2.0.4
+
 
 
 dev_dependencies:

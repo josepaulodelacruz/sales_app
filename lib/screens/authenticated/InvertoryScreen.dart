@@ -56,7 +56,7 @@ class _InventoryScreen extends State<InventoryScreen> {
                 Navigator.push(context, PageRouteBuilder(
                   transitionDuration: Duration(seconds: 1),
                   pageBuilder: (context, a1, a2) {
-                    return AddItem();
+                    return AddItemState();
                   },
                 ));
               },
