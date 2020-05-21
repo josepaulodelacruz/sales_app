@@ -22,10 +22,11 @@ class AddItemState extends StatefulWidget {
 }
 
 class _AddItemState extends State<AddItemState> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   String _imagePath;
   final _productName = TextEditingController();
   final _productCode = TextEditingController();
-  String _productCategory = 'All';
+  String _productCategory = '';
   final _productPrice = TextEditingController();
   final _productQuantity = TextEditingController();
   final _productDescription = TextEditingController();
@@ -45,9 +46,23 @@ class _AddItemState extends State<AddItemState> {
 
   @override
   void _addProduct () {
-//    final productInfo = Products.toJson(_productName.text, _productCode.text, _productCategory, _productPrice.text, _productQuantity.text, _productDescription.text, _productExpiration);
-//
-//    print(productInfo);
+    final productInfo = Products.toJson(
+        _productId,
+        _productName.text,
+        _productCode.text,
+        _productCategory,
+        _productPrice.text,
+        _productQuantity.text,
+        _productDescription.text,
+        _productExpiration,
+        _imagePath
+    );
+
+    if(productInfo['invalid']) {
+      _scaffoldKey.currentState.showSnackBar(new SnackBar(backgroundColor: Colors.redAccent, content: new Text(productInfo['error'])));
+    } else {
+      print(productInfo);
+    }
 
   }
 
@@ -210,30 +225,30 @@ class _AddItemState extends State<AddItemState> {
     );
 
     Widget _quantityInput = Container(
-        padding: EdgeInsets.symmetric(horizontal: 32, vertical: 10),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Flexible(
-              flex: 1,
-              child: Text('Quantity:', style: TextStyle(fontSize: 18, color: Colors.grey[500])),
-            ),
-            Flexible(
-                flex: 2,
-                child: TextFormField(
-                  controller: _productQuantity,
-                  textAlign: TextAlign.right,
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.all(8.0),
-                  ),
-                  keyboardType: TextInputType.numberWithOptions(
-                    decimal: false,
-                    signed: true,
-                  ),
-                )
+      padding: EdgeInsets.symmetric(horizontal: 32, vertical: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Flexible(
+            flex: 1,
+            child: Text('Quantity:', style: TextStyle(fontSize: 18, color: Colors.grey[500])),
+          ),
+          Flexible(
+            flex: 2,
+            child: TextFormField(
+              controller: _productQuantity,
+              textAlign: TextAlign.right,
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.all(8.0),
+              ),
+              keyboardType: TextInputType.numberWithOptions(
+                decimal: false,
+                signed: true,
+              ),
             )
-          ],
-        )
+          )
+        ],
+      )
     );
 
     Widget _descInput = Container(
@@ -293,9 +308,11 @@ class _AddItemState extends State<AddItemState> {
     );
 
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: getColorFromHex('#f3f3f3'),
       appBar: AppBar(
-        title: Text('Add item')
+        title: Text('Add item'),
+        backgroundColor: getColorFromHex('#20BDFF'),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -50,7 +50,8 @@ class _TakePhotoState extends State<TakePhoto> {
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(
-        title: Text('Camera')
+        title: Text('Camera'),
+        backgroundColor: getColorFromHex('#20BDFF'),
       ),
       body: Hero(
           tag: 'takePhoto',
