@@ -1,13 +1,30 @@
+import 'dart:async';
+import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../constants/categoriesList.dart';
 import '../utils/colorParser.dart';
 
 class ProductCard extends StatefulWidget {
+  Map<String, dynamic> productInfo;
+  int productIndex;
+
+  ProductCard({Key key, this.productInfo, this.productIndex }) : super(key: key);
+
   @override
   createState () => _ProductCardState();
 }
 
 class _ProductCardState extends State<ProductCard> {
+  Map<String, dynamic> _productInfo;
+
+  void initState () {
+
+    setState(() {
+      _productInfo = widget.productInfo;
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,13 +49,14 @@ class _ProductCardState extends State<ProductCard> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
-                          Text('1', style: TextStyle(color: Colors.white)),
-                          Image.asset(
-                            'images/Hero.png',
+                          Text(widget.productIndex.toString(), style: TextStyle(color: Colors.white)),
+                          Image.file(
+                            File(_productInfo['pImagePath']),
                             height: MediaQuery.of(context).size.height * 0.1,
                             width: MediaQuery.of(context).size.width,
                           ),
-                          Text('Expiree date: 10/20/21', style: TextStyle(fontSize: 12, color: Colors.white)),
+
+                          Text('Expiration: ${_productInfo['pExpiration']}', style: TextStyle(fontSize: 12, color: Colors.white)),
                         ],
                       )
                     ),
@@ -51,10 +69,10 @@ class _ProductCardState extends State<ProductCard> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
-                          Text('Product Name: Sample 1', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
-                          Text('ID: 1', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
-                          Text('Quantity: 12', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
-                          Text('Barcode: 203921', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
+                          Text('Product Name: ${_productInfo['pName']}', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
+                          Text('ID: ${_productInfo['pId']}', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
+                          Text('Quantity:  ${_productInfo['pQuantity']}', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
+                          Text('Barcode: ${_productInfo['pCode']}', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
                         ],
                       )
                     )

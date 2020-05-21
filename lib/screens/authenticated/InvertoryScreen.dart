@@ -3,10 +3,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sari_sales/constants/categoriesList.dart';
 import 'package:sari_sales/screens/authenticated/AddItem.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../utils/colorParser.dart';
 
 //components
 import '../../components/ProductCard.dart';
+
+//models
+import '../../models/ListProducts.dart';
 
 class InventoryScreen extends StatefulWidget {
 
@@ -19,6 +23,7 @@ class _InventoryScreen extends State<InventoryScreen> {
   ScrollController _scrollController;
   bool _onMountAnimation = false;
   int _activeSortCategory;
+  List _products = [];
 
   double _offsetScroll;
   List<Color> _colors = [getColorFromHex('#5433FF '), getColorFromHex('#20BDFF')];
@@ -30,8 +35,16 @@ class _InventoryScreen extends State<InventoryScreen> {
         _onMountAnimation = true;
       });
     });
-    print(_onMountAnimation);
+
+    _fetchLocalStorage();
     super.initState();
+  }
+
+  _fetchLocalStorage () async {
+    List _items = await ListProducts.getProductLocalStorage();
+    setState(() {
+      _products = _items;
+    });
   }
 
   Widget _textBanner (context) {
@@ -140,7 +153,7 @@ class _InventoryScreen extends State<InventoryScreen> {
                               child: Container(
                                   child: ListView.builder(
                                     controller: _scrollController,
-                                    itemCount: 20,
+                                    itemCount: _products.length,
                                     itemBuilder: (context, int index) {
                                       return AnimatedOpacity(
                                           duration: Duration(milliseconds: 500),
@@ -149,7 +162,10 @@ class _InventoryScreen extends State<InventoryScreen> {
                                               duration: Duration(milliseconds: 1000),
                                               margin: EdgeInsets.only(top: _onMountAnimation ? 0 : 20),
                                               curve: Curves.ease,
-                                              child: ProductCard()
+                                              child: ProductCard(
+                                                productInfo: _products[index],
+                                                productIndex: index,
+                                              )
                                           )
                                       );
                                     },

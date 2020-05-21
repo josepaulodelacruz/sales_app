@@ -10,6 +10,9 @@ import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';
 import 'package:camera/camera.dart';
 import 'package:barcode_scan/barcode_scan.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+//components
 import '../../components/TakePhoto.dart';
 
 
@@ -23,10 +26,11 @@ class AddItemState extends StatefulWidget {
 
 class _AddItemState extends State<AddItemState> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  List _products = [];
   String _imagePath;
   final _productName = TextEditingController();
   final _productCode = TextEditingController();
-  String _productCategory = '';
+  String _productCategory = 'All';
   final _productPrice = TextEditingController();
   final _productQuantity = TextEditingController();
   final _productDescription = TextEditingController();
@@ -35,13 +39,49 @@ class _AddItemState extends State<AddItemState> {
 
   @override
   void initState () {
+    _fetchLocalStorage();
     super.initState();
+  }
+
+  _fetchLocalStorage () async {
+    final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
+    dynamic ListProducts = sharedPrefs.getString('ListProducts');
+    List decodedFiles = json.decode(ListProducts);
+    setState(() {
+      _products = decodedFiles;
+    });
   }
 
   @override
   void dispose() {
     // Dispose of the controller when the widget is disposed.
     super.dispose();
+  }
+
+  @override
+  void _resetState () {
+    setState(() {
+      _productId = '';
+      _productName.text = '';
+      _productCode.text = '';
+      _productCategory = 'All';
+      _productPrice.text = '';
+      _productQuantity.text = '';
+      _productDescription.text = '';
+      _productExpiration = new DateFormat.yMd().format(DateTime.now());
+      _imagePath = null;
+    });
+  }
+
+  @override
+  Future<void> _saveToStorage (products) async {
+    final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
+    final decode = json.encode(products);
+    sharedPrefs.setString('ListProducts', decode).then((res) {
+      _resetState();
+    });
+
+    print(products);
   }
 
   @override
@@ -61,7 +101,14 @@ class _AddItemState extends State<AddItemState> {
     if(productInfo['invalid']) {
       _scaffoldKey.currentState.showSnackBar(new SnackBar(backgroundColor: Colors.redAccent, content: new Text(productInfo['error'])));
     } else {
-      print(productInfo);
+      setState(() {
+        _products.add(productInfo);
+      });
+
+      _saveToStorage(_products).then((res) {
+        _scaffoldKey.currentState.showSnackBar(new SnackBar(backgroundColor: Colors.greenAccent, content: new Text('Successfully added!')));
+      });
+
     }
 
   }
@@ -133,6 +180,7 @@ class _AddItemState extends State<AddItemState> {
                  margin: EdgeInsets.all(10),
                  child: InkWell(
                    onTap: () async {
+                     FocusScope.of(context).unfocus();
                      WidgetsFlutterBinding.ensureInitialized();
 
                      // Obtain a list of the available cameras on the device.
@@ -284,6 +332,7 @@ class _AddItemState extends State<AddItemState> {
             FlatButton(
               child: Text(_productExpiration, style: TextStyle(color: Colors.grey[500], fontSize: 18)),
               onPressed: () {
+                FocusScope.of(context).unfocus();
                 return showDatePicker(
                     context: context,
                     initialDate: DateTime.now(),
