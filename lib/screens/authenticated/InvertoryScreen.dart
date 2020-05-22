@@ -47,6 +47,15 @@ class _InventoryScreen extends State<InventoryScreen> {
     });
   }
 
+  void _deleteToLocalStorage (int index) async {
+    setState(() {
+      _products.removeAt(index);
+    });
+    //update local storage
+    await ListProducts.saveProductToLocalStorage(_products);
+
+  }
+
   Widget _textBanner (context) {
     List _textShadow = <Shadow>[
       Shadow(
@@ -69,7 +78,7 @@ class _InventoryScreen extends State<InventoryScreen> {
                 Navigator.push(context, PageRouteBuilder(
                   transitionDuration: Duration(seconds: 1),
                   pageBuilder: (context, a1, a2) {
-                    return AddItemState(products: _products);
+                    return AddItemState(products: _products, editItem: {});
                   },
                 ));
               },
@@ -156,6 +165,7 @@ class _InventoryScreen extends State<InventoryScreen> {
                                 itemCount: _products.length,
                                 itemBuilder: (context, int index) {
                                   return AnimatedOpacity(
+                                    key: ObjectKey(_products[index]),
                                     duration: Duration(milliseconds: 500),
                                     opacity: _onMountAnimation ? 1 : 0,
                                     child: AnimatedContainer(
@@ -165,6 +175,16 @@ class _InventoryScreen extends State<InventoryScreen> {
                                       child: ProductCard(
                                         productInfo: _products[index],
                                         productIndex: index,
+                                        isDelete: (del) {
+                                          _deleteToLocalStorage(index);
+                                        },
+                                        isEdit: (int editIndex) {
+                                          if(editIndex == index) {
+                                            Navigator.push(context, PageRouteBuilder(
+                                              pageBuilder: (context, a1, a2) => AddItemState(products: _products, editItem: _products[editIndex], editIndex: index),
+                                            ));
+                                          }
+                                        },
                                       )
                                     )
                                   );

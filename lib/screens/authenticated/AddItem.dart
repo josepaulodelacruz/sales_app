@@ -21,8 +21,10 @@ import '../../models/Products.dart';
 
 class AddItemState extends StatefulWidget {
   List products;
+  Map<String, dynamic> editItem;
+  int editIndex;
 
-  AddItemState({Key key, this.products }) : super(key: key);
+  AddItemState({Key key, this.products, this.editItem, this.editIndex }) : super(key: key);
 
   @override
   createState () => _AddItemState();
@@ -46,6 +48,20 @@ class _AddItemState extends State<AddItemState> {
     setState(() {
       _products = widget.products;
     });
+    if(widget.editItem.isNotEmpty) {
+      setState(() {
+        _productName.text = widget.editItem['pName'];
+        _productCode.text = widget.editItem['pCode'].toString();
+        _productCategory = widget.editItem['pCategory'];
+        _productPrice.text = widget.editItem['pPrice'].toString();
+        _productQuantity.text = widget.editItem['pQuantity'].toString();
+        _productDescription.text = widget.editItem['pDescription'];
+        _productExpiration =  widget.editItem['pExpiration'];
+        _productId = widget.editItem['pId'];
+        _imagePath = widget.editItem['pImagePath'];
+      });
+    }
+
 
     super.initState();
   }
@@ -105,6 +121,37 @@ class _AddItemState extends State<AddItemState> {
 
       _saveToStorage(_products).then((res) {
         _scaffoldKey.currentState.showSnackBar(new SnackBar(backgroundColor: Colors.greenAccent, content: new Text('Successfully added!')));
+      });
+
+    }
+
+  }
+
+  @override
+  _editProduct (context) {
+    final productInfo = Products.toJson(
+        _productId,
+        _productName.text,
+        _productCode.text,
+        _productCategory,
+        _productPrice.text,
+        _productQuantity.text,
+        _productDescription.text,
+        _productExpiration,
+        _imagePath
+    );
+
+    if(productInfo['invalid']) {
+      _scaffoldKey.currentState.showSnackBar(new SnackBar(backgroundColor: Colors.redAccent, content: new Text(productInfo['error'])));
+    } else {
+      setState(() {
+        _products[widget.editIndex] = productInfo;
+      });
+
+      _saveToStorage(_products).then((res) {
+        _scaffoldKey.currentState.showSnackBar(new SnackBar(backgroundColor: Colors.greenAccent, content: new Text('Successfully Edited!')));
+      }).then((res) {
+        Navigator.pop(context);
       });
 
     }
@@ -358,7 +405,7 @@ class _AddItemState extends State<AddItemState> {
       key: _scaffoldKey,
       backgroundColor: getColorFromHex('#f3f3f3'),
       appBar: AppBar(
-        title: Text('Add item'),
+        title: Text(widget.editItem.isEmpty ? 'Add item' : 'Edit item'),
         backgroundColor: getColorFromHex('#20BDFF'),
       ),
       body: Column(
@@ -379,7 +426,7 @@ class _AddItemState extends State<AddItemState> {
           ),
           RaisedButton(
             onPressed: () {
-              _addProduct();
+              widget.editItem.isEmpty ? _addProduct() : _editProduct(context);
             },
             textColor: Colors.white,
             padding: const EdgeInsets.all(0.0),
@@ -397,7 +444,7 @@ class _AddItemState extends State<AddItemState> {
               padding: const EdgeInsets.all(10.0),
               child: Center(
                 child: Text(
-                  'Add Item',
+                  widget.editItem.isEmpty ? 'Add Item' : 'Edit Item',
                   textAlign: TextAlign.center,
                 )
               ),

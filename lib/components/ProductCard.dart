@@ -7,9 +7,11 @@ import '../utils/colorParser.dart';
 
 class ProductCard extends StatefulWidget {
   Map<String, dynamic> productInfo;
+  Function isEdit;
+  Function isDelete;
   int productIndex;
 
-  ProductCard({Key key, this.productInfo, this.productIndex }) : super(key: key);
+  ProductCard({Key key, this.productInfo, this.productIndex, this.isEdit, this.isDelete }) : super(key: key);
 
   @override
   createState () => _ProductCardState();
@@ -33,7 +35,7 @@ class _ProductCardState extends State<ProductCard> {
         children: <Widget>[
           Container(
             height: 175,
-            width: MediaQuery.of(context).size.width  ,
+            width: MediaQuery.of(context).size.width,
             margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
             child: Card(
               elevation: 10,
@@ -49,7 +51,7 @@ class _ProductCardState extends State<ProductCard> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
-                          Text(widget.productIndex.toString(), style: TextStyle(color: Colors.white)),
+                          Text((widget.productIndex + 1).toString(), style: TextStyle(color: Colors.white)),
                           Image.file(
                             File(_productInfo['pImagePath']),
                             height: MediaQuery.of(context).size.height * 0.1,
@@ -64,13 +66,42 @@ class _ProductCardState extends State<ProductCard> {
                   Expanded(
                     flex: 2,
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
-                          Text('Product Name: ${_productInfo['pName']}', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
-                          Text('ID: ${_productInfo['pId']}', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
+                          Container(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Flexible(
+                                  child:
+                                  Text('${_productInfo['pName']}', style: TextStyle(fontSize: 15, color: Colors.grey[500], fontWeight: FontWeight.bold)),
+                                ),
+                                Container(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      IconButton(
+                                        onPressed: () {
+                                          widget.isEdit(widget.productIndex);
+                                        },
+                                        icon: Icon(Icons.edit, color: Colors.blue)
+                                      ),
+                                      IconButton(
+                                        onPressed: () {
+                                          widget.isDelete(widget.productInfo['pId']);
+                                        },
+                                        icon: Icon(Icons.delete, color: Colors.redAccent)
+                                      ),
+                                    ]
+                                  )
+                                )
+                              ]
+                            )
+                          ),
+                          Text('Price: P${_productInfo['pPrice']}', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
                           Text('Quantity:  ${_productInfo['pQuantity']}', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
                           Text('Barcode: ${_productInfo['pCode']}', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
                         ],
