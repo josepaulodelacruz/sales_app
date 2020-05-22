@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 //component
 import '../../components/ProductCard.dart';
 import '../../models/ListProducts.dart';
+import '../../utils/colorParser.dart';
 
 
 const flashOn = 'FLASH ON';
@@ -25,8 +27,9 @@ class _BarcodeScanState extends State<BarcodeScan> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   List _products = [];
   List _soldItems = [];
+  bool _isScan = false;
   final _scanItem = TextEditingController();
-  Map<String, dynamic> item;
+  Map<String, dynamic> item = {};
   Timer _timer;
   bool _isCameraMounted = false;
   var qrText = '';
@@ -58,8 +61,9 @@ class _BarcodeScanState extends State<BarcodeScan> {
   void _onQRViewCreated(QRViewController controller) {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) {
-      if (_scanItem.text != scanData) {
+      if (!_isScan) {
           setState(() {
+            _isScan = true;
             _scanItem.text = scanData;
           });
           dynamic result = _products.where((pp) {
@@ -69,12 +73,10 @@ class _BarcodeScanState extends State<BarcodeScan> {
           setState(() {
             item = result[0];
           });
-
         }
       }
     );
   }
-
 
 
   @override
@@ -127,10 +129,15 @@ class _BarcodeScanState extends State<BarcodeScan> {
                                 child: TextField(
                                   controller: _scanItem,
                                   onChanged: (val) {
-                                    setState(() {
-                                      _scanItem.text = '';
-                                      item = null;
-                                    });
+                                    dynamic result = _products.where((pp) {
+                                      String codeString = pp['pCode'].toString();
+                                      return codeString.contains(val);
+                                    }).toList();
+                                    if(result[0]['pCode'] == val) {
+                                      setState(() {
+                                        item = result;
+                                      });
+                                    }
                                   },
                                   decoration: InputDecoration(
                                     labelText: 'Scan items'
@@ -145,8 +152,9 @@ class _BarcodeScanState extends State<BarcodeScan> {
                                 child: Icon(Icons.close, color: Colors.black),
                                 onPressed: () {
                                   setState(() {
+                                    _isScan = false;
                                     _scanItem.text = '';
-                                    item = null;
+                                    item = {};
                                   });
                                 },
                               ),
@@ -157,20 +165,74 @@ class _BarcodeScanState extends State<BarcodeScan> {
                                         String codeString = pp['pCode'].toString();
                                         return codeString.contains(_scanItem.text);
                                       }).toList();
-                                      print(result[0]);
-//                                    dynamic result =  _products.map((pp) {
-//                                      if(pp['pCode'].toString() == _scanItem.text) {
-//                                        return pp;
-//                                      }
-//                                    }).toList();
-//                                    print(result);
+                                      setState(() {
+                                        item = {};
+                                        _scanItem.text = '';
+                                        _isScan = false;
+                                      });
                                   },
                                   shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
                               )
                             ],
                           )
                         ),
-                        item == null ? Text('No items scan') : Text(item['pName']),
+                        item.isEmpty ? Text('No items scan') : Container(
+                          margin: EdgeInsets.only(top: 10, right: 10, left: 10),
+                          height: 150,
+                          width: MediaQuery.of(context).size.width,
+                          child: Card(
+                            child: Row(
+                              children: <Widget>[
+                                Expanded(
+                                  flex: 1,
+                                  child: Container(
+                                    padding: EdgeInsets.all(10),
+                                    color: getColorFromHex('#373234'),
+                                    height: MediaQuery.of(context).size.height,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      children: <Widget>[
+                                        Image.file(
+                                          File(item['pImagePath']),
+                                          height: MediaQuery.of(context).size.height * 0.1,
+                                          width: MediaQuery.of(context).size.width,
+                                        ),
+                                        Text('Expiration: ${item['pExpiration']}', style: TextStyle(fontSize: 12, color: Colors.white)),
+                                      ],
+                                    )
+                                  ),
+                                ),
+                                Expanded(
+                                    flex: 2,
+                                    child: Container(
+                                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                          children: <Widget>[
+                                            Container(
+                                                child: Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Flexible(
+                                                        child:
+                                                        Text('${item['pName']}', style: TextStyle(fontSize: 15, color: Colors.grey[500], fontWeight: FontWeight.bold)),
+                                                      ),
+                                                    ]
+                                                )
+                                            ),
+                                            Text('Price: P${item['pPrice']}', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
+                                            Text('Quantity:  ${item['pQuantity']}', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
+                                            Text('Barcode: ${item['pCode']}', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
+                                          ],
+                                        )
+                                    )
+                                )
+                              ],
+                            )
+                          )
+                        ),
                       ],
                     )
                   )
