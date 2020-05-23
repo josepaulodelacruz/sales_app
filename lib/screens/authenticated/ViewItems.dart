@@ -4,21 +4,17 @@ import 'package:flutter/material.dart';
 
 import '../../utils/colorParser.dart';
 
-class ViewItems extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    return _ViewItems();
-  }
-}
+class ViewItems extends StatefulWidget {
+  List products;
+  Function deleteItem;
 
-class _ViewItems extends StatefulWidget {
+  ViewItems({Key key, this.products, this.deleteItem }) : super(key: key);
 
   @override
   createState () => _ViewItemsState();
 }
 
-class _ViewItemsState extends State<_ViewItems> {
+class _ViewItemsState extends State<ViewItems> {
   Timer _timer;
   bool _onMountWidget = false;
   final _customerAmount = TextEditingController();
@@ -30,6 +26,7 @@ class _ViewItemsState extends State<_ViewItems> {
         _onMountWidget = true;
       });
     });
+    print(widget.products);
 
     super.initState();
   }
@@ -40,7 +37,7 @@ class _ViewItemsState extends State<_ViewItems> {
     Widget _topHeader = Container(
       padding: EdgeInsets.all(20),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
           Flexible(
             flex: 2,
@@ -64,9 +61,39 @@ class _ViewItemsState extends State<_ViewItems> {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 10),
         child: ListView.builder(
-          itemCount: 20,
+          itemCount: widget.products.length,
           itemBuilder: (context, int index) {
-            return ListTile(title: Text('test $index'));
+            return Dismissible(
+              key: ObjectKey(index),
+              onDismissed: (direction) {
+                widget.deleteItem(index);
+              },
+              // Show a red background as the item is swiped away.
+              background: Container(color: Colors.red),
+              child: Container(
+                height: 70,
+                width: MediaQuery.of(context).size.width,
+                child: Card(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      Flexible(
+                        flex: 2,
+                        child: Text(widget.products[index]['pName'], style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.bold))
+                      ),
+                      Flexible(
+                        flex: 1,
+                        child: Text('${widget.products[index]['orderCount']}', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.bold))
+                      ),
+                      Flexible(
+                        flex: 1,
+                        child: Text('${widget.products[index]['pPrice'] * widget.products[index]['orderCount']}', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.bold))
+                      )
+                    ],
+                  )
+                )
+              )
+            );
           },
         )
       )
@@ -85,8 +112,7 @@ class _ViewItemsState extends State<_ViewItems> {
           SizedBox(width: MediaQuery.of(context).size.width * 0.10),
           Flexible(
             flex: 1,
-            child:
-            Text('P 32', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold))
+            child: Text('P 32', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold))
           ),
         ],
       )

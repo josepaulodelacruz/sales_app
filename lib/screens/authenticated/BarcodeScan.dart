@@ -165,7 +165,7 @@ class _BarcodeScanState extends State<BarcodeScan> {
                                   child: Text('Add'),
                                   onPressed: ()  {
                                       setState(() {
-                                        _soldItems.add(item);
+                                        _soldItems.add({'orderCount': _orderCount, ...item });
                                         item = {};
                                         _scanItem.text = '';
                                         _isScan = false;
@@ -234,7 +234,7 @@ class _BarcodeScanState extends State<BarcodeScan> {
                                               Flexible(
                                                 flex: 1,
                                                 child: TextField(
-                                                  textAlign: TextAlign.center,
+                                                  textAlign: TextAlign.right,
                                                   onChanged: (val) {
                                                     setState(() {
                                                       _orderCount = val.length > 0 ? int.parse(val): 1;
@@ -287,7 +287,14 @@ class _BarcodeScanState extends State<BarcodeScan> {
         onPressed: () {
           Navigator.push(context, PageRouteBuilder(
             transitionDuration: Duration(seconds: 1),
-            pageBuilder: (context, a1, a2) => ViewItems(),
+            pageBuilder: (context, a1, a2) => ViewItems(
+              products: _soldItems,
+              deleteItem: (int index) {
+                setState(() {
+                  _soldItems.removeAt(index);
+                });
+              }
+            ),
           ));
         },
         child: Badge(
