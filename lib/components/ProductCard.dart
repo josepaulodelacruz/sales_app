@@ -57,7 +57,6 @@ class _ProductCardState extends State<ProductCard> {
                             height: MediaQuery.of(context).size.height * 0.1,
                             width: MediaQuery.of(context).size.width,
                           ),
-
                           Text('Expiration: ${_productInfo['pExpiration']}', style: TextStyle(fontSize: 12, color: Colors.white)),
                         ],
                       )

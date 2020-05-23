@@ -100,20 +100,20 @@ class _BarcodeScanState extends State<BarcodeScan> {
             height: MediaQuery.of(context).size.height * 0.87,
             child: Column(
               children: <Widget>[
-                Flexible(
-                  flex: 2,
-                  child: QRView(
-                    key: qrKey,
-                    onQRViewCreated: _onQRViewCreated,
-                    overlay: QrScannerOverlayShape(
-                      borderColor: Colors.red,
-                      borderRadius: 10,
-                      borderLength: 30,
-                      borderWidth: 10,
-                      cutOutSize: 300,
-                    ),
-                  ),
-                ),
+//                Flexible(
+//                  flex: 2,
+//                  child: QRView(
+//                    key: qrKey,
+//                    onQRViewCreated: _onQRViewCreated,
+//                    overlay: QrScannerOverlayShape(
+//                      borderColor: Colors.red,
+//                      borderRadius: 10,
+//                      borderLength: 30,
+//                      borderWidth: 10,
+//                      cutOutSize: 300,
+//                    ),
+//                  ),
+//                ),
                 Flexible(
                   flex: 1,
                   child: Container(
@@ -129,15 +129,13 @@ class _BarcodeScanState extends State<BarcodeScan> {
                                 child: TextField(
                                   controller: _scanItem,
                                   onChanged: (val) {
-                                    dynamic result = _products.where((pp) {
-                                      String codeString = pp['pCode'].toString();
-                                      return codeString.contains(val);
+                                    _products.map((x) {
+                                      if(x['pCode'].toString() == val) {
+                                        setState(() {
+                                          item = x;
+                                        });
+                                      }
                                     }).toList();
-                                    if(result[0]['pCode'] == val) {
-                                      setState(() {
-                                        item = result;
-                                      });
-                                    }
                                   },
                                   decoration: InputDecoration(
                                     labelText: 'Scan items'
