@@ -2,11 +2,13 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:badges/badges.dart';
 
 //component
 import '../../components/ProductCard.dart';
 import '../../models/ListProducts.dart';
 import '../../utils/colorParser.dart';
+import 'ViewItems.dart';
 
 
 const flashOn = 'FLASH ON';
@@ -30,8 +32,10 @@ class _BarcodeScanState extends State<BarcodeScan> {
   bool _isScan = false;
   final _scanItem = TextEditingController();
   Map<String, dynamic> item = {};
+  int _orderCount = 1;
   Timer _timer;
   bool _isCameraMounted = false;
+  int _itemCounter = 0;
   var qrText = '';
   var flashState = flashOn;
   var cameraState = frontCamera;
@@ -153,20 +157,19 @@ class _BarcodeScanState extends State<BarcodeScan> {
                                     _isScan = false;
                                     _scanItem.text = '';
                                     item = {};
+                                    _orderCount = 1;
                                   });
                                 },
                               ),
                               RaisedButton(
                                   child: Text('Add'),
                                   onPressed: ()  {
-                                      var result = _products.where((pp) {
-                                        String codeString = pp['pCode'].toString();
-                                        return codeString.contains(_scanItem.text);
-                                      }).toList();
                                       setState(() {
+                                        _soldItems.add(item);
                                         item = {};
                                         _scanItem.text = '';
                                         _isScan = false;
+                                        _orderCount = 1;
                                       });
                                   },
                                   shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
@@ -193,39 +196,78 @@ class _BarcodeScanState extends State<BarcodeScan> {
                                       children: <Widget>[
                                         Image.file(
                                           File(item['pImagePath']),
-                                          height: MediaQuery.of(context).size.height * 0.1,
+                                          height: MediaQuery.of(context).size.height * 0.15,
                                           width: MediaQuery.of(context).size.width,
                                         ),
-                                        Text('Expiration: ${item['pExpiration']}', style: TextStyle(fontSize: 12, color: Colors.white)),
                                       ],
                                     )
                                   ),
                                 ),
                                 Expanded(
-                                    flex: 2,
-                                    child: Container(
-                                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                          children: <Widget>[
-                                            Container(
-                                                child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    children: [
-                                                      Flexible(
-                                                        child:
-                                                        Text('${item['pName']}', style: TextStyle(fontSize: 15, color: Colors.grey[500], fontWeight: FontWeight.bold)),
-                                                      ),
-                                                    ]
+                                  flex: 2,
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      children: <Widget>[
+                                        Container(
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Flexible(
+                                                child: Text('Product Name:', style: TextStyle(fontSize: 15, color: Colors.grey[500], fontWeight: FontWeight.bold)),
+                                              ),
+                                              Text('${item['pName']}', style: TextStyle(fontSize: 15, color: Colors.grey[500], fontWeight: FontWeight.bold)),
+                                            ]
+                                          )
+                                        ),
+                                        Container(
+                                          height: 20,
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Flexible(
+                                                flex: 2,
+                                                child: Text('Quantity:', style: TextStyle(fontSize: 15, color: Colors.grey[500], fontWeight: FontWeight.bold)),
+                                              ),
+                                              Flexible(
+                                                flex: 1,
+                                                child: TextField(
+                                                  textAlign: TextAlign.center,
+                                                  onChanged: (val) {
+                                                    setState(() {
+                                                      _orderCount = val.length > 0 ? int.parse(val): 1;
+                                                    });
+                                                  },
+                                                  decoration: InputDecoration(
+                                                    hintText: '1'
+                                                  ),
+                                                  keyboardType: TextInputType.numberWithOptions(
+                                                    decimal: false,
+                                                    signed: true,
+                                                  ),
                                                 )
-                                            ),
-                                            Text('Price: P${item['pPrice']}', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
-                                            Text('Quantity:  ${item['pQuantity']}', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
-                                            Text('Barcode: ${item['pCode']}', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
-                                          ],
-                                        )
+                                              ),
+                                            ]
+                                          )
+                                        ),
+                                        Container(
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Flexible(
+                                                child: Text('Price:', style: TextStyle(fontSize: 15, color: Colors.grey[500], fontWeight: FontWeight.bold)),
+                                              ),
+                                              Text('P${item['pPrice'] * _orderCount}', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
+                                            ]
+                                          )
+                                        ),
+
+                                        Text('Barcode: ${item['pCode']}', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
+                                      ],
                                     )
+                                  )
                                 )
                               ],
                             )
@@ -241,9 +283,20 @@ class _BarcodeScanState extends State<BarcodeScan> {
         )
       ),
       floatingActionButton: FloatingActionButton(
-        elevation: 10,
-        onPressed: () => print(item),
-        child: Icon(Icons.shopping_cart, color: Colors.white)
+        heroTag: 'soldItems',
+        onPressed: () {
+          Navigator.push(context, PageRouteBuilder(
+            transitionDuration: Duration(seconds: 1),
+            pageBuilder: (context, a1, a2) => ViewItems(),
+          ));
+        },
+        child: Badge(
+          toAnimate: true,
+          animationType: BadgeAnimationType.scale,
+          animationDuration: Duration(milliseconds: 300),
+          badgeContent: Text(_soldItems.length <= 9 ? _soldItems.length.toString() : '9+', style: TextStyle(fontSize: 12, color: Colors.white)),
+          child: Icon(Icons.add_shopping_cart),
+        )
       ),
     );
   }
