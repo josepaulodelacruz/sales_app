@@ -113,7 +113,6 @@ class _InventoryScreen extends State<InventoryScreen> {
                 child: Hero(
                   tag: 'addItem',
                   child: Container(
-                      padding: EdgeInsets.only(top: 20, right: 20, left: 20),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.only(
@@ -133,7 +132,15 @@ class _InventoryScreen extends State<InventoryScreen> {
                       child: Column(
                         children: <Widget>[
                           Container(
-                              height: 50,
+                              padding: EdgeInsets.only(top: 10, bottom: 15, right: 20, left: 20),
+                              height: 60,
+                              decoration: BoxDecoration(
+                                  color: getColorFromHex('#f3f3f3'),
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(50.0),
+                                      topRight: Radius.circular(50.0)
+                                  )
+                              ),
                               child: ListView(
                                 scrollDirection: Axis.horizontal,
                                 children: categories.map((cc) {
@@ -160,6 +167,8 @@ class _InventoryScreen extends State<InventoryScreen> {
                           Expanded(
                             flex: 1,
                             child: Container(
+                              padding: EdgeInsets.only(right: 20, left: 20),
+                              color: getColorFromHex('#f3f3f3'),
                               child: ListView.builder(
                                 controller: _scrollController,
                                 itemCount: _products.length,

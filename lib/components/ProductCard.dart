@@ -38,7 +38,6 @@ class _ProductCardState extends State<ProductCard> {
             width: MediaQuery.of(context).size.width,
             margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
             child: Card(
-              elevation: 10,
               child: Row(
                 children: <Widget>[
                   Expanded(
