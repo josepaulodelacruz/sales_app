@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../utils/colorParser.dart';
@@ -15,6 +16,7 @@ class ViewItems extends StatefulWidget {
 }
 
 class _ViewItemsState extends State<ViewItems> {
+  List _products = [];
   Timer _timer;
   bool _onMountWidget = false;
   final _customerAmount = TextEditingController();
@@ -26,7 +28,8 @@ class _ViewItemsState extends State<ViewItems> {
         _onMountWidget = true;
       });
     });
-    print(widget.products);
+
+    _products = widget.products;
 
     super.initState();
   }
@@ -37,20 +40,12 @@ class _ViewItemsState extends State<ViewItems> {
     Widget _topHeader = Container(
       padding: EdgeInsets.all(20),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Flexible(
-            flex: 2,
-            child: Text('Product Name', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.bold))
-          ),
-          Flexible(
-            flex: 1,
-            child: Text('QTY', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.bold))
-          ),
-          Flexible(
-            flex: 1,
-            child: Text('Price', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.bold))
-          )
+          Text('Name', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.bold)),
+          Text('Quantity', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.bold)),
+          Text('Price', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.bold)),
         ],
       )
     );
@@ -61,15 +56,28 @@ class _ViewItemsState extends State<ViewItems> {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 10),
         child: ListView.builder(
-          itemCount: widget.products.length,
+          itemCount: _products.length,
           itemBuilder: (context, int index) {
             return Dismissible(
               key: ObjectKey(index),
+              dismissThresholds: {
+                DismissDirection.vertical: 0.4,
+              },
               onDismissed: (direction) {
-                widget.deleteItem(index);
+                widget.deleteItem(_products[index]['pId']);
               },
               // Show a red background as the item is swiped away.
-              background: Container(color: Colors.red),
+              background: Container(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                color: Colors.red,
+//                child: Row(
+//                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                  children: <Widget>[
+//                    Icon(Icons.delete, color: Colors.white),
+//                    Icon(Icons.delete, color: Colors.white),
+//                  ],
+//                )
+              ),
               child: Container(
                 height: 70,
                 width: MediaQuery.of(context).size.width,
@@ -79,15 +87,27 @@ class _ViewItemsState extends State<ViewItems> {
                     children: <Widget>[
                       Flexible(
                         flex: 2,
-                        child: Text(widget.products[index]['pName'], style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.bold))
+                        child: Text(_products[index]['pName'], style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.bold))
                       ),
                       Flexible(
                         flex: 1,
-                        child: Text('${widget.products[index]['orderCount']}', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.bold))
+                        child: TextField(
+                          onChanged: (val) {
+                            setState(() {
+                              _products[index]['orderCount'] = int.parse(val);
+                            });
+                          },
+                          textAlign: TextAlign.center,
+                          decoration: InputDecoration(
+                            hintText: '${_products[index]['orderCount']}',
+                          ),
+
+                        )
+//                        child: Text('${widget.products[index]['orderCount']}', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.bold))
                       ),
                       Flexible(
                         flex: 1,
-                        child: Text('${widget.products[index]['pPrice'] * widget.products[index]['orderCount']}', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.bold))
+                        child: Text('P${_products[index]['pPrice'] * _products[index]['orderCount']}', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.bold))
                       )
                     ],
                   )
@@ -99,24 +119,29 @@ class _ViewItemsState extends State<ViewItems> {
       )
     );
 
-    Widget _totalComputation = Container(
-      padding: EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Flexible(
-            flex: 2,
-            child: Text('Total Price:', style: TextStyle(fontSize: 20, color: Colors.grey[500], fontWeight: FontWeight.bold)),
-          ),
-          SizedBox(width: MediaQuery.of(context).size.width * 0.10),
-          Flexible(
-            flex: 1,
-            child: Text('P 32', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold))
-          ),
-        ],
-      )
-    );
+    Widget _totalComputation () {
+      List _total = _products.map((pp) => pp['pPrice'] * pp['orderCount']).toList();
+      double computeTotal = _total.fold(0, (i, j) => i + j);
+      return Container(
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Flexible(
+                flex: 2,
+                child: Text('Total Price:', style: TextStyle(fontSize: 20, color: Colors.grey[500], fontWeight: FontWeight.bold)),
+              ),
+              SizedBox(width: MediaQuery.of(context).size.width * 0.10),
+              Flexible(
+                  flex: 1,
+                  child: Text('P ${computeTotal}', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold))
+              ),
+            ],
+          )
+      );
+    }
+
 
     Widget _amount = Container(
       height: 60,
@@ -129,9 +154,13 @@ class _ViewItemsState extends State<ViewItems> {
             width: MediaQuery.of(context).size.width * 0.30,
             child: TextField(
               textAlign: TextAlign.right,
-              controller: _customerAmount,
+              onChanged: (val) {
+                setState(() {
+                  _customerAmount.text = val;
+                });
+              },
               decoration: InputDecoration(
-                hintText: '32',
+                hintText: 'Enter Amount',
               ),
               keyboardType: TextInputType.numberWithOptions(
                 decimal: false,
@@ -143,6 +172,30 @@ class _ViewItemsState extends State<ViewItems> {
         ],
       )
     );
+
+    Widget _change () {
+      List _total = _products.map((pp) => pp['pPrice'] * pp['orderCount']).toList();
+      double computeTotal = _total.fold(0, (i, j) => i + j);
+      return Container(
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Flexible(
+                flex: 2,
+                child: Text('Change is:', style: TextStyle(fontSize: 20, color: Colors.grey[500], fontWeight: FontWeight.bold)),
+              ),
+              SizedBox(width: MediaQuery.of(context).size.width * 0.10),
+              Flexible(
+                flex: 1,
+                child: _customerAmount.text.length > 0 ? Text((computeTotal - double.parse(_customerAmount.text)).toString(), style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold) ) : Text('0', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold))
+              ),
+            ],
+          )
+      );
+    }
+
 
     return Hero(
       tag: 'soldItems',
@@ -158,8 +211,21 @@ class _ViewItemsState extends State<ViewItems> {
                 children: <Widget>[
                   _topHeader,
                   _listProducts,
-                  _totalComputation,
+                  _totalComputation(),
                   _amount,
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: Container(
+                        width: MediaQuery.of(context).size.width * 0.40,
+                        margin: const EdgeInsets.only(left: 10.0, right: 20.0),
+                        child: Divider(
+                          thickness: 5,
+                          color: Colors.grey[300],
+                          height: 36,
+                        )
+                    )
+                  ),
+                  _change(),
                   RaisedButton(
                       onPressed: () {
                       },

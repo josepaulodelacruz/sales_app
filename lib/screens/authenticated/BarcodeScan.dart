@@ -164,6 +164,7 @@ class _BarcodeScanState extends State<BarcodeScan> {
                               RaisedButton(
                                   child: Text('Add'),
                                   onPressed: ()  {
+                                    if(item.isNotEmpty) {
                                       setState(() {
                                         _soldItems.add({'orderCount': _orderCount, ...item });
                                         item = {};
@@ -171,6 +172,10 @@ class _BarcodeScanState extends State<BarcodeScan> {
                                         _isScan = false;
                                         _orderCount = 1;
                                       });
+                                    } else {
+                                      _scaffoldKey.currentState.showSnackBar(new SnackBar(backgroundColor: Colors.redAccent, content: new Text('No items added.')));
+                                    }
+
                                   },
                                   shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
                               )
@@ -289,9 +294,9 @@ class _BarcodeScanState extends State<BarcodeScan> {
             transitionDuration: Duration(seconds: 1),
             pageBuilder: (context, a1, a2) => ViewItems(
               products: _soldItems,
-              deleteItem: (int index) {
+              deleteItem: (String id) {
                 setState(() {
-                  _soldItems.removeAt(index);
+                  _soldItems.removeWhere((p) => p['pId'] == id);
                 });
               }
             ),
