@@ -59,12 +59,14 @@ class _ViewItemsState extends State<ViewItems> {
           itemCount: _products.length,
           itemBuilder: (context, int index) {
             return Dismissible(
-              key: ObjectKey(index),
+              key: Key(_products[index]['pId']),
               dismissThresholds: {
                 DismissDirection.vertical: 0.4,
               },
-              onDismissed: (direction) {
-                widget.deleteItem(_products[index]['pId']);
+              onDismissed: (direction) async {
+                setState(() {
+                  widget.deleteItem(_products[index]['pId']);
+                });
               },
               // Show a red background as the item is swiped away.
               background: Container(
@@ -189,7 +191,7 @@ class _ViewItemsState extends State<ViewItems> {
               SizedBox(width: MediaQuery.of(context).size.width * 0.10),
               Flexible(
                 flex: 1,
-                child: _customerAmount.text.length > 0 ? Text((computeTotal - double.parse(_customerAmount.text)).toString(), style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold) ) : Text('0', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold))
+                child: _customerAmount.text.length > 0 ? Text((double.parse(_customerAmount.text) - computeTotal).toString(), style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold) ) : Text('0', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold))
               ),
             ],
           )
@@ -211,20 +213,28 @@ class _ViewItemsState extends State<ViewItems> {
                 children: <Widget>[
                   _topHeader,
                   _listProducts,
-                  _totalComputation(),
-                  _amount,
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: Container(
-                        width: MediaQuery.of(context).size.width * 0.40,
-                        margin: const EdgeInsets.only(left: 10.0, right: 20.0),
-                        child: Divider(
-                          thickness: 5,
-                          color: Colors.grey[300],
-                          height: 36,
-                        )
+                  Card(
+                    elevation: 5,
+                    child: Column(
+                      children: <Widget>[
+                        _totalComputation(),
+                        _amount,
+                        Align(
+                            alignment: Alignment.topRight,
+                            child: Container(
+                                width: MediaQuery.of(context).size.width * 0.40,
+                                margin: const EdgeInsets.only(left: 10.0, right: 20.0),
+                                child: Divider(
+                                  thickness: 5,
+                                  color: Colors.grey[300],
+                                  height: 36,
+                                )
+                            )
+                        ),
+                      ],
                     )
                   ),
+
                   _change(),
                   RaisedButton(
                       onPressed: () {
