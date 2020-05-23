@@ -67,12 +67,6 @@ class _AddItemState extends State<AddItemState> {
   }
 
   @override
-  void dispose() {
-    // Dispose of the controller when the widget is disposed.
-    super.dispose();
-  }
-
-  @override
   void _resetState () {
     setState(() {
       _productId = '';
