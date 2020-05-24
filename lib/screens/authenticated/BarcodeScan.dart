@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:badges/badges.dart';
+import 'package:sari_sales/constants/colorsSequence.dart';
 
 //component
 import '../../components/ProductCard.dart';
@@ -104,83 +105,85 @@ class _BarcodeScanState extends State<BarcodeScan> {
             height: MediaQuery.of(context).size.height * 0.87,
             child: Column(
               children: <Widget>[
-                Flexible(
-                  flex: 2,
-                  child: QRView(
-                    key: qrKey,
-                    onQRViewCreated: _onQRViewCreated,
-                    overlay: QrScannerOverlayShape(
-                      borderColor: Colors.red,
-                      borderRadius: 10,
-                      borderLength: 30,
-                      borderWidth: 10,
-                      cutOutSize: 300,
-                    ),
-                  ),
-                ),
+//                Flexible(
+//                  flex: 2,
+//                  child: QRView(
+//                    key: qrKey,
+//                    onQRViewCreated: _onQRViewCreated,
+//                    overlay: QrScannerOverlayShape(
+//                      borderColor: Colors.red,
+//                      borderRadius: 10,
+//                      borderLength: 30,
+//                      borderWidth: 10,
+//                      cutOutSize: 300,
+//                    ),
+//                  ),
+//                ),
                 Flexible(
                   flex: 1,
                   child: Container(
                     child: Column(
                       children: <Widget>[
                         Container(
-                          padding: EdgeInsets.symmetric(horizontal: 10),
-                          height: 50,
-                          color: Colors.blue,
-                          child: Row(
-                            children: <Widget>[
-                              Expanded(
-                                child: TextField(
-                                  controller: _scanItem,
-                                  onChanged: (val) {
-                                    _products.map((x) {
-                                      if(x['pCode'].toString() == val) {
-                                        setState(() {
-                                          item = x;
-                                        });
-                                      }
-                                    }).toList();
-                                  },
-                                  decoration: InputDecoration(
-                                    labelText: 'Scan items'
-                                  ),
-                                  keyboardType: TextInputType.numberWithOptions(
-                                    decimal: false,
-                                    signed: true,
+                          height: 60,
+                          child: Card(
+                            elevation: 10,
+                            child: Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: TextField(
+                                    controller: _scanItem,
+                                    onChanged: (val) {
+                                      _products.map((x) {
+                                        if(x['pCode'].toString() == val) {
+                                          setState(() {
+                                            item = x;
+                                          });
+                                        }
+                                      }).toList();
+                                    },
+                                    decoration: InputDecoration(
+                                      suffixIcon: IconButton(
+                                        icon: Icon(Icons.clear),
+                                        onPressed: () {
+                                          setState(() {
+                                            _isScan = false;
+                                            _scanItem.text = '';
+                                            item = {};
+                                            _orderCount = 1;
+                                          });
+                                        },
+                                      ),
+                                      hintText: 'Scan an item.'
+                                    ),
+                                    keyboardType: TextInputType.numberWithOptions(
+                                      decimal: false,
+                                      signed: true,
+                                    )
                                   )
-                                )
-                              ),
-                              FlatButton(
-                                child: Icon(Icons.close, color: Colors.black),
-                                onPressed: () {
-                                  setState(() {
-                                    _isScan = false;
-                                    _scanItem.text = '';
-                                    item = {};
-                                    _orderCount = 1;
-                                  });
-                                },
-                              ),
-                              RaisedButton(
-                                  child: Text('Add'),
-                                  onPressed: ()  {
-                                    if(item.isNotEmpty) {
-                                      setState(() {
-                                        _soldItems.add({'orderCount': _orderCount, ...item });
-                                        item = {};
-                                        _scanItem.text = '';
-                                        _isScan = false;
-                                        _orderCount = 1;
-                                      });
-                                    } else {
-                                      _scaffoldKey.currentState.showSnackBar(new SnackBar(backgroundColor: Colors.redAccent, content: new Text('No items added.')));
-                                    }
+                                ),
+                                RaisedButton(
+                                    child: Text('Add', style: TextStyle(color: Colors.white)),
+                                    color: getColorFromHex(ColorSequence().collections[1]),
+                                    onPressed: ()  {
+                                      if(item.isNotEmpty) {
+                                        setState(() {
+                                          _soldItems.add({'orderCount': _orderCount, ...item });
+                                          item = {};
+                                          _scanItem.text = '';
+                                          _isScan = false;
+                                          _orderCount = 1;
+                                        });
+                                      } else {
+                                        _scaffoldKey.currentState.showSnackBar(new SnackBar(backgroundColor: Colors.redAccent, content: new Text('No items added.')));
+                                      }
 
-                                  },
-                                  shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
-                              )
-                            ],
-                          )
+                                    },
+                                    shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
+                                )
+                              ],
+                            )
+                          ),
                         ),
                         item.isEmpty ? Text('No items scan') : Container(
                           margin: EdgeInsets.only(top: 10, right: 10, left: 10),

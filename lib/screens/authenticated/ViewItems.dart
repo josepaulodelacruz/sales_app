@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:sari_sales/components/DialogModal.dart';
 
 import '../../utils/colorParser.dart';
 
@@ -234,32 +235,49 @@ class _ViewItemsState extends State<ViewItems> {
                       ],
                     )
                   ),
-
                   _change(),
                   RaisedButton(
-                      onPressed: () {
-                      },
-                      textColor: Colors.white,
-                      padding: const EdgeInsets.all(0.0),
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: 50,
-                        decoration: new BoxDecoration(
-                          gradient: new LinearGradient(
-                            colors: [
-                              getColorFromHex('#5AFF15'),
-                              getColorFromHex('#00B712'),
-                            ],
-                          ),
+                    onPressed: () {
+                      return showGeneralDialog(
+                        barrierColor: Colors.black.withOpacity(0.5),
+                        transitionBuilder: (context, a1, a2, widget) {
+                          final curvedValue = Curves.easeInOutBack.transform(a1.value) - 1.0;
+                          return Transform(
+                            transform: Matrix4.translationValues(0.0, curvedValue * 200, 0.0),
+                            child: Opacity(
+                              opacity: a1.value,
+                              child: DialogModal()
+                            ),
+                          );
+                        },
+                        transitionDuration: Duration(milliseconds: 500),
+                        barrierDismissible: true,
+                        barrierLabel: '',
+                        context: context,
+                        pageBuilder: (context, animation1, animation2) {}
+                      );
+                    },
+                    textColor: Colors.white,
+                    padding: const EdgeInsets.all(0.0),
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: 50,
+                      decoration: new BoxDecoration(
+                        gradient: new LinearGradient(
+                          colors: [
+                            getColorFromHex('#5AFF15'),
+                            getColorFromHex('#00B712'),
+                          ],
                         ),
-                        padding: const EdgeInsets.all(10.0),
-                        child: Center(
-                            child: Text(
-                              'Checkout',
-                              textAlign: TextAlign.center,
-                            )
-                        ),
-                      )
+                      ),
+                      padding: const EdgeInsets.all(10.0),
+                      child: Center(
+                        child: Text(
+                          'Checkout',
+                          textAlign: TextAlign.center,
+                        )
+                      ),
+                    )
                   ),
                 ],
               )
