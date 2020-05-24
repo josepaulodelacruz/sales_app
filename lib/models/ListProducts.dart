@@ -22,6 +22,7 @@ class ListProducts {
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
     final decode = json.encode(products);
     sharedPrefs.setString('ListProducts', decode);
+
   }
 
 }

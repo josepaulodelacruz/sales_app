@@ -169,7 +169,7 @@ class _InventoryScreen extends State<InventoryScreen> {
                           ),
                           Expanded(
                             flex: 1,
-                            child: Container(
+                            child: _products.length > 0 ? Container(
                               padding: EdgeInsets.only(right: 20, left: 20),
                               color: getColorFromHex('#f3f3f3'),
                               child: ListView.builder(
@@ -204,7 +204,7 @@ class _InventoryScreen extends State<InventoryScreen> {
                                   );
                                 },
                               )
-                            )
+                            ) : Text('No items'),
                           )
                         ],
                       )

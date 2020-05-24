@@ -296,6 +296,7 @@ class _BarcodeScanState extends State<BarcodeScan> {
           Navigator.push(context, PageRouteBuilder(
             transitionDuration: Duration(seconds: 1),
             pageBuilder: (context, a1, a2) => ViewItems(
+              localStorageProducts: _products,
               products: _soldItems,
               deleteItem: (String id) {
                 setState(() {

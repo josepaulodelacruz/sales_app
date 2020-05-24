@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import '../utils/colorParser.dart';
 
 class DialogModal extends StatefulWidget {
+  Function confirmTransaction;
+
+  DialogModal({Key key, this.confirmTransaction}) : super(key: key);
+
   @override
   createState () => _DialogModal();
 }
@@ -34,7 +38,7 @@ class _DialogModal extends State<DialogModal> {
                   Flexible(
                     flex: 1,
                     child: InkWell(
-                      onTap: (){},
+                      onTap: () => Navigator.of(context).pop(),
                       child: Container(
                         width: MediaQuery.of(context).size.width,
                         height: 50,
@@ -60,7 +64,7 @@ class _DialogModal extends State<DialogModal> {
                   Flexible(
                     flex: 1,
                     child: InkWell(
-                      onTap: (){},
+                      onTap: () => widget.confirmTransaction(),
                       child: Container(
                         width: MediaQuery.of(context).size.width,
                         height: 50,

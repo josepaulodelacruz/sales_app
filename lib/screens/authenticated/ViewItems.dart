@@ -4,13 +4,18 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sari_sales/components/DialogModal.dart';
 
+//constant
 import '../../utils/colorParser.dart';
+
+//models
+import '../../models/ListProducts.dart';
 
 class ViewItems extends StatefulWidget {
   List products;
+  List localStorageProducts;
   Function deleteItem;
 
-  ViewItems({Key key, this.products, this.deleteItem }) : super(key: key);
+  ViewItems({Key key, this.products, this.deleteItem, this.localStorageProducts }) : super(key: key);
 
   @override
   createState () => _ViewItemsState();
@@ -18,6 +23,8 @@ class ViewItems extends StatefulWidget {
 
 class _ViewItemsState extends State<ViewItems> {
   List _products = [];
+  List _localStorageProducts = [];
+  List _updatingProducts = [];
   Timer _timer;
   bool _onMountWidget = false;
   final _customerAmount = TextEditingController();
@@ -31,8 +38,38 @@ class _ViewItemsState extends State<ViewItems> {
     });
 
     _products = widget.products;
+    _localStorageProducts = widget.localStorageProducts;
 
     super.initState();
+  }
+
+  //update products from local storage.
+  @override
+  void _transactionProcedure (context) {
+
+    _products.map((x) {
+      _localStorageProducts.map((pp) {
+        if(x['pId'] == pp['pId']) {
+          int index = _localStorageProducts.indexOf(pp);
+          setState(() {
+            _localStorageProducts[index] = {
+              ...pp,
+              'pQuantity': (pp['pQuantity'] - x['orderCount']),
+            };
+          });
+        }
+      }).toList();
+    }).toList();
+
+    ListProducts.saveProductToLocalStorage(_localStorageProducts).then((res) {
+      setState(() {
+        _products = [];
+        _localStorageProducts = [];
+      });
+      Navigator.pop(context);
+      Navigator.pop(context);
+    });
+
   }
 
   @override
@@ -73,13 +110,6 @@ class _ViewItemsState extends State<ViewItems> {
               background: Container(
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 color: Colors.red,
-//                child: Row(
-//                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                  children: <Widget>[
-//                    Icon(Icons.delete, color: Colors.white),
-//                    Icon(Icons.delete, color: Colors.white),
-//                  ],
-//                )
               ),
               child: Container(
                 height: 70,
@@ -246,7 +276,11 @@ class _ViewItemsState extends State<ViewItems> {
                             transform: Matrix4.translationValues(0.0, curvedValue * 200, 0.0),
                             child: Opacity(
                               opacity: a1.value,
-                              child: DialogModal()
+                              child: DialogModal(
+                                confirmTransaction: () {
+                                  _transactionProcedure(context);
+                                }
+                              )
                             ),
                           );
                         },
