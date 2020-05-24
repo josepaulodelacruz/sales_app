@@ -11,6 +11,7 @@ import '../../components/ProductCard.dart';
 
 //models
 import '../../models/ListProducts.dart';
+import '../../constants/colorsSequence.dart';
 
 class InventoryScreen extends StatefulWidget {
 
@@ -30,6 +31,7 @@ class _InventoryScreen extends State<InventoryScreen> {
 
   @override
   void initState () {
+    print(ColorSequence().collections);
     _timer = Timer(Duration(milliseconds: 300), () {
       setState(() {
         _onMountAnimation = true;
@@ -132,7 +134,7 @@ class _InventoryScreen extends State<InventoryScreen> {
                       child: Column(
                         children: <Widget>[
                           Container(
-                              padding: EdgeInsets.only(top: 10, bottom: 15, right: 20, left: 20),
+                              padding: EdgeInsets.only(top: 20, bottom: 15, right: 20, left: 20),
                               height: 60,
                               decoration: BoxDecoration(
                                   color: getColorFromHex('#f3f3f3'),
@@ -154,7 +156,8 @@ class _InventoryScreen extends State<InventoryScreen> {
                                       padding: EdgeInsets.only(left: _onMountAnimation ? 0 : 100),
                                       margin: EdgeInsets.symmetric(horizontal: 5, vertical: 0),
                                       child: RaisedButton(
-                                        child: Text(cc),
+                                        color: getColorFromHex(ColorSequence().collections[sortIndex % ColorSequence().collections.length]),
+                                        child: Text(cc, style: TextStyle(color: Colors.white)),
                                         onPressed: ()  {
                                         },
                                         shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
