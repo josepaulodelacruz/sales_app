@@ -185,10 +185,10 @@ class _AddItemState extends State<AddItemState> {
                            var result = await BarcodeScanner.scan();
 
                            FocusScope.of(context).unfocus();
-                           print(result.type); // The result type (barcode, cancelled, failed)
-                           print(result.rawContent); // The barcode content
-                           print(result.format); // The barcode format (as enum)
-                           print(result.formatNote);
+//                           print(result.type); // The result type (barcode, cancelled, failed)
+//                           print(result.rawContent); // The barcode content
+//                           print(result.format); // The barcode format (as enum)
+//                           print(result.formatNote);
                            setState(() {
                              _productCode.text = result.rawContent;
                            });
