@@ -15,7 +15,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 //components
 import '../../components/TakePhoto.dart';
 
-
 //models
 import '../../models/Products.dart';
 
@@ -23,8 +22,9 @@ class AddItemState extends StatefulWidget {
   List products;
   Map<String, dynamic> editItem;
   int editIndex;
+  Function updateProduct;
 
-  AddItemState({Key key, this.products, this.editItem, this.editIndex }) : super(key: key);
+  AddItemState({Key key, this.products, this.editItem, this.editIndex, this.updateProduct }) : super(key: key);
 
   @override
   createState () => _AddItemState();
@@ -61,8 +61,6 @@ class _AddItemState extends State<AddItemState> {
         _imagePath = widget.editItem['pImagePath'];
       });
     }
-
-
     super.initState();
   }
 
@@ -88,8 +86,6 @@ class _AddItemState extends State<AddItemState> {
     sharedPrefs.setString('ListProducts', decode).then((res) {
       _resetState();
     });
-
-    print(products);
   }
 
   @override
@@ -113,8 +109,10 @@ class _AddItemState extends State<AddItemState> {
         _products.add(productInfo);
       });
 
+
       _saveToStorage(_products).then((res) {
         _scaffoldKey.currentState.showSnackBar(new SnackBar(backgroundColor: Colors.greenAccent, content: new Text('Successfully added!')));
+        widget.updateProduct();
       });
 
     }
@@ -144,6 +142,7 @@ class _AddItemState extends State<AddItemState> {
 
       _saveToStorage(_products).then((res) {
         _scaffoldKey.currentState.showSnackBar(new SnackBar(backgroundColor: Colors.greenAccent, content: new Text('Successfully Edited!')));
+        widget.updateProduct();
       }).then((res) {
         Navigator.pop(context);
       });

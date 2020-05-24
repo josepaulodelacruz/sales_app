@@ -16,7 +16,7 @@ import '../../constants/colorsSequence.dart';
 class InventoryScreen extends StatefulWidget {
 
   @override
-  createState () => _InventoryScreen();
+  createState () => new _InventoryScreen();
 }
 
 class _InventoryScreen extends State<InventoryScreen> {
@@ -31,7 +31,6 @@ class _InventoryScreen extends State<InventoryScreen> {
 
   @override
   void initState () {
-    print(ColorSequence().collections);
     _timer = Timer(Duration(milliseconds: 300), () {
       setState(() {
         _onMountAnimation = true;
@@ -55,7 +54,6 @@ class _InventoryScreen extends State<InventoryScreen> {
     });
     //update local storage
     await ListProducts.saveProductToLocalStorage(_products);
-
   }
 
   Widget _textBanner (context) {
@@ -80,7 +78,9 @@ class _InventoryScreen extends State<InventoryScreen> {
                 Navigator.push(context, PageRouteBuilder(
                   transitionDuration: Duration(seconds: 1),
                   pageBuilder: (context, a1, a2) {
-                    return AddItemState(products: _products, editItem: {});
+                    return AddItemState(products: _products, editItem: {}, updateProduct: () async {
+                      await _fetchLocalStorage();
+                    });
                   },
                 ));
               },
@@ -193,7 +193,9 @@ class _InventoryScreen extends State<InventoryScreen> {
                                         isEdit: (int editIndex) {
                                           if(editIndex == index) {
                                             Navigator.push(context, PageRouteBuilder(
-                                              pageBuilder: (context, a1, a2) => AddItemState(products: _products, editItem: _products[editIndex], editIndex: index),
+                                              pageBuilder: (context, a1, a2) => AddItemState(products: _products, editItem: _products[editIndex], editIndex: index, updateProduct: () async {
+                                                await _fetchLocalStorage();
+                                              }),
                                             ));
                                           }
                                         },
