@@ -112,10 +112,11 @@ class _LoginScreenState extends State<LoginScreenState> {
                                   Container(
                                     padding: EdgeInsets.symmetric(horizontal: 32, vertical: 10),
                                     child: TextFormField(
-                                        decoration: InputDecoration(
-                                            labelText: 'Password',
-                                            labelStyle: TextStyle(color: Colors.grey[500])
-                                        )
+                                      obscureText: true,
+                                      decoration: InputDecoration(
+                                        labelText: 'Password',
+                                        labelStyle: TextStyle(color: Colors.grey[500])
+                                      )
                                     ),
                                   ),
                                   FlatButton(

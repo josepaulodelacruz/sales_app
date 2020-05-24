@@ -68,8 +68,8 @@ class _ViewItemsState extends State<ViewItems> {
       });
       Navigator.pop(context);
       Navigator.pop(context);
+      Navigator.pop(context);
     });
-
   }
 
   @override
@@ -133,10 +133,13 @@ class _ViewItemsState extends State<ViewItems> {
                           textAlign: TextAlign.center,
                           decoration: InputDecoration(
                             hintText: '${_products[index]['orderCount']}',
-                          ),
 
+                          ),
+                          keyboardType: TextInputType.numberWithOptions(
+                            decimal: false,
+                            signed: true,
+                          )
                         )
-//                        child: Text('${widget.products[index]['orderCount']}', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.bold))
                       ),
                       Flexible(
                         flex: 1,
