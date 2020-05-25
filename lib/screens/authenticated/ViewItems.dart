@@ -14,8 +14,9 @@ class ViewItems extends StatefulWidget {
   List products;
   List localStorageProducts;
   Function deleteItem;
+  Function updateItem;
 
-  ViewItems({Key key, this.products, this.deleteItem, this.localStorageProducts }) : super(key: key);
+  ViewItems({Key key, this.products, this.deleteItem, this.localStorageProducts, this.updateItem }) : super(key: key);
 
   @override
   createState () => _ViewItemsState();
@@ -66,7 +67,8 @@ class _ViewItemsState extends State<ViewItems> {
         _products = [];
         _localStorageProducts = [];
       });
-      Navigator.pop(context);
+      widget.updateItem();
+    }).then((res) {
       Navigator.pop(context);
       Navigator.pop(context);
     });

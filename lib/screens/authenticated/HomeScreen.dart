@@ -87,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                     child: Card(
                       color: _isCategoryActive == cardIndex ? Colors.yellowAccent : Colors.white,
-                      elevation: _isCategoryActive == cardIndex ? 5 : 15,
+                      elevation: _isCategoryActive == cardIndex ? 0 : 5,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[

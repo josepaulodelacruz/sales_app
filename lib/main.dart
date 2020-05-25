@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:sari_sales/screens/auth/LaunchScreen.dart';
 import 'package:sari_sales/screens/auth/LoginScreen.dart';
 import 'package:sari_sales/screens/auth/RegisterScreen.dart';
+import 'package:sari_sales/screens/authenticated/CurrentScreen.dart';
 
 void main() => runApp(MyApp(
 
@@ -21,6 +22,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => LaunchScreen(),
         '/register': (context) => RegisterScreen(),
         '/login': (context) => LoginScreen(),
+        '/home': (context) => CurrentScreen(),
       }
     );
 

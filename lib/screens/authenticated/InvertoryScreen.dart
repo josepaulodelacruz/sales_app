@@ -36,6 +36,7 @@ class _InventoryScreen extends State<InventoryScreen> {
         _onMountAnimation = true;
       });
     });
+    print('Inventory');
 
     _fetchLocalStorage();
     super.initState();
@@ -169,7 +170,7 @@ class _InventoryScreen extends State<InventoryScreen> {
                           ),
                           Expanded(
                             flex: 1,
-                            child: _products.length > 0 ? Container(
+                            child: Container(
                               padding: EdgeInsets.only(right: 20, left: 20),
                               color: getColorFromHex('#f3f3f3'),
                               child: ListView.builder(
@@ -204,7 +205,7 @@ class _InventoryScreen extends State<InventoryScreen> {
                                   );
                                 },
                               )
-                            ) : Text('No items'),
+                            )
                           )
                         ],
                       )

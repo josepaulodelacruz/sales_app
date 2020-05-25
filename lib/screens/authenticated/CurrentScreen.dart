@@ -28,7 +28,7 @@ class _CurrentScreenState extends State<CurrentScreenState> {
 
   @override
   void initState () {
-    _timer = Timer(Duration(milliseconds: 2000), () {
+    _timer = Timer(Duration(milliseconds: 1000), () {
       setState(() {
         _appearWidget = true;
       });
@@ -64,9 +64,9 @@ class _CurrentScreenState extends State<CurrentScreenState> {
         setState(() {
           _appearWidget = false;
         });
-        Navigator.of(context).pop();
+        print('Confirmation to exit');
       },
-      child: Scaffold(
+      child: _appearWidget ? Scaffold(
         resizeToAvoidBottomPadding: true,
         body: Container(
           child: Stack(
@@ -123,6 +123,17 @@ class _CurrentScreenState extends State<CurrentScreenState> {
           )
         ) : null,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      ) : Scaffold(
+        body: Center(
+          child: new SizedBox(
+            height: 50.0,
+            width: 50.0,
+            child: new CircularProgressIndicator(
+              value: null,
+              strokeWidth: 7.0,
+            ),
+          )
+        )
       )
     );
   }
