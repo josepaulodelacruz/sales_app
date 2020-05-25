@@ -3,15 +3,15 @@ import '../utils/colorParser.dart';
 
 class DialogModal extends StatefulWidget {
   Function confirmTransaction;
+  bool addNewCategory;
 
-  DialogModal({Key key, this.confirmTransaction}) : super(key: key);
+  DialogModal({Key key, this.confirmTransaction, this.addNewCategory }) : super(key: key);
 
   @override
   createState () => _DialogModal();
 }
 
 class _DialogModal extends State<DialogModal> {
-
   @override
   Widget build(BuildContext context) {
     return AlertDialog(

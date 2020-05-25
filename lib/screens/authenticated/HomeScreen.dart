@@ -1,9 +1,20 @@
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sari_sales/utils/colorParser.dart';
+import 'package:intl/intl.dart';
+import 'package:path/path.dart' show join;
+import 'package:path_provider/path_provider.dart';
+import 'package:camera/camera.dart';
 
 //constant
-import '../../constants/categoriesList.dart';
+//import '../../constants/categoriesList.dart';
+
+//components
+import '../../components/TakePhoto.dart';
+
+//models
+import '../../models/Categories.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -12,7 +23,163 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  List categories = [{'cTitle': 'All', 'cPath': '', 'isValid': true}];
+  final _newCategory = TextEditingController();
+  String _imageCategoryPath;
   int _isCategoryActive;
+
+
+  @override
+  void initState () {
+    _fetchCategoriesLocalStorate();
+    super.initState();
+  }
+
+  _fetchCategoriesLocalStorate () async {
+    await Categories.getCategoryLocalStorage().then((res) {
+      setState(() {
+        categories = res;
+      });
+    });
+  }
+
+  @override
+  void _addNewCategory (context) async {
+    Map<String, dynamic> _categoryItem = await Categories.toJson(_newCategory.text, _imageCategoryPath);
+    if(!_categoryItem['isValid']) {
+      print('Something went wrong');
+      return;
+    } else {
+      setState(() {
+        categories.add(_categoryItem);
+      });
+      Categories.saveCategoryToLocalStorage(categories).then((res) {
+        setState(() {
+          _imageCategoryPath = null;
+          _newCategory.text = '';
+        });
+        print(res);
+      }).then((res) {
+        Navigator.pop(context);
+      });
+    }
+  }
+
+  @override
+  void _newCategoryModal (context) async {
+    return showGeneralDialog(
+      barrierDismissible: false,
+      barrierColor: Colors.black.withOpacity(0.5),
+      transitionBuilder: (context, a1, a2, widget) {
+        final curvedValue = Curves.easeInOutBack.transform(a1.value) - 1.0;
+        return WillPopScope(
+          onWillPop: () {},
+          child: Transform(
+            transform: Matrix4.translationValues(0.0, curvedValue * 200, 0.0),
+            child: Opacity(
+              opacity: a1.value,
+              child: AlertDialog(
+                contentPadding: EdgeInsets.all(0),
+                content: Container(
+                  height: MediaQuery.of(context).size.height * 0.15,
+                  width: MediaQuery.of(context).size.width * 0.50,
+                  child: Row(
+                    children: <Widget>[
+                      Flexible(
+                        flex: 1,
+                        child: InkWell(
+                          onTap: () async {
+                            FocusScope.of(context).unfocus();
+                            WidgetsFlutterBinding.ensureInitialized();
+
+                            // Obtain a list of the available cameras on the device.
+                            final cameras = await availableCameras();
+
+                            // Get a specific camera from the list of available cameras.
+                            final firstCamera = cameras.first;
+                            Navigator.push(context, PageRouteBuilder(
+                              pageBuilder: (context, a1, a2) => TakePhoto(camera: firstCamera, isCapture: (path, pictureId) {
+                                setState(() {
+                                  _imageCategoryPath = path;
+                                  Navigator.pop(context);
+                                  Navigator.pop(context);
+                                  _newCategoryModal(context);
+                                });
+
+                              }),
+                            ));
+                          },
+                          child: _imageCategoryPath == null ? Container(
+                              height: MediaQuery.of(context).size.height,
+                              width: MediaQuery.of(context).size.width,
+                              color: getColorFromHex('#373234'),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  IconButton(
+                                    icon: Icon(Icons.camera_front, size: 32, color: Colors.white),
+                                  ),
+                                  Text('Add Pictrue', style: TextStyle(color: Colors.white))
+                                ],
+                              )
+                          ) : Image.file(File(_imageCategoryPath))
+                        )
+
+                      ),
+                      Flexible(
+                        flex: 2,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          height: MediaQuery.of(context).size.height,
+                          width: MediaQuery.of(context).size.width,
+                          child: Column(
+                            children: <Widget>[
+                              TextField(
+                                textCapitalization: TextCapitalization.words,
+                                controller: _newCategory,
+                                decoration: InputDecoration(
+                                    labelText: 'Input new Category'
+                                )
+                              ),
+                              Container(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: <Widget>[
+                                    IconButton(
+                                      icon: Icon(Icons.clear, color: Colors.red),
+                                      onPressed: () => Navigator.of(context).pop(),
+                                    ),
+                                    IconButton(
+                                      icon: Icon(Icons.check, color: Colors.blue),
+                                      onPressed: () {
+                                        _addNewCategory(context);
+                                      },
+                                    )
+                                  ],
+                                ),
+                              )
+
+                            ],
+                          )
+                        )
+                      )
+                    ],
+                  )
+                ),
+              )
+            ),
+          )
+        );
+
+      },
+      transitionDuration: Duration(milliseconds: 500),
+      barrierLabel: '',
+      context: context,
+      pageBuilder: (context, animation1, animation2) {}
+    );
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +258,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
-                          Text(cc, style: TextStyle(fontSize: 22,fontWeight: FontWeight.bold, color: Colors.black))
+                          Text(cc['cTitle'].toString(), style: TextStyle(fontSize: 22,fontWeight: FontWeight.bold, color: Colors.black))
                         ],
                       ),
                     )
@@ -183,10 +350,29 @@ class _HomeScreenState extends State<HomeScreen> {
                 _searchBar,
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 32, vertical: 5),
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: Text('Categories', textAlign: TextAlign.start, style: TextStyle(color: Colors.black, fontSize: 28, fontWeight: FontWeight.bold, shadows: _textShadow)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text('Categories', textAlign: TextAlign.start, style: TextStyle(color: Colors.black, fontSize: 28, fontWeight: FontWeight.bold, shadows: _textShadow)),
+                      Container(
+                        height: 30,
+                        child:  RaisedButton.icon(
+                          color: getColorFromHex('#36d1dc'),
+                          label: Text('New Category', style: TextStyle(fontSize: 14, color: Colors.white)),
+                          icon: Icon(Icons.add, color: Colors.white),
+                          shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+                          onPressed: () {
+                            _newCategoryModal(context);
+                          },
+                        )
+                      )
+                    ],
                   ),
+
+//                  child: Align(
+//                    alignment: Alignment.topLeft,
+//                    child: Text('Categories', textAlign: TextAlign.start, style: TextStyle(color: Colors.black, fontSize: 28, fontWeight: FontWeight.bold, shadows: _textShadow)),
+//                  ),
                 ),
                 _productCategory,
                 Padding(

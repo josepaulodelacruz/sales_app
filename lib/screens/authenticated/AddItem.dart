@@ -23,8 +23,9 @@ class AddItemState extends StatefulWidget {
   Map<String, dynamic> editItem;
   int editIndex;
   Function updateProduct;
+  List categories = [];
 
-  AddItemState({Key key, this.products, this.editItem, this.editIndex, this.updateProduct }) : super(key: key);
+  AddItemState({Key key, this.products, this.editItem, this.editIndex, this.updateProduct, this.categories }) : super(key: key);
 
   @override
   createState () => _AddItemState();
@@ -42,11 +43,13 @@ class _AddItemState extends State<AddItemState> {
   final _productDescription = TextEditingController();
   String _productExpiration = new DateFormat.yMd().format(DateTime.now());
   String _productId;
+  List _categories = [];
 
   @override
   void initState () {
     setState(() {
       _products = widget.products;
+      _categories = widget.categories;
     });
     if(widget.editItem.isNotEmpty) {
       setState(() {
@@ -267,10 +270,10 @@ class _AddItemState extends State<AddItemState> {
           Text('Category', style: TextStyle(fontSize: 18, color: Colors.grey[500])),
           new DropdownButton<String>(
             value: _productCategory,
-            items: <String>['All', 'Snacks', 'Noodles', 'Canned'].map((String val) {
+            items: _categories.map((val) {
               return new DropdownMenuItem<String>(
-                value: val,
-                child: Text(val)
+                value: val['cTitle'],
+                child: Text(val['cTitle'].toString()),
               );
             }).toList(),
             onChanged: (val) {

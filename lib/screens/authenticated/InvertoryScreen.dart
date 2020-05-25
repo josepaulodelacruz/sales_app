@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:sari_sales/constants/categoriesList.dart';
+//import 'package:sari_sales/constants/categoriesList.dart';
 import 'package:sari_sales/screens/authenticated/AddItem.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../utils/colorParser.dart';
@@ -11,6 +11,7 @@ import '../../components/ProductCard.dart';
 
 //models
 import '../../models/ListProducts.dart';
+import '../../models/Categories.dart';
 import '../../constants/colorsSequence.dart';
 
 class InventoryScreen extends StatefulWidget {
@@ -25,6 +26,7 @@ class _InventoryScreen extends State<InventoryScreen> {
   bool _onMountAnimation = false;
   int _activeSortCategory;
   List _products = [];
+  List _categories = [];
 
   double _offsetScroll;
   List<Color> _colors = [getColorFromHex('#5433FF '), getColorFromHex('#20BDFF')];
@@ -36,9 +38,8 @@ class _InventoryScreen extends State<InventoryScreen> {
         _onMountAnimation = true;
       });
     });
-    print('Inventory');
-
     _fetchLocalStorage();
+    _fetchCategoriesLocalStorage();
     super.initState();
   }
 
@@ -46,6 +47,13 @@ class _InventoryScreen extends State<InventoryScreen> {
     List _items = await ListProducts.getProductLocalStorage();
     setState(() {
       _products = _items;
+    });
+  }
+
+  _fetchCategoriesLocalStorage () async {
+    List fetchCategories = await Categories.getCategoryLocalStorage();
+    setState(() {
+      _categories = fetchCategories;
     });
   }
 
@@ -79,7 +87,7 @@ class _InventoryScreen extends State<InventoryScreen> {
                 Navigator.push(context, PageRouteBuilder(
                   transitionDuration: Duration(seconds: 1),
                   pageBuilder: (context, a1, a2) {
-                    return AddItemState(products: _products, editItem: {}, updateProduct: () async {
+                    return AddItemState(products: _products, editItem: {}, categories: _categories, updateProduct: () async {
                       await _fetchLocalStorage();
                     });
                   },
@@ -146,8 +154,8 @@ class _InventoryScreen extends State<InventoryScreen> {
                               ),
                               child: ListView(
                                 scrollDirection: Axis.horizontal,
-                                children: categories.map((cc) {
-                                  int sortIndex = categories.indexOf(cc);
+                                children: _categories.map((cc) {
+                                  int sortIndex = _categories.indexOf(cc);
                                   return AnimatedOpacity(
                                     duration: Duration(milliseconds: 300),
                                     opacity: _onMountAnimation ? 1 : 0,
@@ -158,7 +166,7 @@ class _InventoryScreen extends State<InventoryScreen> {
                                       margin: EdgeInsets.symmetric(horizontal: 5, vertical: 0),
                                       child: RaisedButton(
                                         color: getColorFromHex(ColorSequence().collections[sortIndex % ColorSequence().collections.length]),
-                                        child: Text(cc, style: TextStyle(color: Colors.white)),
+                                        child: Text(cc['cTitle'], style: TextStyle(color: Colors.white)),
                                         onPressed: ()  {
                                         },
                                         shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
