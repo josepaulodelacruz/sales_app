@@ -25,7 +25,7 @@ class Products {
   });
 
   static toJson(String pId, String pName, String pCode, String pCategory, String pPrice,String pQuantity, String pDescription, String pExpiration, String pImagePath) {
-    if(pName == '' || pCode == '' || pCategory == '' || pPrice == '' || pQuantity == '' || pImagePath == null) {
+    if(pName == '' || pCode == '' || pCategory == 'All' || pPrice == '' || pQuantity == '' || pImagePath == null) {
       return {'error': 'Invalid inputs please fill up all the information.', 'invalid': true};
     } else {
       return {
