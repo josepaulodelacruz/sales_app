@@ -34,6 +34,8 @@ dependencies:
   uuid: 2.0.4
   shared_preferences: ^0.5.7+2
   badges: ^1.1.1
+  animated_text_kit: ^2.1.0
+
 
 
 

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sari_sales/utils/colorParser.dart';
@@ -6,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';
 import 'package:camera/camera.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
 
 //constant
 //import '../../constants/categoriesList.dart';
@@ -26,8 +28,8 @@ class _HomeScreenState extends State<HomeScreen> {
   List categories = [{'cTitle': 'All', 'cPath': '', 'isValid': true}];
   final _newCategory = TextEditingController();
   String _imageCategoryPath;
-  int _isCategoryActive;
-
+  String _isCategoryActive = 'All';
+  bool _animateText = false;
 
   @override
   void initState () {
@@ -178,7 +180,16 @@ class _HomeScreenState extends State<HomeScreen> {
       context: context,
       pageBuilder: (context, animation1, animation2) {}
     );
+  }
 
+  //trigger animation text
+  void _isAnimateText (category) {
+    Timer(Duration(milliseconds: 500), () {
+      setState(() {
+        _isCategoryActive = category;
+        _animateText = false;
+      });
+    });
   }
 
   @override
@@ -215,7 +226,11 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text('Food', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600, color: Colors.black, shadows: _textShadow)),
+            AnimatedOpacity(
+              duration: Duration(milliseconds: 500),
+              opacity: _animateText ? 0 : 1,
+              child: Text(_isCategoryActive.toString(), style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600, color: Colors.black, shadows: _textShadow)),
+            ),
             Text('Products', style: TextStyle(fontSize: 34, fontWeight: FontWeight.bold, color: Colors.black, shadows: _textShadow)),
           ],
         )
@@ -240,7 +255,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: categories.map((cc) {
             int cardIndex = categories.indexOf(cc);
             return Transform.scale(
-              scale: _isCategoryActive == cardIndex ? 0.95 : 1,
+              scale: _isCategoryActive == cc['cTitle'] ? 0.95 : 1,
               child: AnimatedContainer(
                 duration: Duration(milliseconds: 300),
                 height: 150,
@@ -249,12 +264,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: InkWell(
                   onTap: () {
                     setState(() {
-                      _isCategoryActive = cardIndex;
+                      _animateText = true;
                     });
+                    _isAnimateText(cc['cTitle']);
                   },
                   child: Card(
-                    color: _isCategoryActive == cardIndex ? Colors.yellowAccent : Colors.white,
-                    elevation: _isCategoryActive == cardIndex ? 0 : 5,
+                    color: _isCategoryActive == cc['cTitle'] ? Colors.yellowAccent : Colors.white,
+                    elevation: _isCategoryActive == cc['cTitle'] ? 0 : 5,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
