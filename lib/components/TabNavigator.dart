@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sari_sales/screens/authenticated/HomeScreen.dart';
 import 'package:sari_sales/screens/authenticated/InvertoryScreen.dart';
+import 'package:sari_sales/screens/authenticated/ReportScreen.dart';
 
 import '../utils/colorParser.dart';
 
@@ -86,15 +87,16 @@ class _TabNavigator extends State<TabNavigator> {
                 MaterialButton(
                   minWidth: 40,
                   onPressed: () {
+                    widget.currentWidget(ReportScreen());
                   },
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Icon(
-                        Icons.dashboard,
+                        Icons.pie_chart,
                       ),
                       Text(
-                        'Profile',
+                        'Reports',
                         style: TextStyle(
                         ),
                       ),
