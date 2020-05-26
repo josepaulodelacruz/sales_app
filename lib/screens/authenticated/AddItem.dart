@@ -186,7 +186,6 @@ class _AddItemState extends State<AddItemState> {
                          icon: Icon(Icons.linked_camera),
                          onPressed: () async {
                            var result = await BarcodeScanner.scan();
-
                            FocusScope.of(context).unfocus();
 //                           print(result.type); // The result type (barcode, cancelled, failed)
 //                           print(result.rawContent); // The barcode content
@@ -216,45 +215,44 @@ class _AddItemState extends State<AddItemState> {
            Flexible(
              flex: 1,
              child: Container(
-                 height: MediaQuery.of(context).size.height * 0.20,
-                 width: MediaQuery.of(context).size.width * 0.35,
-                 margin: EdgeInsets.all(10),
-                 child: InkWell(
-                   onTap: () async {
-                     FocusScope.of(context).unfocus();
-                     WidgetsFlutterBinding.ensureInitialized();
+               height: MediaQuery.of(context).size.height * 0.20,
+               width: MediaQuery.of(context).size.width * 0.35,
+               margin: EdgeInsets.all(10),
+               child: InkWell(
+                 onTap: () async {
+                   FocusScope.of(context).unfocus();
+                   WidgetsFlutterBinding.ensureInitialized();
 
-                     // Obtain a list of the available cameras on the device.
-                     final cameras = await availableCameras();
+                   // Obtain a list of the available cameras on the device.
+                   final cameras = await availableCameras();
 
-                     // Get a specific camera from the list of available cameras.
-                     final firstCamera = cameras.first;
-                     Navigator.push(context, PageRouteBuilder(
-                       transitionDuration: Duration(seconds: 2),
-                       pageBuilder: (context, a1, a2) => TakePhoto(camera: firstCamera, isCapture: (path, pictureId) {
-                         setState(() {
-                           _imagePath = path;
-                           _productId = pictureId;
-                         });
-                         Navigator.pop(context);
+                   // Get a specific camera from the list of available cameras.
+                   final firstCamera = cameras.first;
+                   Navigator.push(context, PageRouteBuilder(
+                     transitionDuration: Duration(seconds: 2),
+                     pageBuilder: (context, a1, a2) => TakePhoto(camera: firstCamera, isCapture: (path, pictureId) {
+                       setState(() {
+                         _imagePath = path;
+                         _productId = pictureId;
+                       });
+                       Navigator.pop(context);
 
-                       }),
-                     ));
-                   },
-                   child: _imagePath == null ? Hero(
-                    tag: 'takePhoto',
-                    child: Card(
-                       elevation: 10,
-                       child: Column(
-                         mainAxisAlignment: MainAxisAlignment.center,
-                         children: <Widget>[
-                           Icon(Icons.photo_camera),
-                           Text('Add Picture')
-                         ],
-                       )
-                    )
-                   ) : Hero(tag: 'takePhoto', child: Image.file(File(_imagePath)))
-
+                     }),
+                   ));
+                 },
+                 child: _imagePath == null ? Hero(
+                  tag: 'takePhoto',
+                  child: Card(
+                     elevation: 10,
+                     child: Column(
+                       mainAxisAlignment: MainAxisAlignment.center,
+                       children: <Widget>[
+                         Icon(Icons.photo_camera),
+                         Text('Add Picture')
+                       ],
+                     )
+                  )
+                 ) : Hero(tag: 'takePhoto', child: Image.file(File(_imagePath)))
                )
              )
            )
