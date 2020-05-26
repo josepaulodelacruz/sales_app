@@ -23,8 +23,10 @@ class InventoryScreen extends StatefulWidget {
 class _InventoryScreen extends State<InventoryScreen> {
   Timer _timer;
   ScrollController _scrollController;
-  bool _onMountAnimation = false;
-  int _activeSortCategory;
+  bool _onMountAnimationCategory = false;
+  bool _onMountAnimationCard = false;
+  String _activeSortCategory = 'All';
+  bool _triggerAnimation = false;
   List _products = [];
   List _categories = [];
 
@@ -35,7 +37,8 @@ class _InventoryScreen extends State<InventoryScreen> {
   void initState () {
     _timer = Timer(Duration(milliseconds: 300), () {
       setState(() {
-        _onMountAnimation = true;
+        _onMountAnimationCategory = true;
+        _onMountAnimationCard = true;
       });
     });
     _fetchLocalStorage();
@@ -47,6 +50,10 @@ class _InventoryScreen extends State<InventoryScreen> {
     List _items = await ListProducts.getProductLocalStorage();
     setState(() {
       _products = _items;
+    });
+
+    _items.forEach((x) {
+      print(x['pCategory']);
     });
   }
 
@@ -65,13 +72,13 @@ class _InventoryScreen extends State<InventoryScreen> {
     await ListProducts.saveProductToLocalStorage(_products);
   }
 
-  Widget _textBanner (context) {
-    List _textShadow = <Shadow>[
-      Shadow(
-        offset: Offset(10.0, 5.0),
-        blurRadius: 8.0,
-        color: Color.fromARGB(80, 0, 0, 255),
-      ),
+    Widget _textBanner (context) {
+      List _textShadow = <Shadow>[
+        Shadow(
+          offset: Offset(10.0, 5.0),
+          blurRadius: 8.0,
+          color: Color.fromARGB(80, 0, 0, 255),
+        ),
     ];
 
     return Container(
@@ -96,6 +103,51 @@ class _InventoryScreen extends State<InventoryScreen> {
             )
           ],
         )
+    );
+  }
+
+  @override
+  Widget _listProducts (context) {
+    List<dynamic> sortedProductList = _activeSortCategory == 'All' ? _products.map((product) => product).toList() : _products.where((element) => element['pCategory'].contains(_activeSortCategory)).toList();
+
+    return Expanded(
+      flex: 1,
+      child: Container(
+        padding: EdgeInsets.only(right: 20, left: 20),
+        color: getColorFromHex('#f3f3f3'),
+        child: ListView.builder(
+          controller: _scrollController,
+          itemCount: sortedProductList.length,
+          itemBuilder: (context, int index) {
+            return (sortedProductList[index]['pCategory'] == _activeSortCategory || _activeSortCategory == 'All') ? AnimatedOpacity(
+              key: ObjectKey(sortedProductList[index]),
+              duration: Duration(milliseconds: 1000),
+              opacity: _onMountAnimationCard ? 1 : 0,
+              child: AnimatedContainer(
+                duration: Duration(milliseconds: 1000),
+                margin: EdgeInsets.only(top: _onMountAnimationCard ? 0 : 20),
+                curve: Curves.ease,
+                child: ProductCard(
+                  productInfo: sortedProductList[index],
+                  productIndex: index,
+                  isDelete: (del) {
+                    _deleteToLocalStorage(index);
+                  },
+                  isEdit: (int editIndex) {
+                    if(editIndex == index) {
+                      Navigator.push(context, PageRouteBuilder(
+                        pageBuilder: (context, a1, a2) => AddItemState(products: _products, editItem: sortedProductList[editIndex], categories: _categories, editIndex: index, updateProduct: () async {
+                          await _fetchLocalStorage();
+                        }),
+                      ));
+                    }
+                  },
+                )
+              )
+            ) : null;
+          },
+        )
+      )
     );
   }
 
@@ -143,78 +195,52 @@ class _InventoryScreen extends State<InventoryScreen> {
                       child: Column(
                         children: <Widget>[
                           Container(
-                              padding: EdgeInsets.only(top: 20, bottom: 15, right: 20, left: 20),
-                              height: 60,
-                              decoration: BoxDecoration(
-                                  color: getColorFromHex('#f3f3f3'),
-                                  borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(50.0),
-                                      topRight: Radius.circular(50.0)
+                            padding: EdgeInsets.only(top: 20, bottom: 15, right: 20, left: 20),
+                            height: 60,
+                            decoration: BoxDecoration(
+                                color: getColorFromHex('#f3f3f3'),
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(50.0),
+                                    topRight: Radius.circular(50.0)
+                                )
+                            ),
+                            child: ListView(
+                              scrollDirection: Axis.horizontal,
+                              children: _categories.map((cc) {
+                                int sortIndex = _categories.indexOf(cc);
+                                return AnimatedOpacity(
+                                  duration: Duration(milliseconds: 1000),
+                                  opacity: _onMountAnimationCategory ? 1 : 0,
+                                  child: AnimatedContainer(
+                                    duration: Duration(milliseconds: 1000),
+                                    curve: Curves.ease,
+                                    padding: EdgeInsets.only(left: _onMountAnimationCategory ? 0 : 100),
+                                    margin: EdgeInsets.symmetric(horizontal: 5, vertical: 0),
+                                    child: RaisedButton(
+                                      animationDuration: Duration(milliseconds: 2000),
+                                      splashColor: Colors.white,
+                                      color: getColorFromHex(ColorSequence().collections[sortIndex % ColorSequence().collections.length]),
+                                      child: Text(cc['cTitle'], style: TextStyle(color: Colors.white)),
+                                      onPressed: ()  {
+                                        setState(() {
+                                          _activeSortCategory = cc['cTitle'];
+                                          _onMountAnimationCard = false;
+                                        });
+                                        //animate when sort by category change
+                                        Timer(Duration(milliseconds: 500), () {
+                                          setState(() {
+                                            _onMountAnimationCard = true;
+                                          });
+                                        });
+                                      },
+                                      shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
+                                    )
                                   )
-                              ),
-                              child: ListView(
-                                scrollDirection: Axis.horizontal,
-                                children: _categories.map((cc) {
-                                  int sortIndex = _categories.indexOf(cc);
-                                  return AnimatedOpacity(
-                                    duration: Duration(milliseconds: 300),
-                                    opacity: _onMountAnimation ? 1 : 0,
-                                    child: AnimatedContainer(
-                                      duration: Duration(milliseconds: 1000),
-                                      curve: Curves.ease,
-                                      padding: EdgeInsets.only(left: _onMountAnimation ? 0 : 100),
-                                      margin: EdgeInsets.symmetric(horizontal: 5, vertical: 0),
-                                      child: RaisedButton(
-                                        color: getColorFromHex(ColorSequence().collections[sortIndex % ColorSequence().collections.length]),
-                                        child: Text(cc['cTitle'], style: TextStyle(color: Colors.white)),
-                                        onPressed: ()  {
-                                        },
-                                        shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
-                                      )
-                                    )
-                                  );
-                                }).toList(),
-                              )
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Container(
-                              padding: EdgeInsets.only(right: 20, left: 20),
-                              color: getColorFromHex('#f3f3f3'),
-                              child: ListView.builder(
-                                controller: _scrollController,
-                                itemCount: _products.length,
-                                itemBuilder: (context, int index) {
-                                  return AnimatedOpacity(
-                                    key: ObjectKey(_products[index]),
-                                    duration: Duration(milliseconds: 500),
-                                    opacity: _onMountAnimation ? 1 : 0,
-                                    child: AnimatedContainer(
-                                      duration: Duration(milliseconds: 1000),
-                                      margin: EdgeInsets.only(top: _onMountAnimation ? 0 : 20),
-                                      curve: Curves.ease,
-                                      child: ProductCard(
-                                        productInfo: _products[index],
-                                        productIndex: index,
-                                        isDelete: (del) {
-                                          _deleteToLocalStorage(index);
-                                        },
-                                        isEdit: (int editIndex) {
-                                          if(editIndex == index) {
-                                            Navigator.push(context, PageRouteBuilder(
-                                              pageBuilder: (context, a1, a2) => AddItemState(products: _products, editItem: _products[editIndex], editIndex: index, updateProduct: () async {
-                                                await _fetchLocalStorage();
-                                              }),
-                                            ));
-                                          }
-                                        },
-                                      )
-                                    )
-                                  );
-                                },
-                              )
+                                );
+                              }).toList(),
                             )
-                          )
+                          ),
+                          _listProducts(context),
                         ],
                       )
                   )

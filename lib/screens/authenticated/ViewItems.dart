@@ -23,6 +23,7 @@ class ViewItems extends StatefulWidget {
 }
 
 class _ViewItemsState extends State<ViewItems> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   List _products = [];
   List _localStorageProducts = [];
   List _updatingProducts = [];
@@ -47,31 +48,47 @@ class _ViewItemsState extends State<ViewItems> {
   //update products from local storage.
   @override
   void _transactionProcedure (context) {
+    List _total = _products.map((pp) => pp['pPrice'] * pp['orderCount']).toList();
+    double computeTotal = _total.fold(0, (i, j) => i + j);
+    double change = (_customerAmount.text == '' ? 0 : double.parse(_customerAmount.text)) - computeTotal;
+    if(change.isNegative || change == 0) {
+      _scaffoldKey.currentState.showSnackBar(new SnackBar(backgroundColor: Colors.redAccent, content: new Text('Can\'t proccess transaction.')));
+      Navigator.of(context).pop();
+    } else {
+      print('proceed transaction');
+      _products.map((x) {
+        _localStorageProducts.map((pp) {
+          if(x['pId'] == pp['pId']) {
+            int index = _localStorageProducts.indexOf(pp);
+            setState(() {
+              _localStorageProducts[index] = {
+                ...pp,
+                'pQuantity': (pp['pQuantity'] - x['orderCount']),
+              };
+            });
+            //check if the quantity is less than 0 if is yes delete from the localstorage.
+            if(_localStorageProducts[index]['pQuantity'] == 0 || _localStorageProducts[index]['pQuantity'].isNegative) {
+              setState(() {
+                _localStorageProducts.removeAt(index);
+              });
+            }
 
-    _products.map((x) {
-      _localStorageProducts.map((pp) {
-        if(x['pId'] == pp['pId']) {
-          int index = _localStorageProducts.indexOf(pp);
-          setState(() {
-            _localStorageProducts[index] = {
-              ...pp,
-              'pQuantity': (pp['pQuantity'] - x['orderCount']),
-            };
-          });
-        }
+          }
+        }).toList();
       }).toList();
-    }).toList();
 
-    ListProducts.saveProductToLocalStorage(_localStorageProducts).then((res) {
-      setState(() {
-        _products = [];
-        _localStorageProducts = [];
+      ListProducts.saveProductToLocalStorage(_localStorageProducts).then((res) {
+        setState(() {
+          _products = [];
+          _localStorageProducts = [];
+        });
+        widget.updateItem();
+      }).then((res) {
+        Navigator.pop(context);
+        Navigator.pop(context);
       });
-      widget.updateItem();
-    }).then((res) {
-      Navigator.pop(context);
-      Navigator.pop(context);
-    });
+    }
+
   }
 
   @override
@@ -238,90 +255,91 @@ class _ViewItemsState extends State<ViewItems> {
     return Hero(
       tag: 'soldItems',
       child: Scaffold(
-          appBar: AppBar(
-              title: Text('Items List')
-          ),
-          body: AnimatedOpacity(
-            duration: Duration(milliseconds: 700),
-            opacity: _onMountWidget ? 1 : 0,
-            child: Container(
-              child: Column(
-                children: <Widget>[
-                  _topHeader,
-                  _listProducts,
-                  Card(
-                    elevation: 5,
-                    child: Column(
-                      children: <Widget>[
-                        _totalComputation(),
-                        _amount,
-                        Align(
-                            alignment: Alignment.topRight,
-                            child: Container(
-                                width: MediaQuery.of(context).size.width * 0.40,
-                                margin: const EdgeInsets.only(left: 10.0, right: 20.0),
-                                child: Divider(
-                                  thickness: 5,
-                                  color: Colors.grey[300],
-                                  height: 36,
-                                )
-                            )
-                        ),
-                      ],
-                    )
-                  ),
-                  _change(),
-                  RaisedButton(
-                    onPressed: () {
-                      return showGeneralDialog(
-                        barrierColor: Colors.black.withOpacity(0.5),
-                        transitionBuilder: (context, a1, a2, widget) {
-                          final curvedValue = Curves.easeInOutBack.transform(a1.value) - 1.0;
-                          return Transform(
-                            transform: Matrix4.translationValues(0.0, curvedValue * 200, 0.0),
-                            child: Opacity(
-                              opacity: a1.value,
-                              child: DialogModal(
-                                confirmTransaction: () {
-                                  _transactionProcedure(context);
-                                }
+        key: _scaffoldKey,
+        appBar: AppBar(
+            title: Text('Items List')
+        ),
+        body: AnimatedOpacity(
+          duration: Duration(milliseconds: 700),
+          opacity: _onMountWidget ? 1 : 0,
+          child: Container(
+            child: Column(
+              children: <Widget>[
+                _topHeader,
+                _listProducts,
+                Card(
+                  elevation: 5,
+                  child: Column(
+                    children: <Widget>[
+                      _totalComputation(),
+                      _amount,
+                      Align(
+                          alignment: Alignment.topRight,
+                          child: Container(
+                              width: MediaQuery.of(context).size.width * 0.40,
+                              margin: const EdgeInsets.only(left: 10.0, right: 20.0),
+                              child: Divider(
+                                thickness: 5,
+                                color: Colors.grey[300],
+                                height: 36,
                               )
-                            ),
-                          );
-                        },
-                        transitionDuration: Duration(milliseconds: 500),
-                        barrierDismissible: true,
-                        barrierLabel: '',
-                        context: context,
-                        pageBuilder: (context, animation1, animation2) {}
-                      );
-                    },
-                    textColor: Colors.white,
-                    padding: const EdgeInsets.all(0.0),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: 50,
-                      decoration: new BoxDecoration(
-                        gradient: new LinearGradient(
-                          colors: [
-                            getColorFromHex('#5AFF15'),
-                            getColorFromHex('#00B712'),
-                          ],
-                        ),
+                          )
                       ),
-                      padding: const EdgeInsets.all(10.0),
-                      child: Center(
-                        child: Text(
-                          'Checkout',
-                          textAlign: TextAlign.center,
-                        )
+                    ],
+                  )
+                ),
+                _change(),
+                RaisedButton(
+                  onPressed: () {
+                    return showGeneralDialog(
+                      barrierColor: Colors.black.withOpacity(0.5),
+                      transitionBuilder: (context, a1, a2, widget) {
+                        final curvedValue = Curves.easeInOutBack.transform(a1.value) - 1.0;
+                        return Transform(
+                          transform: Matrix4.translationValues(0.0, curvedValue * 200, 0.0),
+                          child: Opacity(
+                            opacity: a1.value,
+                            child: DialogModal(
+                              confirmTransaction: () {
+                                _transactionProcedure(context);
+                              }
+                            )
+                          ),
+                        );
+                      },
+                      transitionDuration: Duration(milliseconds: 500),
+                      barrierDismissible: true,
+                      barrierLabel: '',
+                      context: context,
+                      pageBuilder: (context, animation1, animation2) {}
+                    );
+                  },
+                  textColor: Colors.white,
+                  padding: const EdgeInsets.all(0.0),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 50,
+                    decoration: new BoxDecoration(
+                      gradient: new LinearGradient(
+                        colors: [
+                          getColorFromHex('#5AFF15'),
+                          getColorFromHex('#00B712'),
+                        ],
                       ),
-                    )
-                  ),
-                ],
-              )
+                    ),
+                    padding: const EdgeInsets.all(10.0),
+                    child: Center(
+                      child: Text(
+                        'Checkout',
+                        textAlign: TextAlign.center,
+                      )
+                    ),
+                  )
+                ),
+              ],
             )
           )
+        )
 
       )
     );

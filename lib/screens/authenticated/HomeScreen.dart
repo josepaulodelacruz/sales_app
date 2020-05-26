@@ -247,21 +247,21 @@ class _HomeScreenState extends State<HomeScreen> {
                 width: 120,
                 padding: EdgeInsets.symmetric(vertical: 10),
                 child: InkWell(
-                    onTap: () {
-                      setState(() {
-                        _isCategoryActive = cardIndex;
-                      });
-                    },
-                    child: Card(
-                      color: _isCategoryActive == cardIndex ? Colors.yellowAccent : Colors.white,
-                      elevation: _isCategoryActive == cardIndex ? 0 : 5,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          Text(cc['cTitle'].toString(), style: TextStyle(fontSize: 22,fontWeight: FontWeight.bold, color: Colors.black))
-                        ],
-                      ),
-                    )
+                  onTap: () {
+                    setState(() {
+                      _isCategoryActive = cardIndex;
+                    });
+                  },
+                  child: Card(
+                    color: _isCategoryActive == cardIndex ? Colors.yellowAccent : Colors.white,
+                    elevation: _isCategoryActive == cardIndex ? 0 : 5,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        Text(cc['cTitle'].toString(), style: TextStyle(fontSize: 22,fontWeight: FontWeight.bold, color: Colors.black))
+                      ],
+                    ),
+                  )
                 ),
               )
             );
@@ -333,7 +333,7 @@ class _HomeScreenState extends State<HomeScreen> {
           height: 300,
           width: MediaQuery.of(context).size.width * 0.75,
           decoration: BoxDecoration(
-          color: getColorFromHex('#E8E9EB'),
+          color: getColorFromHex('#f1f1f1'),
             borderRadius: BorderRadius.horizontal(
               right: Radius.elliptical(2000, 1000)
             )
@@ -353,13 +353,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Text('Categories', textAlign: TextAlign.start, style: TextStyle(color: Colors.black, fontSize: 28, fontWeight: FontWeight.bold, shadows: _textShadow)),
+                      Text('Categories', textAlign: TextAlign.start, style: TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold, shadows: _textShadow)),
                       Container(
                         height: 30,
+                        width: MediaQuery.of(context).size.width * 0.35,
                         child:  RaisedButton.icon(
                           color: getColorFromHex('#36d1dc'),
-                          label: Text('New Category', style: TextStyle(fontSize: 14, color: Colors.white)),
-                          icon: Icon(Icons.add, color: Colors.white),
+                          label: Text('New Category', style: TextStyle(fontSize: 11, color: Colors.white)),
+                          icon: Icon(Icons.add, color: Colors.white, size: 18),
                           shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
                           onPressed: () {
                             _newCategoryModal(context);
@@ -368,11 +369,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       )
                     ],
                   ),
-
-//                  child: Align(
-//                    alignment: Alignment.topLeft,
-//                    child: Text('Categories', textAlign: TextAlign.start, style: TextStyle(color: Colors.black, fontSize: 28, fontWeight: FontWeight.bold, shadows: _textShadow)),
-//                  ),
                 ),
                 _productCategory,
                 Padding(
