@@ -1,6 +1,13 @@
+import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 import 'package:sari_sales/utils/colorParser.dart';
+
+//models
+import '../../models/Reports.dart';
+
+
 class ReportScreen extends StatefulWidget {
 
   @override
@@ -9,17 +16,25 @@ class ReportScreen extends StatefulWidget {
 }
 
 class _ReportScreen extends State<ReportScreen> {
+  String _showCard = 'Sales';
+  bool _isAnimateCard = false;
+
+  @override
+  void _isCard(val) {
+    setState(() {
+      _showCard = val;
+      _isAnimateCard = true;
+    });
+
+    Timer(Duration(milliseconds: 600), () {
+      setState(() {
+        _isAnimateCard = false;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-
-    List _textShadow = <Shadow>[
-      Shadow(
-        offset: Offset(10.0, 5.0),
-        blurRadius: 8.0,
-        color: Color.fromARGB(80, 0, 0, 255),
-      ),
-    ];
-
     Widget _topButtons = Container(
       margin: EdgeInsets.symmetric(horizontal: 40),
       child: Row(
@@ -28,10 +43,15 @@ class _ReportScreen extends State<ReportScreen> {
           Flexible(
             flex: 1,
             child: RaisedButton(
+              shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+              elevation: 15,
               padding: EdgeInsets.all(0),
-              onPressed: () {},
+              onPressed: () {
+                _isCard('Sales');
+              },
               child: Container(
-                decoration: new BoxDecoration(
+                  decoration: new BoxDecoration(
+                  borderRadius: new BorderRadius.circular(10),
                   gradient: new LinearGradient(
                     colors: [
                       getColorFromHex('#ff9966'),
@@ -53,10 +73,15 @@ class _ReportScreen extends State<ReportScreen> {
           Flexible(
             flex: 1,
             child: RaisedButton(
+              shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+              elevation: 15,
               padding: EdgeInsets.all(0),
-              onPressed: () {},
+              onPressed: () {
+                _isCard('Products');
+              },
               child: Container(
                 decoration: new BoxDecoration(
+                  borderRadius: new BorderRadius.circular(10),
                   gradient: new LinearGradient(
                     colors: [
                       getColorFromHex('#56CCF2'),
@@ -78,10 +103,15 @@ class _ReportScreen extends State<ReportScreen> {
           Flexible(
             flex: 1,
             child: RaisedButton(
+              shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+              elevation: 15,
               padding: EdgeInsets.all(0),
-              onPressed: () {},
+              onPressed: () {
+                _isCard('Inventory');
+              },
               child: Container(
                 decoration: new BoxDecoration(
+                  borderRadius: new BorderRadius.circular(10),
                   gradient: new LinearGradient(
                     colors: <Color>[
                       getColorFromHex('#f85032'),
@@ -104,31 +134,78 @@ class _ReportScreen extends State<ReportScreen> {
     );
 
     Widget _recentTransaction = Container(
-      padding: EdgeInsets.only(top: 20, left: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          Align(
-            alignment: Alignment.topLeft,
-            child: Text('Recent Activities', style: TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold, shadows: _textShadow)),
-          ),
-          Container(
-            padding: EdgeInsets.only(top: 10),
-            width: MediaQuery.of(context).size.width * 0.90,
-            child: Card(
-              child: Column(
-                children: <Widget>[
-                  ListTile(title: Text('testing ')),
-                  ListTile(title: Text('testing ')),
-                  ListTile(title: Text('testing ')),
-                  ListTile(title: Text('testing ')),
-                ],
+        padding: EdgeInsets.only(top: 20, left: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Align(
+              alignment: Alignment.topLeft,
+              child: Text('Recent Activities', style: TextStyle(color: Colors.black38, fontSize: 20, fontWeight: FontWeight.w400)),
+            ),
+            Container(
+              padding: EdgeInsets.only(top: 10),
+              width: MediaQuery.of(context).size.width * 0.90,
+              child: Card(
+                child: Column(
+                  children: ListTile.divideTiles(
+                    context: context,
+                    tiles: [
+                      ListTile(
+                        title: Text("Oreo", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
+                        subtitle: Text('Purchased item'),
+                        trailing: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            Text('29 May, 2020', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w500)),
+                            Text('P 120.00', style: TextStyle(color: Colors.red[500], fontWeight: FontWeight.w700)),
+                          ],
+                        ),
+                      ),
+                      ListTile(
+                        title: Text("Coffee", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
+                        subtitle: Text('Purchased item'),
+                        trailing: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            Text('29 May, 2020', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w500)),
+                            Text('P 120.00', style: TextStyle(color: Colors.red[500], fontWeight: FontWeight.w700)),
+                          ],
+                        ),
+                      ),
+                      ListTile(
+                        title: Text("Red Horse", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
+                        subtitle: Text('Purchased item'),
+                        trailing: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            Text('29 May, 2020', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w500)),
+                            Text('P 120.00', style: TextStyle(color: Colors.red[500], fontWeight: FontWeight.w700)),
+                          ],
+                        ),
+                      ),
+                      ListTile(
+                        title: Text("Highlands Cornedbeef", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
+                        subtitle: Text('Purchased item'),
+                        trailing: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            Text('29 May, 2020', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w500)),
+                            Text('P 120.00', style: TextStyle(color: Colors.red[500], fontWeight: FontWeight.w700)),
+                          ],
+                        ),
+                      ),
+                    ]
+                  ).toList(),
+                )
               )
             )
-          )
-        ],
-      )
+          ],
+        )
     );
 
     Widget _loanList = Container(
@@ -139,19 +216,28 @@ class _ReportScreen extends State<ReportScreen> {
           children: <Widget>[
             Align(
               alignment: Alignment.topLeft,
-              child: Text('App Features', style: TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold, shadows: _textShadow)),
+              child: Text('Lists', style: TextStyle(color: Colors.black38, fontSize: 20, fontWeight: FontWeight.w400)),
             ),
             Container(
               padding: EdgeInsets.only(top: 10),
               width: MediaQuery.of(context).size.width * 0.90,
               child: Card(
                 child: Column(
-                  children: <Widget>[
-                    ListTile(title: Text('testing ')),
-                    ListTile(title: Text('testing ')),
-                    ListTile(title: Text('testing ')),
-                    ListTile(title: Text('testing ')),
-                  ],
+                  children: ListTile.divideTiles(
+                    context: context,
+                    tiles: [
+                      ListTile(
+                        title: Text("Products", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
+                        subtitle: Text('Table'),
+                        trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey[500]),
+                      ),
+                      ListTile(
+                        title: Text("Sales", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
+                        subtitle: Text('Table'),
+                        trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey[500]),
+                      )
+                    ],
+                  ).toList(),
                 )
               )
             )
@@ -165,7 +251,11 @@ class _ReportScreen extends State<ReportScreen> {
         child: CustomScrollView(
           slivers: [
             SliverPersistentHeader(
-              delegate: MySliverAppBar(expandedHeight: 200),
+              delegate: MySliverAppBar(
+                expandedHeight: 200,
+                showCard: _showCard,
+                isAnimate: _isAnimateCard,
+              ),
               pinned: true,
               floating: false,
             ),
@@ -192,8 +282,26 @@ class _ReportScreen extends State<ReportScreen> {
 
 class MySliverAppBar extends SliverPersistentHeaderDelegate {
   final double expandedHeight;
+  String showCard;
+  bool isAnimate = false;
 
-  MySliverAppBar({@required this.expandedHeight});
+  List<dynamic> cards = [
+    Reports(
+      cardTitle: 'Sales',
+      isCard: Card(),
+    ),
+    Reports(
+      cardTitle: 'Products',
+      isCard: Card(),
+    ),
+    Reports(
+      cardTitle: 'Inventory',
+      isCard: Card(),
+    ),
+  ];
+
+
+  MySliverAppBar({@required this.expandedHeight, this.showCard, this.isAnimate });
 
   @override
   Widget build( BuildContext context, double shrinkOffset, bool overlapsContent) {
@@ -222,23 +330,31 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
             )
           ),
         ),
-        Positioned(
+        for(var card in cards ) card.title == showCard ? Positioned(
           top: expandedHeight / 3 - shrinkOffset,
           left: MediaQuery.of(context).size.width / 10,
           child: Opacity(
             opacity: (1 - shrinkOffset / expandedHeight),
             child: Center(
-              child:  Card(
-                elevation: 10,
-                child: SizedBox(
-                  height: expandedHeight,
-                  width: MediaQuery.of(context).size.width * 0.80,
-                  child: FlutterLogo(),
-                ),
-              ),
+              child: AnimatedOpacity(
+                duration: Duration(milliseconds: 500),
+                opacity: !isAnimate ? 1 : 0,
+                child: AnimatedContainer(
+                  duration: Duration(milliseconds: 500),
+                  margin: EdgeInsets.only(top: isAnimate ? 25 : 0),
+                  child: Card(
+                    elevation: 10,
+                    child: SizedBox(
+                      height: expandedHeight,
+                      width: MediaQuery.of(context).size.width * 0.80,
+                      child: Text(card.title.toString()),
+                    ),
+                  ),
+                )
+              )
             )
           ),
-        ),
+        ) : SizedBox(),
       ],
     );
   }
