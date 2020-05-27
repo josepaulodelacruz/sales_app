@@ -6,6 +6,7 @@ import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:sari_sales/utils/colorParser.dart';
 
 //components
+import 'package:sari_sales/components/ProductChart.dart';
 
 //models
 import '../../models/Reports.dart';
@@ -351,6 +352,9 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
           padding: EdgeInsets.all(10.0),
           child: Column(
             children: <Widget>[
+              Expanded(
+                child: SparkBar(),
+              )
             ],
           )
       ),
@@ -370,8 +374,9 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
           padding: EdgeInsets.all(10.0),
           child: Column(
             children: <Widget>[
-              Icon(Icons.insert_chart, color: Colors.white),
-              Text('Inventory Report', textAlign: TextAlign.center, style: TextStyle(color: Colors.white))
+              Expanded(
+                child: SparkBar()
+              )
             ],
           )
       ),
@@ -451,3 +456,4 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
   @override
   bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) => true;
 }
+
