@@ -35,6 +35,7 @@ dependencies:
   shared_preferences: ^0.5.7+2
   badges: ^1.1.1
   animated_text_kit: ^2.1.0
+  charts_flutter: ^0.9.0
 
 
 

@@ -1,8 +1,11 @@
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:charts_flutter/flutter.dart' as charts;
 
 import 'package:sari_sales/utils/colorParser.dart';
+
+//components
 
 //models
 import '../../models/Reports.dart';
@@ -280,23 +283,98 @@ class _ReportScreen extends State<ReportScreen> {
 
 }
 
+
 class MySliverAppBar extends SliverPersistentHeaderDelegate {
   final double expandedHeight;
   String showCard;
   bool isAnimate = false;
 
+
   List<dynamic> cards = [
     Reports(
       cardTitle: 'Sales',
-      isCard: Card(),
+      isCard: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          gradient: LinearGradient(
+            colors: [
+              getColorFromHex('#ff9966'),
+              getColorFromHex('#ff5e62'),
+            ],
+          ),
+        ),
+        padding: EdgeInsets.all(10.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Flexible(
+              flex: 1,
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: Text('Sales Report', textAlign: TextAlign.start, style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w400))
+              ),
+            ),
+            Flexible(
+              flex: 1,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text('\$ 200.00', textAlign: TextAlign.start, style: TextStyle(color: Colors.white, fontSize: 40, fontWeight: FontWeight.bold)),
+                  Icon(Icons.arrow_drop_up, color: Colors.white, size: 32)
+                ],
+              )
+            ),
+            Flexible(
+              flex: 1,
+              child: Align(
+                alignment: Alignment.bottomRight,
+                child: Text('24 May, 2020', textAlign: TextAlign.end, style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700))
+              ),
+            )
+          ],
+        )
+      ),
     ),
     Reports(
       cardTitle: 'Products',
-      isCard: Card(),
+      isCard: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            gradient: LinearGradient(
+              colors: [
+                getColorFromHex('#56CCF2'),
+                getColorFromHex('#2F80ED'),
+              ],
+            ),
+          ),
+          padding: EdgeInsets.all(10.0),
+          child: Column(
+            children: <Widget>[
+            ],
+          )
+      ),
     ),
     Reports(
       cardTitle: 'Inventory',
-      isCard: Card(),
+      isCard: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            gradient: LinearGradient(
+              colors: <Color>[
+                getColorFromHex('#f85032'),
+                getColorFromHex('#e73827'),
+              ],
+            ),
+          ),
+          padding: EdgeInsets.all(10.0),
+          child: Column(
+            children: <Widget>[
+              Icon(Icons.insert_chart, color: Colors.white),
+              Text('Inventory Report', textAlign: TextAlign.center, style: TextStyle(color: Colors.white))
+            ],
+          )
+      ),
     ),
   ];
 
@@ -338,16 +416,21 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
             child: Center(
               child: AnimatedOpacity(
                 duration: Duration(milliseconds: 500),
-                opacity: !isAnimate ? 1 : 0,
+                opacity: isAnimate ? 0 : 1,
                 child: AnimatedContainer(
-                  duration: Duration(milliseconds: 500),
-                  margin: EdgeInsets.only(top: isAnimate ? 25 : 0),
+                  decoration: new BoxDecoration(
+                    borderRadius: new BorderRadius.circular(10),
+                  ),
+                  curve: Curves.easeOutExpo,
+                  duration: Duration(milliseconds: 1000),
+                  margin: EdgeInsets.only(top: isAnimate ? 50 : 0),
                   child: Card(
+                    shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
                     elevation: 10,
                     child: SizedBox(
                       height: expandedHeight,
                       width: MediaQuery.of(context).size.width * 0.80,
-                      child: Text(card.title.toString()),
+                      child: card.card,
                     ),
                   ),
                 )
