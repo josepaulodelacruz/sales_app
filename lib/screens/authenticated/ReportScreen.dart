@@ -5,11 +5,16 @@ import 'package:charts_flutter/flutter.dart' as charts;
 
 import 'package:sari_sales/utils/colorParser.dart';
 
+//screens
+import 'package:sari_sales/screens/authenticated/ProductsTable.dart';
+
 //components
 import 'package:sari_sales/components/ProductChart.dart';
 
 //models
 import '../../models/Reports.dart';
+import 'package:sari_sales/models/Categories.dart';
+import 'package:sari_sales/models/ListProducts.dart';
 
 
 class ReportScreen extends StatefulWidget {
@@ -20,8 +25,16 @@ class ReportScreen extends StatefulWidget {
 }
 
 class _ReportScreen extends State<ReportScreen> {
+  List _categories;
+  List _products;
   String _showCard = 'Sales';
   bool _isAnimateCard = false;
+
+  @override
+  void initState () {
+    _fetchLocalStorage();
+    super.initState();
+  }
 
   @override
   void _isCard(val) {
@@ -35,6 +48,21 @@ class _ReportScreen extends State<ReportScreen> {
         _isAnimateCard = false;
       });
     });
+  }
+
+  _fetchLocalStorage () async {
+    await Categories.getCategoryLocalStorage().then((res) {
+      setState(() {
+        _categories = res;
+      });
+    }).then((res) async {
+     await ListProducts.getProductLocalStorage().then((res) {
+       setState(() {
+         _products = res;
+       });
+     });
+    });
+
   }
 
   @override
@@ -138,78 +166,78 @@ class _ReportScreen extends State<ReportScreen> {
     );
 
     Widget _recentTransaction = Container(
-        padding: EdgeInsets.only(top: 20, left: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Align(
-              alignment: Alignment.topLeft,
-              child: Text('Recent Activities', style: TextStyle(color: Colors.black38, fontSize: 20, fontWeight: FontWeight.w400)),
-            ),
-            Container(
-              padding: EdgeInsets.only(top: 10),
-              width: MediaQuery.of(context).size.width * 0.90,
-              child: Card(
-                child: Column(
-                  children: ListTile.divideTiles(
-                    context: context,
-                    tiles: [
-                      ListTile(
-                        title: Text("Oreo", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
-                        subtitle: Text('Purchased item'),
-                        trailing: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: <Widget>[
-                            Text('29 May, 2020', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w500)),
-                            Text('P 120.00', style: TextStyle(color: Colors.red[500], fontWeight: FontWeight.w700)),
-                          ],
-                        ),
+      padding: EdgeInsets.only(top: 20, left: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Align(
+            alignment: Alignment.topLeft,
+            child: Text('Recent Transactions', style: TextStyle(color: Colors.black38, fontSize: 20, fontWeight: FontWeight.w400)),
+          ),
+          Container(
+            padding: EdgeInsets.only(top: 10),
+            width: MediaQuery.of(context).size.width * 0.90,
+            child: Card(
+              child: Column(
+                children: ListTile.divideTiles(
+                  context: context,
+                  tiles: [
+                    ListTile(
+                      title: Text("Oreo", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
+                      subtitle: Text('Purchased item'),
+                      trailing: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+                          Text('27 May, 2020', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w500)),
+                          Text('P 120.00', style: TextStyle(color: Colors.red[500], fontWeight: FontWeight.w700)),
+                        ],
                       ),
-                      ListTile(
-                        title: Text("Coffee", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
-                        subtitle: Text('Purchased item'),
-                        trailing: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: <Widget>[
-                            Text('29 May, 2020', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w500)),
-                            Text('P 120.00', style: TextStyle(color: Colors.red[500], fontWeight: FontWeight.w700)),
-                          ],
-                        ),
+                    ),
+                    ListTile(
+                      title: Text("Nestle Coffee", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
+                      subtitle: Text('Purchased item'),
+                      trailing: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+                          Text('19 May, 2020', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w500)),
+                          Text('P 12.00', style: TextStyle(color: Colors.red[500], fontWeight: FontWeight.w700)),
+                        ],
                       ),
-                      ListTile(
-                        title: Text("Red Horse", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
-                        subtitle: Text('Purchased item'),
-                        trailing: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: <Widget>[
-                            Text('29 May, 2020', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w500)),
-                            Text('P 120.00', style: TextStyle(color: Colors.red[500], fontWeight: FontWeight.w700)),
-                          ],
-                        ),
+                    ),
+                    ListTile(
+                      title: Text("Red Horse", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
+                      subtitle: Text('Purchased item'),
+                      trailing: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+                          Text('12 May, 2020', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w500)),
+                          Text('P 90.00', style: TextStyle(color: Colors.red[500], fontWeight: FontWeight.w700)),
+                        ],
                       ),
-                      ListTile(
-                        title: Text("Highlands Cornedbeef", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
-                        subtitle: Text('Purchased item'),
-                        trailing: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: <Widget>[
-                            Text('29 May, 2020', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w500)),
-                            Text('P 120.00', style: TextStyle(color: Colors.red[500], fontWeight: FontWeight.w700)),
-                          ],
-                        ),
+                    ),
+                    ListTile(
+                      title: Text("Highlands Cornedbeef", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
+                      subtitle: Text('Purchased item'),
+                      trailing: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+                          Text('20 May, 2020', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w500)),
+                          Text('P 120.00', style: TextStyle(color: Colors.red[500], fontWeight: FontWeight.w700)),
+                        ],
                       ),
-                    ]
-                  ).toList(),
-                )
+                    ),
+                  ]
+                ).toList(),
               )
             )
-          ],
-        )
+          )
+        ],
+      )
     );
 
     Widget _loanList = Container(
@@ -230,14 +258,31 @@ class _ReportScreen extends State<ReportScreen> {
                   children: ListTile.divideTiles(
                     context: context,
                     tiles: [
+                      Hero(
+                        tag: 'table',
+                        child: Material(
+                          child: ListTile(
+                            title: Text("Products", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
+                            subtitle: Text('Table List'),
+                            trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey[500]),
+                            onTap: () {
+                              print('Navigate to products');
+                              Navigator.push(context, PageRouteBuilder(
+                                transitionDuration: Duration(seconds: 1),
+                                pageBuilder: (context, a1, a2) => ProductsTable(categories: _categories, products: _products),
+                              ));
+                            },
+                          ),
+                        )
+                      ),
                       ListTile(
-                        title: Text("Products", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
-                        subtitle: Text('Table'),
+                        title: Text("Sales Transactions", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
+                        subtitle: Text('Table List'),
                         trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey[500]),
                       ),
                       ListTile(
-                        title: Text("Sales", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
-                        subtitle: Text('Table'),
+                        title: Text("Listahan ng Utang", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
+                        subtitle: Text('Loan information list'),
                         trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey[500]),
                       )
                     ],
@@ -316,12 +361,13 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                 child: Text('Sales Report', textAlign: TextAlign.start, style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w400))
               ),
             ),
+            Text('PHP', textAlign: TextAlign.start, style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.w500)),
             Flexible(
               flex: 1,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text('\$ 200.00', textAlign: TextAlign.start, style: TextStyle(color: Colors.white, fontSize: 40, fontWeight: FontWeight.bold)),
+                  Text('1,200.00', textAlign: TextAlign.start, style: TextStyle(color: Colors.white, fontSize: 40, fontWeight: FontWeight.bold)),
                   Icon(Icons.arrow_drop_up, color: Colors.white, size: 32)
                 ],
               )
