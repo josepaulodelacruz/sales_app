@@ -63,10 +63,6 @@ class _ProductsTable extends State<ProductsTable> {
               _products.map((product) => product).toList() :
               _products.where((element) => element['pCategory'].contains(cc['cTitle'])).toList();
 
-          List productName = _productByCategory.map((product) => product['pName']).toList();
-          List productQuantity = _productByCategory.map((product) => product['pQuantity']).toList();
-          List productPrice = _productByCategory.map((product) => product['pPrice']).toList();
-
           return Container(
             margin: EdgeInsets.symmetric(horizontal: 10),
             child: Card(
