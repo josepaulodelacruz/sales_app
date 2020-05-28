@@ -51,7 +51,7 @@ class _ViewItemsState extends State<ViewItems> {
     List _total = _products.map((pp) => pp['pPrice'] * pp['orderCount']).toList();
     double computeTotal = _total.fold(0, (i, j) => i + j);
     double change = (_customerAmount.text == '' ? 0 : double.parse(_customerAmount.text)) - computeTotal;
-    if(change.isNegative || change == 0) {
+    if(change.isNegative) {
       _scaffoldKey.currentState.showSnackBar(new SnackBar(backgroundColor: Colors.redAccent, content: new Text('Can\'t proccess transaction.')));
       Navigator.of(context).pop();
     } else {
@@ -110,67 +110,44 @@ class _ViewItemsState extends State<ViewItems> {
 
     Widget _listProducts = Expanded(
       flex: 1,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 10),
-        child: ListView.builder(
-          itemCount: _products.length,
-          itemBuilder: (context, int index) {
-            return Dismissible(
-              key: Key(_products[index]['pId']),
-              dismissThresholds: {
-                DismissDirection.vertical: 0.4,
-              },
-              onDismissed: (direction) async {
-                setState(() {
-                  widget.deleteItem(_products[index]['pId']);
-                });
-              },
-              // Show a red background as the item is swiped away.
-              background: Container(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                color: Colors.red,
-              ),
-              child: Container(
-                height: 70,
-                width: MediaQuery.of(context).size.width,
-                child: Card(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      Flexible(
-                        flex: 2,
-                        child: Text(_products[index]['pName'], style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.bold))
-                      ),
-                      Flexible(
-                        flex: 1,
-                        child: TextField(
-                          onChanged: (val) {
-                            setState(() {
-                              _products[index]['orderCount'] = int.parse(val);
-                            });
-                          },
-                          textAlign: TextAlign.center,
-                          decoration: InputDecoration(
-                            hintText: '${_products[index]['orderCount']}',
-
-                          ),
-                          keyboardType: TextInputType.numberWithOptions(
-                            decimal: false,
-                            signed: true,
-                          )
-                        )
-                      ),
-                      Flexible(
-                        flex: 1,
-                        child: Text('P${_products[index]['pPrice'] * _products[index]['orderCount']}', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.bold))
-                      )
-                    ],
-                  )
-                )
-              )
-            );
-          },
-        )
+      child: SingleChildScrollView(
+        child: Card(
+          child: DataTable(
+            columns: [
+              DataColumn(label: Text('Name')),
+              DataColumn(label: Text('Quantity')),
+              DataColumn(label: Text('Price')),
+            ],
+            rows: _products.map((product) {
+              int index = _products.indexOf(product);
+              return DataRow(
+                cells: [
+                  DataCell(Text(product['pName'].toString()), onTap: () {
+                    setState(() {
+                      widget.deleteItem(product['pId']);
+                    });
+                  }),
+                  DataCell(TextField(
+                    onChanged: (val) {
+                      setState(() {
+                        _products[index]['orderCount'] = int.parse(val);
+                      });
+                    },
+                    keyboardType: TextInputType.numberWithOptions(
+                      decimal: false,
+                      signed: true,
+                    ),
+                    textAlign: TextAlign.center,
+                    decoration: InputDecoration(
+                      hintText: '${product['orderCount']}'
+                    )
+                  )),
+                  DataCell(Text('P${_products[index]['pPrice'] * _products[index]['orderCount']}')),
+                ]
+              );
+            }).toList(),
+          )
+        ),
       )
     );
 
@@ -265,7 +242,6 @@ class _ViewItemsState extends State<ViewItems> {
           child: Container(
             child: Column(
               children: <Widget>[
-                _topHeader,
                 _listProducts,
                 Card(
                   elevation: 5,

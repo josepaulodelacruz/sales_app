@@ -7,6 +7,7 @@ import 'package:sari_sales/utils/colorParser.dart';
 
 //screens
 import 'package:sari_sales/screens/authenticated/ProductsTable.dart';
+import 'package:sari_sales/screens/authenticated/SalesTransactionTable.dart';
 
 //components
 import 'package:sari_sales/components/ProductChart.dart';
@@ -279,6 +280,11 @@ class _ReportScreen extends State<ReportScreen> {
                         title: Text("Sales Transactions", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
                         subtitle: Text('Table List'),
                         trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey[500]),
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) => SalesTransactionTable(),
+                          ));
+                        },
                       ),
                       ListTile(
                         title: Text("Listahan ng Utang", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
