@@ -7,6 +7,7 @@ import 'package:sari_sales/utils/colorParser.dart';
 //models
 import 'package:sari_sales/models/Categories.dart';
 import 'package:sari_sales/models/ListProducts.dart';
+import 'package:sari_sales/models/Products.dart';
 
 
 
@@ -62,17 +63,30 @@ class _ProductsTable extends State<ProductsTable> {
               _products.map((product) => product).toList() :
               _products.where((element) => element['pCategory'].contains(cc['cTitle'])).toList();
 
+          List productName = _productByCategory.map((product) => product['pName']).toList();
+          List productQuantity = _productByCategory.map((product) => product['pQuantity']).toList();
+          List productPrice = _productByCategory.map((product) => product['pPrice']).toList();
+
           return Container(
             margin: EdgeInsets.symmetric(horizontal: 10),
             child: Card(
               child: SingleChildScrollView(
-                child: Column(
-                  children: ListTile.divideTiles(
-                    context: context,
-                    tiles: _productByCategory.map((product) {
-                      return ListTile(title: Text(product['pName']));
-                    }).toList(),
-                  ).toList(),
+                child: DataTable(
+                  columns: [
+                    DataColumn(label: Text('Name')),
+                    DataColumn(label: Text('Price')),
+                    DataColumn(label: Text('Quantity')),
+                  ],
+                  rows: _productByCategory.map((product) {
+                    int index = _productByCategory.indexOf(product);
+                    return DataRow(
+                      cells: <DataCell>[
+                        DataCell(Text(product['pName'].toString())),
+                        DataCell(Text(product['pPrice'].toString())),
+                        DataCell(Text(product['pQuantity'].toString())),
+                      ]
+                    );
+                  }).toList(),
                 )
               )
             ),
@@ -86,32 +100,34 @@ class _ProductsTable extends State<ProductsTable> {
       tag: 'table',
       child: DefaultTabController(
         length: _categories.length,
-        child: Scaffold(
-          backgroundColor: getColorFromHex('#f3f3f3'),
-          appBar: AppBar(
-            bottom: TabBar(
-              isScrollable: true,
-              tabs: _categories == null ? [] : _categories.map((cc) {
-                return Tab(text: cc['cTitle']);
-              }).toList(),
+        child: Material(
+          child: Scaffold(
+            backgroundColor: getColorFromHex('#f3f3f3'),
+            appBar: AppBar(
+              bottom: TabBar(
+                isScrollable: true,
+                tabs: _categories == null ? [] : _categories.map((cc) {
+                  return Tab(text: cc['cTitle']);
+                }).toList(),
+              ),
+              title: Text('Products')
             ),
-            title: Text('Products')
+            body: Container(
+              child: Column(
+                children: <Widget>[
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: _searchBar,
+                  ),
+                  Expanded(
+                   flex: 1,
+                   child: _tabViews,
+                  ),
+                ],
+              ),
+            )
           ),
-          body: Container(
-            child: Column(
-              children: <Widget>[
-                Align(
-                  alignment: Alignment.topCenter,
-                  child: _searchBar,
-                ),
-                Expanded(
-                 flex: 1,
-                 child: _tabViews,
-                ),
-              ],
-            ),
-          )
-        ),
+        )
       )
     );
   }
