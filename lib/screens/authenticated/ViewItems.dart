@@ -3,12 +3,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sari_sales/components/DialogModal.dart';
+import 'package:intl/intl.dart';
 
 //constant
 import '../../utils/colorParser.dart';
 
 //models
 import '../../models/ListProducts.dart';
+import '../../models/Transactions.dart';
 
 class ViewItems extends StatefulWidget {
   List products;
@@ -27,6 +29,7 @@ class _ViewItemsState extends State<ViewItems> {
   List _products = [];
   List _localStorageProducts = [];
   List _updatingProducts = [];
+  List _transactions = [];
   Timer _timer;
   bool _onMountWidget = false;
   final _customerAmount = TextEditingController();
@@ -47,7 +50,7 @@ class _ViewItemsState extends State<ViewItems> {
 
   //update products from local storage.
   @override
-  void _transactionProcedure (context) {
+  void _transactionProcedure (context) async {
     List _total = _products.map((pp) => pp['pPrice'] * pp['orderCount']).toList();
     double computeTotal = _total.fold(0, (i, j) => i + j);
     double change = (_customerAmount.text == '' ? 0 : double.parse(_customerAmount.text)) - computeTotal;
@@ -58,7 +61,7 @@ class _ViewItemsState extends State<ViewItems> {
       print('proceed transaction');
       _products.map((x) {
         _localStorageProducts.map((pp) {
-          if(x['pId'] == pp['pId']) {
+          if (x['pId'] == pp['pId']) {
             int index = _localStorageProducts.indexOf(pp);
             setState(() {
               _localStorageProducts[index] = {
@@ -67,12 +70,12 @@ class _ViewItemsState extends State<ViewItems> {
               };
             });
             //check if the quantity is less than 0 if is yes delete from the localstorage.
-            if(_localStorageProducts[index]['pQuantity'] == 0 || _localStorageProducts[index]['pQuantity'].isNegative) {
+            if (_localStorageProducts[index]['pQuantity'] == 0 ||
+                _localStorageProducts[index]['pQuantity'].isNegative) {
               setState(() {
                 _localStorageProducts.removeAt(index);
               });
             }
-
           }
         }).toList();
       }).toList();
@@ -83,12 +86,12 @@ class _ViewItemsState extends State<ViewItems> {
           _localStorageProducts = [];
         });
         widget.updateItem();
-      }).then((res) {
+      });
+      Transactions.saveTransactionsDetails(_products).then((res) {
         Navigator.pop(context);
         Navigator.pop(context);
       });
     }
-
   }
 
   @override

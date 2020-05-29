@@ -1,6 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import'package:flutter/material.dart';
+
 import '../../utils/colorParser.dart';
+
+//models
+import '../../models/Transactions.dart';
 
 class SalesTransactionTable extends StatefulWidget {
   @override
@@ -8,12 +12,42 @@ class SalesTransactionTable extends StatefulWidget {
 }
 class _SalesTransactionTable extends State<SalesTransactionTable>{
   List<Color> _colors = [getColorFromHex('#5433FF '), getColorFromHex('#20BDFF')];
+  List _transactions;
+  List _dates;
+
+  @override
+  void initState () {
+    _fetchTransactionDetails();
+    super.initState();
+  }
+
+  @override
+  _fetchTransactionDetails () async {
+    await Transactions.getTransactionsDetails().then((res) {
+      //sort all availables dates
+      List d = res.map((d) => d['dates']).toList();
+      List _sortedDates = d.toSet().toList();
+      setState(() {
+        _transactions = res;
+        _dates = _sortedDates;
+      });
+    });
+  }
+
+  void _salesBy () {
+    print(_dates.length);
+    _dates.map((d) {
+      print(d);
+    }).toList();
+
+  }
+
 
   @override
   Widget build(BuildContext context) {
 
     Widget _searchBar = Container(
-      padding: EdgeInsets.only(top: 10),
+      padding: EdgeInsets.only(top: 15),
       height: 70,
       width: MediaQuery.of(context).size.width * 0.90,
       child: Card(
@@ -35,54 +69,49 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
     );
 
     Widget _transactionList = Container(
-        padding: EdgeInsets.only(top: 20, left: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Align(
-              alignment: Alignment.topLeft,
-              child: Text('27 May, 2020', style: TextStyle(color: Colors.black38, fontSize: 20, fontWeight: FontWeight.w400)),
-            ),
-            Container(
-              padding: EdgeInsets.only(top: 10),
-              width: MediaQuery.of(context).size.width * 0.90,
-              child: Card(
-                child: Column(
-                  children: ListTile.divideTiles(
-                    context: context,
-                    tiles: [
-                      ListTile(
-                        title: Text("Oreo", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
-                        subtitle: Text('Purchased Item'),
-                        trailing: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: <Widget>[
-                            Text('P 240.00', style: TextStyle(color: Colors.red[500], fontWeight: FontWeight.w700)),
-                            Text('2 pcs', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w500)),
-                          ],
-                        ),
-                      ),
-                      ListTile(
-                        title: Text("Oreo", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
-                        subtitle: Text('Purchased Item'),
-                        trailing: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: <Widget>[
-                            Text('P 240.00', style: TextStyle(color: Colors.red[500], fontWeight: FontWeight.w700)),
-                            Text('2 pcs', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w500)),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ).toList(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: _dates.map((d) {
+          return Container(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              children: <Widget>[
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(d.toString(), style: TextStyle(color: Colors.black38, fontSize: 20, fontWeight: FontWeight.w400)),
+                ),
+                Container(
+                  padding: EdgeInsets.only(top: 10),
+                  width: MediaQuery.of(context).size.width * 0.90,
+                  child: Card(
+                    child: Column(
+                      children: ListTile.divideTiles(
+                        context: context,
+                        tiles: _transactions.map((transaction) {
+                          return d == transaction['dates'] ? ListTile(
+                            title: Text(transaction['productName'], style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
+                            subtitle: Text('Purchased Item'),
+                            trailing: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: <Widget>[
+                                Text('P ${transaction['amount']}', style: TextStyle(color: Colors.red[500], fontWeight: FontWeight.w700)),
+                                Text('${transaction['quantity']} pcs', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w500)),
+                              ],
+                            ),
+                          ) : SizedBox();
+                        }).toList(),
+                      ).toList(),
+                    )
+                  )
                 )
-              )
+              ],
             )
-          ],
-        )
+          );
+
+        }).toList(),
+      )
     );
 
     return Scaffold(
@@ -135,7 +164,9 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
                   Container(
                     height: 20,
                     child: RaisedButton(
-                      onPressed: () {}  ,
+                      onPressed: () {
+                        _salesBy();
+                      },
                       child: Text('Daily', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                       color: getColorFromHex('#36d1dc'),
                       shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
@@ -194,8 +225,6 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
                     ),
                     child: ListView(
                       children: <Widget>[
-                        _transactionList,
-                        _transactionList,
                         _transactionList,
                         _transactionList,
                         _transactionList,
