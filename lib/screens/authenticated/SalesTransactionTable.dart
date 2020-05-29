@@ -6,6 +6,7 @@ import '../../utils/colorParser.dart';
 
 //models
 import '../../models/Transactions.dart';
+import 'package:intl/intl.dart';
 
 class SalesTransactionTable extends StatefulWidget {
   @override
@@ -15,10 +16,13 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
   List<Color> _colors = [getColorFromHex('#5433FF '), getColorFromHex('#20BDFF')];
   List _transactions;
   List _dates;
+  List _sortDates;
   bool _isLoading = true;
+  final _searchDate = TextEditingController();
 
   @override
   void initState () {
+
     _fetchTransactionDetails();
     Timer(Duration(milliseconds: 1000), () {
       setState(() {
@@ -37,88 +41,105 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
       setState(() {
         _transactions = res;
         _dates = _sortedDates;
+        _sortDates = _sortedDates;
       });
     });
   }
 
   void _salesBy () {
-    print(_dates.length);
-    _dates.map((d) {
-      print(d);
-    }).toList();
+    print(_searchDate.text);
+  }
 
+  void _fuzzySearch (val) {
+    setState(() {
+      _sortDates = val == '' ?
+          _dates.map((d) => d).toList() :
+          _dates.where((element) => element.toString().toLowerCase().contains(_searchDate.text.toString().toLowerCase())).toList();
+    });
   }
 
 
   @override
   Widget build(BuildContext context) {
 
-    Widget _searchBar = Container(
-      padding: EdgeInsets.only(top: 15),
-      height: 70,
-      width: MediaQuery.of(context).size.width * 0.90,
-      child: Card(
-        elevation: 10,
-        child: Align(
-          alignment: Alignment.center,
-          child:  TextField(
+    Widget _searchBar () {
+      DateTime now = DateTime.now();
+      String formattedDate = DateFormat.yMMMMd().format(now);
+      return Container(
+        padding: EdgeInsets.only(top: 15),
+        height: 70,
+        width: MediaQuery.of(context).size.width * 0.90,
+        child: Card(
+          elevation: 10,
+          child: TextField(
+            controller: _searchDate,
+            onChanged: (val) => _fuzzySearch(val),
             decoration: InputDecoration(
               prefixIcon: IconButton(icon: Icon(Icons.arrow_back_ios), onPressed: () => Navigator.pop(context)),
+              suffixIcon: IconButton(icon: Icon(Icons.clear), onPressed: () {
+                setState(() {
+                  _searchDate.text = '';
+                  _sortDates = _dates;
+                });
+              }),
               border: InputBorder.none,
               focusedBorder: InputBorder.none,
               enabledBorder: InputBorder.none,
               errorBorder: InputBorder.none,
               disabledBorder: InputBorder.none,
-              hintText: '28 May 2020'),
+              hintText: 'Search date.'
+            ),
           )
         )
-      ),
-    );
+      );
+    }
 
-    Widget _transactionList = Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: _dates?.map((d) {
-          return Container(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              children: <Widget>[
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(d.toString(), style: TextStyle(color: Colors.black38, fontSize: 20, fontWeight: FontWeight.w400)),
-                ),
-                Container(
-                  padding: EdgeInsets.only(top: 10),
-                  width: MediaQuery.of(context).size.width * 0.90,
-                  child: Card(
-                    child: Column(
-                      children: ListTile.divideTiles(
-                        context: context,
-                        tiles: _transactions.map((transaction) {
-                          return d == transaction['dates'] ? ListTile(
-                            title: Text(transaction['productName'], style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
-                            subtitle: Text('Purchased Item'),
-                            trailing: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: <Widget>[
-                                Text('P ${transaction['amount']}', style: TextStyle(color: Colors.red[500], fontWeight: FontWeight.w700)),
-                                Text('${transaction['quantity']}/pcs', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w500)),
-                              ],
-                            ),
-                          ) : SizedBox();
-                        }).toList(),
-                      ).toList(),
+    Widget _transactionList () {
+      return Container(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: _sortDates?.map((d) {
+            return Container(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: <Widget>[
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(d.toString(), style: TextStyle(color: Colors.black38, fontSize: 20, fontWeight: FontWeight.w400)),
+                  ),
+                  Container(
+                    padding: EdgeInsets.only(top: 10),
+                    width: MediaQuery.of(context).size.width * 0.90,
+                    child: Card(
+                      child: Column(
+                        children: ListTile.divideTiles(
+                          context: context,
+                          tiles: _transactions.map((transaction) {
+                            return d == transaction['dates'] ? ListTile(
+                              title: Text(transaction['productName'], style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
+                              subtitle: Text('Purchased Item'),
+                              trailing: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: <Widget>[
+                                  Text('P ${transaction['amount']}', style: TextStyle(color: Colors.red[500], fontWeight: FontWeight.w700)),
+                                  Text('${transaction['quantity']}/pcs', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w500)),
+                                ],
+                              ),
+                            ) : SizedBox();
+                          }).toList(),
+                        ).toList(),
+                      )
                     )
                   )
-                )
-              ],
-            )
-          );
-        })?.toList() ?? [],
-      )
-    );
+                ],
+              )
+            );
+          })?.toList() ?? [],
+        )
+      );
+    }
 
     return Scaffold(
       body: Stack(
@@ -136,7 +157,7 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
             margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.02),
             child: Align(
               alignment: Alignment.topCenter,
-              child: _searchBar,
+              child: _searchBar(),
             ),
           ),
           Container(
@@ -231,7 +252,7 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
                     ),
                     child: ListView(
                       children: <Widget>[
-                        _transactionList,
+                        _transactionList(),
                       ],
                     )
                   )

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 
-
 class Transactions {
   String productName;
   double amount;
@@ -20,7 +19,7 @@ class Transactions {
 
   static saveTransactionsDetails (products) async {
     DateTime now = DateTime.now();
-    String formattedDate = DateFormat.yMd().format(now);
+    String formattedDate = DateFormat.yMMMMd().format(now);
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
     dynamic TransactionsDetails = sharedPrefs.getString('TransactionsDetails');
     List<dynamic> uncodeDetails = jsonDecode(TransactionsDetails);
