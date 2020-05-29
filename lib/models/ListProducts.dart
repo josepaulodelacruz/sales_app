@@ -14,8 +14,12 @@ class ListProducts {
   static getProductLocalStorage () async {
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
     dynamic ListProducts = sharedPrefs.getString('ListProducts');
-    List<dynamic> decodedFiles = jsonDecode(ListProducts);
-    return decodedFiles;
+    if(ListProducts == null) {
+      return [];
+    } else {
+      List<dynamic> decodedFiles = jsonDecode(ListProducts);
+      return decodedFiles;
+    }
   }
 
   static saveProductToLocalStorage (products) async {

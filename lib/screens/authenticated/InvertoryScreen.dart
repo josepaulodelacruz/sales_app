@@ -51,10 +51,6 @@ class _InventoryScreen extends State<InventoryScreen> {
     setState(() {
       _products = _items;
     });
-
-    _items.forEach((x) {
-      print(x['pCategory']);
-    });
   }
 
   _fetchCategoriesLocalStorage () async {
@@ -108,7 +104,7 @@ class _InventoryScreen extends State<InventoryScreen> {
 
   @override
   Widget _listProducts (context) {
-    List<dynamic> sortedProductList = _activeSortCategory == 'All' ? _products.map((product) => product).toList() : _products.where((element) => element['pCategory'].contains(_activeSortCategory)).toList();
+    List<dynamic> sortedProductList = _activeSortCategory == 'All' ? _products?.map((product) => product)?.toList() ?? [] : _products.where((element) => element['pCategory'].contains(_activeSortCategory)).toList();
 
     return Expanded(
       flex: 1,
@@ -206,7 +202,7 @@ class _InventoryScreen extends State<InventoryScreen> {
                             ),
                             child: ListView(
                               scrollDirection: Axis.horizontal,
-                              children: _categories.map((cc) {
+                              children: _categories?.map((cc) {
                                 int sortIndex = _categories.indexOf(cc);
                                 return AnimatedOpacity(
                                   duration: Duration(milliseconds: 1000),
@@ -237,7 +233,7 @@ class _InventoryScreen extends State<InventoryScreen> {
                                     )
                                   )
                                 );
-                              }).toList(),
+                              })?.toList() ?? [],
                             )
                           ),
                           _listProducts(context),

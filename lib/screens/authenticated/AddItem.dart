@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:sari_sales/models/ListProducts.dart';
 import 'package:sari_sales/utils/colorParser.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' show join;
@@ -84,6 +85,7 @@ class _AddItemState extends State<AddItemState> {
 
   @override
   Future<void> _saveToStorage (products) async {
+    print(products);
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
     final decode = json.encode(products);
     sharedPrefs.setString('ListProducts', decode).then((res) {
@@ -112,10 +114,10 @@ class _AddItemState extends State<AddItemState> {
         _products.add(productInfo);
       });
 
-
       _saveToStorage(_products).then((res) {
         _scaffoldKey.currentState.showSnackBar(new SnackBar(backgroundColor: Colors.greenAccent, content: new Text('Successfully added!')));
         widget.updateProduct();
+        print('success');
       });
 
     }

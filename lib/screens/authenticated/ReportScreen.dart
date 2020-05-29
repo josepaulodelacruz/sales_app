@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:intl/intl.dart';
 
 import 'package:sari_sales/utils/colorParser.dart';
 
@@ -16,6 +17,7 @@ import 'package:sari_sales/components/ProductChart.dart';
 import '../../models/Reports.dart';
 import 'package:sari_sales/models/Categories.dart';
 import 'package:sari_sales/models/ListProducts.dart';
+import 'package:sari_sales/models/Transactions.dart';
 
 
 class ReportScreen extends StatefulWidget {
@@ -28,6 +30,7 @@ class ReportScreen extends StatefulWidget {
 class _ReportScreen extends State<ReportScreen> {
   List _categories;
   List _products;
+  List _transactions;
   String _showCard = 'Sales';
   bool _isAnimateCard = false;
 
@@ -62,12 +65,21 @@ class _ReportScreen extends State<ReportScreen> {
          _products = res;
        });
      });
+    }).then((res) async {
+      await Transactions.getTransactionsDetails().then((res) {
+        setState(() {
+          _transactions = res;
+        });
+      });
     });
 
   }
 
   @override
   Widget build(BuildContext context) {
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat.yMMMMd().format(now);
+
     Widget _topButtons = Container(
       margin: EdgeInsets.symmetric(horizontal: 40),
       child: Row(
@@ -183,56 +195,21 @@ class _ReportScreen extends State<ReportScreen> {
               child: Column(
                 children: ListTile.divideTiles(
                   context: context,
-                  tiles: [
-                    ListTile(
-                      title: Text("Oreo", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
+                  tiles: _transactions?.map((transaction) {
+                    int index = _transactions.indexOf(transaction);
+                    return (4 >= index && transaction['dates'] == formattedDate.toString()) ? ListTile(
+                      title: Text('${transaction['productName']}', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
                       subtitle: Text('Purchased item'),
                       trailing: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: <Widget>[
-                          Text('27 May, 2020', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w500)),
-                          Text('P 120.00', style: TextStyle(color: Colors.red[500], fontWeight: FontWeight.w700)),
+                          Text(transaction['dates'].toString(), style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w500)),
+                          Text('P ${transaction['amount']}', style: TextStyle(color: Colors.red[500], fontWeight: FontWeight.w700)),
                         ],
                       ),
-                    ),
-                    ListTile(
-                      title: Text("Nestle Coffee", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
-                      subtitle: Text('Purchased item'),
-                      trailing: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: <Widget>[
-                          Text('19 May, 2020', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w500)),
-                          Text('P 12.00', style: TextStyle(color: Colors.red[500], fontWeight: FontWeight.w700)),
-                        ],
-                      ),
-                    ),
-                    ListTile(
-                      title: Text("Red Horse", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
-                      subtitle: Text('Purchased item'),
-                      trailing: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: <Widget>[
-                          Text('12 May, 2020', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w500)),
-                          Text('P 90.00', style: TextStyle(color: Colors.red[500], fontWeight: FontWeight.w700)),
-                        ],
-                      ),
-                    ),
-                    ListTile(
-                      title: Text("Highlands Cornedbeef", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
-                      subtitle: Text('Purchased item'),
-                      trailing: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: <Widget>[
-                          Text('20 May, 2020', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w500)),
-                          Text('P 120.00', style: TextStyle(color: Colors.red[500], fontWeight: FontWeight.w700)),
-                        ],
-                      ),
-                    ),
-                  ]
+                    ) : SizedBox();
+                  })?.toList() ?? [],
                 ).toList(),
               )
             )

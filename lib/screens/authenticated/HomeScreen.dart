@@ -25,7 +25,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List categories = [{'cTitle': 'All', 'cPath': '', 'isValid': true}];
+  List categories;
   final _newCategory = TextEditingController();
   String _imageCategoryPath;
   String _isCategoryActive = 'All';
@@ -252,7 +252,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
-          children: categories.map((cc) {
+          children: categories?.map((cc) {
             int cardIndex = categories.indexOf(cc);
             return Transform.scale(
               scale: _isCategoryActive == cc['cTitle'] ? 0.95 : 1,
@@ -281,7 +281,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               )
             );
-          }).toList(),
+          })?.toList() ?? [],
         )
       )
     );

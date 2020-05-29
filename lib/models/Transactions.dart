@@ -13,8 +13,13 @@ class Transactions {
   static getTransactionsDetails () async {
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
     dynamic TransactionsDetails = sharedPrefs.getString('TransactionsDetails');
-    List<dynamic> decodedFiles = jsonDecode(TransactionsDetails);
-    return decodedFiles;
+    if(TransactionsDetails == null) {
+      return null;
+    } else {
+      List<dynamic> decodedFiles = jsonDecode(TransactionsDetails);
+      return decodedFiles;
+    }
+
   }
 
   static saveTransactionsDetails (products) async {
@@ -22,17 +27,33 @@ class Transactions {
     String formattedDate = DateFormat.yMMMMd().format(now);
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
     dynamic TransactionsDetails = sharedPrefs.getString('TransactionsDetails');
-    List<dynamic> uncodeDetails = jsonDecode(TransactionsDetails);
-    List<dynamic> _details = products.map((product) {
-      uncodeDetails.add({
-        'dates': formattedDate.toString(),
-        'productName': product['pName'],
-        'amount': (product['pPrice'] * product['orderCount']).toString(),
-        'quantity': product['orderCount'],
-      });
-    }).toList();
-    final decode = json.encode(uncodeDetails);
-    sharedPrefs.setString('TransactionsDetails', decode);
+
+    if(TransactionsDetails == null) {
+      List<dynamic> uncodeDetails = [];
+      List<dynamic> _details = products.map((product) {
+        uncodeDetails.add({
+          'dates': formattedDate.toString(),
+          'productName': product['pName'],
+          'amount': (product['pPrice'] * product['orderCount']).toString(),
+          'quantity': product['orderCount'],
+        });
+      }).toList();
+      final decode = json.encode(uncodeDetails);
+      sharedPrefs.setString('TransactionsDetails', decode);
+    } else {
+      List<dynamic> uncodeDetails = jsonDecode(TransactionsDetails);
+      List<dynamic> _details = products.map((product) {
+        uncodeDetails.add({
+          'dates': formattedDate.toString(),
+          'productName': product['pName'],
+          'amount': (product['pPrice'] * product['orderCount']).toString(),
+          'quantity': product['orderCount'],
+        });
+      }).toList();
+      final decode = json.encode(uncodeDetails);
+      sharedPrefs.setString('TransactionsDetails', decode);
+
+    }
   }
 
 }

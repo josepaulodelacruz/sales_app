@@ -28,9 +28,13 @@ class Categories {
   static getCategoryLocalStorage () async {
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
     dynamic categories = sharedPrefs.getString('categories');
-    print(categories);
-    List<dynamic> decodedFiles = jsonDecode(categories);
-    return decodedFiles;
+    if(categories == null) {
+      return [{'cTitle': 'All', 'cPath': '', 'isValid': true}, {'cTitle': 'Noodles', 'cPath': '', 'isValid': true}];
+    } else {
+      List<dynamic> decodedFiles = jsonDecode(categories);
+      return decodedFiles;
+    }
+
   }
 
   static saveCategoryToLocalStorage (categories) async {

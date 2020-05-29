@@ -37,7 +37,7 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
   _fetchTransactionDetails () async {
     await Transactions.getTransactionsDetails().then((res) {
       //sort all availables dates
-      List d = res.map((d) => d['dates']).toList();
+      List d = res?.map((d) => d['dates'])?.toList() ?? [];
       List _sortedDates = d.toSet().toList();
       setState(() {
         _transactions = res;
@@ -57,7 +57,7 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
   void _fuzzySearch (val) {
     setState(() {
       _sortDates = val == '' ?
-          _dates.map((d) => d).toList() :
+          _dates?.map((d) => d)?.toList() ?? [] :
           _dates.where((element) => element.toString().toLowerCase().contains(_searchDate.text.toString().toLowerCase())).toList();
     });
   }
@@ -126,7 +126,7 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
                       child: Column(
                         children: ListTile.divideTiles(
                           context: context,
-                          tiles: _transactions.map((transaction) {
+                          tiles: _transactions?.map((transaction) {
                             return d == transaction['dates'] ? ListTile(
                               title: Text(transaction['productName'], style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
                               subtitle: Text('Purchased Item'),
@@ -139,7 +139,7 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
                                 ],
                               ),
                             ) : SizedBox();
-                          }).toList(),
+                          })?.toList() ?? [],
                         ).toList(),
                       )
                     )

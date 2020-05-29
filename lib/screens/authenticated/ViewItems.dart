@@ -80,14 +80,16 @@ class _ViewItemsState extends State<ViewItems> {
         }).toList();
       }).toList();
 
+      print('testing 1');
       ListProducts.saveProductToLocalStorage(_localStorageProducts).then((res) {
+        widget.updateItem();
+      });
+      print('testing 2');
+      Transactions.saveTransactionsDetails(_products).then((res) {
         setState(() {
           _products = [];
           _localStorageProducts = [];
         });
-        widget.updateItem();
-      });
-      Transactions.saveTransactionsDetails(_products).then((res) {
         Navigator.pop(context);
         Navigator.pop(context);
       });

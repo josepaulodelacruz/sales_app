@@ -10,7 +10,6 @@ import 'package:sari_sales/models/ListProducts.dart';
 import 'package:sari_sales/models/Products.dart';
 
 
-
 class ProductsTable extends StatefulWidget {
   List categories;
   List products;
@@ -58,10 +57,10 @@ class _ProductsTable extends State<ProductsTable> {
 
     Widget _tabViews = Container(
       child: TabBarView(
-        children: _categories.map((cc) {
+        children: _categories?.map((cc) {
           List <dynamic> _productByCategory = cc['cTitle'] == 'All' ?
-              _products.map((product) => product).toList() :
-              _products.where((element) => element['pCategory'].contains(cc['cTitle'])).toList();
+              _products?.map((product) => product)?.toList() ?? [] :
+              _products?.where((element) => element['pCategory'].contains(cc['cTitle']))?.toList() ?? [];
 
           return Container(
             margin: EdgeInsets.symmetric(horizontal: 10),
@@ -87,7 +86,7 @@ class _ProductsTable extends State<ProductsTable> {
               )
             ),
           );
-        }).toList(),
+        })?.toList() ?? [],
       ),
     );
 
