@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import'package:flutter/material.dart';
 
@@ -14,10 +15,16 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
   List<Color> _colors = [getColorFromHex('#5433FF '), getColorFromHex('#20BDFF')];
   List _transactions;
   List _dates;
+  bool _isLoading = true;
 
   @override
   void initState () {
     _fetchTransactionDetails();
+    Timer(Duration(milliseconds: 1000), () {
+      setState(() {
+        _isLoading = false;
+      });
+    });
     super.initState();
   }
 
@@ -72,7 +79,7 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
-        children: _dates.map((d) {
+        children: _dates?.map((d) {
           return Container(
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: Column(
@@ -97,7 +104,7 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: <Widget>[
                                 Text('P ${transaction['amount']}', style: TextStyle(color: Colors.red[500], fontWeight: FontWeight.w700)),
-                                Text('${transaction['quantity']} pcs', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w500)),
+                                Text('${transaction['quantity']}/pcs', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w500)),
                               ],
                             ),
                           ) : SizedBox();
@@ -109,8 +116,7 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
               ],
             )
           );
-
-        }).toList(),
+        })?.toList() ?? [],
       )
     );
 
@@ -225,9 +231,6 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
                     ),
                     child: ListView(
                       children: <Widget>[
-                        _transactionList,
-                        _transactionList,
-                        _transactionList,
                         _transactionList,
                       ],
                     )
