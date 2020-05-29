@@ -17,6 +17,7 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
   List _transactions;
   List _dates;
   List _sortDates;
+  String _profitType = 'Daily';
   bool _isLoading = true;
   final _searchDate = TextEditingController();
 
@@ -46,8 +47,11 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
     });
   }
 
-  void _salesBy () {
-    print(_searchDate.text);
+  void _salesBy (String val) {
+    setState(() {
+      _profitType = val;
+    });
+
   }
 
   void _fuzzySearch (val) {
@@ -61,6 +65,13 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
 
   @override
   Widget build(BuildContext context) {
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat.yMMMMd().format(now);
+    //compute profits
+    List _transactionAmounts = _transactions?.map((transaction) {
+      return transaction['dates'] == formattedDate.toString() ? double.parse(transaction['amount']) : 0;
+    })?.toList() ?? [];
+    double _profitAmount = _transactionAmounts.fold(0, (i, j) => i + j);
 
     Widget _searchBar () {
       DateTime now = DateTime.now();
@@ -174,7 +185,7 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text('P 1,530', style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold)),
+                  Text('P ${_profitAmount}', style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold)),
                   SizedBox(width: 10),
                   Text('+5%', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
                 ],
@@ -192,33 +203,37 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
                     height: 20,
                     child: RaisedButton(
                       onPressed: () {
-                        _salesBy();
+                        _salesBy('Daily');
                       },
                       child: Text('Daily', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                       color: getColorFromHex('#36d1dc'),
                       shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
                     )
                   ),
-                  SizedBox(width: 10),
-                  Container(
-                    height: 20,
-                    child: RaisedButton(
-                      onPressed: () {},
-                      color: getColorFromHex('#ffb88c'),
-                      child: Text('Weekly', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                      shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
-                    )
-                  ),
-                  SizedBox(width: 10),
-                  Container(
-                    height: 20,
-                    child: RaisedButton(
-                      onPressed: () {},
-                      color: getColorFromHex('#b06ab3'),
-                      child: Text('Montly', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                      shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
-                    )
-                  ),
+//                  SizedBox(width: 10),
+//                  Container(
+//                    height: 20,
+//                    child: RaisedButton(
+//                      onPressed: () {
+//                        _salesBy('Weekly');
+//                      },
+//                      color: getColorFromHex('#ffb88c'),
+//                      child: Text('Weekly', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+//                      shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
+//                    )
+//                  ),
+//                  SizedBox(width: 10),
+//                  Container(
+//                    height: 20,
+//                    child: RaisedButton(
+//                      onPressed: () {
+//                        _salesBy('Monthly');
+//                      },
+//                      color: getColorFromHex('#b06ab3'),
+//                      child: Text('Montly', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+//                      shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
+//                    )
+//                  ),
 
                 ],
               ),
