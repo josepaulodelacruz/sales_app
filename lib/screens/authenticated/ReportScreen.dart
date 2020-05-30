@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:intl/intl.dart';
+import 'package:sari_sales/screens/authenticated/LoanList.dart';
 
 import 'package:sari_sales/utils/colorParser.dart';
 
@@ -242,31 +243,32 @@ class _ReportScreen extends State<ReportScreen> {
                           child: ListTile(
                             title: Text("Products", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
                             subtitle: Text('Table List'),
-                            trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey[500]),
-                            onTap: () {
-                              print('Navigate to products');
+                            trailing: IconButton(icon: Icon(Icons.arrow_forward_ios, color: Colors.grey[500]), onPressed: () {
                               Navigator.push(context, PageRouteBuilder(
                                 transitionDuration: Duration(seconds: 1),
                                 pageBuilder: (context, a1, a2) => ProductsTable(categories: _categories, products: _products),
                               ));
-                            },
+                            }),
                           ),
                         )
                       ),
                       ListTile(
                         title: Text("Sales Transactions", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
                         subtitle: Text('Table List'),
-                        trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey[500]),
-                        onTap: () {
+                        trailing: IconButton(icon: Icon(Icons.arrow_forward_ios, color: Colors.grey[500]), onPressed: () {
                           Navigator.push(context, MaterialPageRoute(
                             builder: (context) => SalesTransactionTable(),
                           ));
-                        },
+                        }),
                       ),
                       ListTile(
                         title: Text("Listahan ng Utang", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
                         subtitle: Text('Loan information list'),
-                        trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey[500]),
+                        trailing: IconButton(icon: Icon(Icons.arrow_forward_ios, color: Colors.grey[500]), onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) => LoanList(),
+                          ));
+                        }),
                       )
                     ],
                   ).toList(),
