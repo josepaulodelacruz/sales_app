@@ -6,6 +6,7 @@ import 'package:sari_sales/screens/authenticated/BarcodeScan.dart';
 import 'package:sari_sales/screens/authenticated/HomeScreen.dart';
 import 'package:sari_sales/screens/authenticated/InvertoryScreen.dart';
 import 'package:sari_sales/utils/colorParser.dart';
+import 'dart:io';
 
 class CurrentScreen extends StatelessWidget {
   @override
@@ -61,10 +62,43 @@ class _CurrentScreenState extends State<CurrentScreenState> {
 
     return WillPopScope(
       onWillPop: () async {
-        setState(() {
-          _appearWidget = false;
-        });
-        print('Confirmation to exit');
+        return showGeneralDialog(
+          barrierColor: Colors.black.withOpacity(0.5),
+          transitionBuilder: (context, a1, a2, widget) {
+            final curvedValue = Curves.easeInOutBack.transform(a1.value) - 1.0;
+            return Opacity(
+              opacity: a1.value,
+              child: AlertDialog(
+                contentPadding: EdgeInsets.all(0),
+                title: Text('Do you want\nexit the application', textAlign: TextAlign.start, style: TextStyle( fontSize: 20, fontWeight: FontWeight.bold, color: Colors.grey[500] )),
+                content: Container(
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      FlatButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text('No', style: TextStyle(color: Colors.grey[500]))
+                      ),
+                      FlatButton(
+                        onPressed: () {
+                        },
+                        child: Text('Yes', style: TextStyle(color: Colors.grey[500]))
+                      ),
+                    ],
+                  )
+                ),
+              ),
+            );
+          },
+          transitionDuration: Duration(milliseconds: 500),
+          barrierDismissible: true,
+          barrierLabel: '',
+          context: context,
+          pageBuilder: (context, animation1, animation2) {}
+        );
       },
       child: _appearWidget ? Scaffold(
         resizeToAvoidBottomPadding: true,

@@ -87,14 +87,21 @@ class _InventoryScreen extends State<InventoryScreen> {
             IconButton(
               icon: Icon(Icons.add, color: Colors.black38),
               onPressed: () {
-                Navigator.push(context, PageRouteBuilder(
-                  transitionDuration: Duration(seconds: 1),
-                  pageBuilder: (context, a1, a2) {
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (context) {
                     return AddItemState(products: _products, editItem: {}, categories: _categories, updateProduct: () async {
                       await _fetchLocalStorage();
                     });
-                  },
+                  }
                 ));
+//                Navigator.push(context, PageRouteBuilder(
+//                  transitionDuration: Duration(seconds: 1),
+//                  pageBuilder: (context, a1, a2) {
+//                    return AddItemState(products: _products, editItem: {}, categories: _categories, updateProduct: () async {
+//                      await _fetchLocalStorage();
+//                    });
+//                  },
+//                ));
               },
             )
           ],

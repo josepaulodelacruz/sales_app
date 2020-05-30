@@ -21,17 +21,34 @@ class ProductsTable extends StatefulWidget {
 }
 
 class _ProductsTable extends State<ProductsTable> {
+  TabController _tabController;
   List _categories;
   List _products;
+  List _sortProduct;
+  int _tabIndex = 0;
+  final _searchedProduct = TextEditingController();
+
 
   @override
   void initState () {
     setState(() {
       _categories = widget.categories;
+      _sortProduct = widget.products;
       _products = widget.products;
     });
     super.initState();
   }
+
+  @override
+  _fuzzySearch(val) {
+    setState(() {
+      _products = val == '' ?
+          _sortProduct?.map((product) => product)?.toList() ?? [] :
+          _sortProduct.where((element) => element['pName'].toString().toLowerCase().contains(val.toString().toLowerCase())).toList();
+    });
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -42,14 +59,25 @@ class _ProductsTable extends State<ProductsTable> {
       child: Card(
         elevation: 10,
         child: TextField(
+          controller: _searchedProduct,
+          onChanged: (val) => _fuzzySearch(val),
           decoration: InputDecoration(
+            suffixIcon: IconButton(
+                icon: Icon(Icons.clear),
+                onPressed: () {
+                  setState(() {
+                    _searchedProduct.text ='';
+                    _products = _sortProduct;
+                  });
+                },
+              ),
             border: InputBorder.none,
             focusedBorder: InputBorder.none,
             enabledBorder: InputBorder.none,
             errorBorder: InputBorder.none,
             disabledBorder: InputBorder.none,
             contentPadding:
-            EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
+            EdgeInsets.only(left: 15, bottom: 11, top: 15, right: 15),
             hintText: 'Search Item'),
           )
         ),
@@ -57,6 +85,7 @@ class _ProductsTable extends State<ProductsTable> {
 
     Widget _tabViews = Container(
       child: TabBarView(
+        controller: _tabController,
         children: _categories?.map((cc) {
           List <dynamic> _productByCategory = cc['cTitle'] == 'All' ?
               _products?.map((product) => product)?.toList() ?? [] :
@@ -100,6 +129,7 @@ class _ProductsTable extends State<ProductsTable> {
             backgroundColor: getColorFromHex('#f3f3f3'),
             appBar: AppBar(
               bottom: TabBar(
+                controller: _tabController,
                 isScrollable: true,
                 tabs: _categories == null ? [] : _categories.map((cc) {
                   return Tab(text: cc['cTitle']);
