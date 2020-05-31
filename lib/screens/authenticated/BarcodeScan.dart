@@ -19,8 +19,12 @@ const frontCamera = 'FRONT CAMERA';
 const backCamera = 'BACK CAMERA';
 
 class BarcodeScan extends StatefulWidget {
+  bool loanActive;
+  Map<String, dynamic> personalLoan;
   BarcodeScan({
     Key key,
+    this.loanActive,
+    this.personalLoan,
   }) : super(key: key);
 
   @override
@@ -116,20 +120,20 @@ class _BarcodeScanState extends State<BarcodeScan> {
               height: MediaQuery.of(context).size.height * 0.92,
               child: Column(
                 children: <Widget>[
-//                 Flexible(
-//                   flex: 2,
-//                   child: QRView(
-//                     key: qrKey,
-//                     onQRViewCreated: _onQRViewCreated,
-//                     overlay: QrScannerOverlayShape(
-//                       borderColor: Colors.red,
-//                       borderRadius: 10,
-//                       borderLength: 30,
-//                       borderWidth: 10,
-//                       cutOutSize: 300,
-//                     ),
-//                   ),
-//                 ),
+                 Flexible(
+                   flex: 2,
+                   child: QRView(
+                     key: qrKey,
+                     onQRViewCreated: _onQRViewCreated,
+                     overlay: QrScannerOverlayShape(
+                       borderColor: Colors.red,
+                       borderRadius: 10,
+                       borderLength: 30,
+                       borderWidth: 10,
+                       cutOutSize: 300,
+                     ),
+                   ),
+                 ),
                 Flexible(
                   flex: 1,
                   child: Container(
@@ -315,6 +319,8 @@ class _BarcodeScanState extends State<BarcodeScan> {
             Navigator.push(context, PageRouteBuilder(
               transitionDuration: Duration(seconds: 1),
               pageBuilder: (context, a1, a2) => ViewItems(
+                loanActive: widget.loanActive,
+                personalLoan: widget.personalLoan,
                 localStorageProducts: _products,
                 products: _soldItems,
                 deleteItem: (String id) {

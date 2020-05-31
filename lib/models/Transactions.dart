@@ -19,7 +19,6 @@ class Transactions {
       List<dynamic> decodedFiles = jsonDecode(TransactionsDetails);
       return decodedFiles;
     }
-
   }
 
   static saveTransactionsDetails (products) async {

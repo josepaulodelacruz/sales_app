@@ -11,14 +11,17 @@ import '../../utils/colorParser.dart';
 //models
 import '../../models/ListProducts.dart';
 import '../../models/Transactions.dart';
+import '../../models/Loans.dart';
 
 class ViewItems extends StatefulWidget {
   List products;
   List localStorageProducts;
   Function deleteItem;
   Function updateItem;
+  bool loanActive;
+  Map<String, dynamic> personalLoan;
 
-  ViewItems({Key key, this.products, this.deleteItem, this.localStorageProducts, this.updateItem }) : super(key: key);
+  ViewItems({Key key, this.products, this.deleteItem, this.localStorageProducts, this.updateItem, this.loanActive, this.personalLoan }) : super(key: key);
 
   @override
   createState () => _ViewItemsState();
@@ -80,20 +83,28 @@ class _ViewItemsState extends State<ViewItems> {
         }).toList();
       }).toList();
 
-      print('testing 1');
       ListProducts.saveProductToLocalStorage(_localStorageProducts).then((res) {
         widget.updateItem();
       });
-      print('testing 2');
+      //check if the person who wants to loan
+      if(widget.loanActive == true) {
+        print('proceed to add loan');
+        Loans.addItemLoan(_products, widget.personalLoan).then((res) {
+          Navigator.of(context).popUntil(ModalRoute.withName('/home'));
+        });
+      }
+
       Transactions.saveTransactionsDetails(_products).then((res) {
         setState(() {
           _products = [];
           _localStorageProducts = [];
         });
-        Navigator.pop(context);
-        Navigator.pop(context);
       });
+
+      Navigator.pop(context);
+      Navigator.pop(context);
     }
+
   }
 
   @override

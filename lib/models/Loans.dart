@@ -39,6 +39,25 @@ class Loans {
     return true;
   }
 
+  static addItemLoan (_products, person) async {
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat.yMMMMd().format(now);
+    final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
+    dynamic _LoansList = sharedPrefs.getString('LoansList');
+    List<dynamic> decodedFiles = jsonDecode(_LoansList);
+    decodedFiles.map((people) {
+      int index = decodedFiles.indexOf(people);
+      if(people['id'] == person['id']) {
+        _products.map((product) {
+          decodedFiles[index]['loans'].insert(0, {...product, 'date': formattedDate.toString()});
+        }).toList();
+      }
+    }).toList();
+
+    final decode = json.encode(decodedFiles);
+    sharedPrefs.setString('LoansList', decode);
+  }
+
   static getLoanInformation () async {
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
     dynamic _LoansList = sharedPrefs.getString('LoansList');

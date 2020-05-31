@@ -10,6 +10,7 @@ import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';
 import 'package:camera/camera.dart';
 import 'package:sari_sales/components/SignSignature.dart';
+import 'package:sari_sales/components/ViewLoans.dart';
 import 'package:uuid/uuid.dart';
 import 'package:sari_sales/utils/colorParser.dart';
 
@@ -116,7 +117,7 @@ class _LoanList extends State<LoanList>{
                   },
                   child: CircleAvatar(
                     maxRadius: 33,
-                    backgroundColor: Colors.lightBlueAccent[200],
+                    backgroundColor: Colors.grey[300],
                     child: Center(
                       child: ClipOval(
                           child: Image.file(
@@ -129,7 +130,7 @@ class _LoanList extends State<LoanList>{
                     )
                   ),
                 ),
-                Text(_personalLoans[index - 1]['first'])
+                Text(_personalLoans[index - 1]['first'], style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.black87)),
               ],
             )
           ) : Container(
@@ -144,11 +145,11 @@ class _LoanList extends State<LoanList>{
                     },
                     child: CircleAvatar(
                       maxRadius: 33,
-                      backgroundColor: Colors.brown.shade800,
-                      child: Icon(Icons.add),
+                      backgroundColor: getColorFromHex('#f3f3f3'),
+                      child: Icon(Icons.add, size: 32),
                     ),
                   ),
-                  Text('Add person')
+                  Text('Add')
                 ],
               )
           );
@@ -424,24 +425,26 @@ class _LoanList extends State<LoanList>{
               )
             ) : Align(
               alignment: Alignment.topCenter,
-              child: CircleAvatar(
-                radius: 50,
-                backgroundColor: Color.fromARGB(255, 148, 231, 225),
+              child: Hero(
+                tag: 'viewLoan',
                 child: CircleAvatar(
-                  radius: 45,
-//                  backgroundImage: AssetImage(_viewPerson['imagePath']),
-                  child: Center(
-                    child: ClipOval(
+                  radius: 50,
+                  backgroundColor: Color.fromARGB(255, 148, 231, 225),
+                  child: CircleAvatar(
+                    radius: 45,
+                    child: Center(
+                      child: ClipOval(
                         child: Image.file(
                           File(_viewPerson['imagePath']),
                           height: 90,
                           width: 90,
                           fit: BoxFit.fill,
                         )
-                    ),
-                  )
+                      ),
+                    )
+                  ),
                 ),
-              ),
+              )
             ),
             Align(
               alignment: Alignment.topRight,
@@ -449,7 +452,14 @@ class _LoanList extends State<LoanList>{
                 margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.05, right: 35),
                 child: _viewPerson == null ? IconButton(icon: Icon(Icons.check, color: Colors.green, size: 45), onPressed: () {
                   _handleSubmit();
-                }) : SizedBox(),
+                }) : IconButton(icon: Icon(Icons.add_shopping_cart, color: Colors.blueAccent), onPressed: () {
+                  Navigator.push(context, PageRouteBuilder(
+                    transitionDuration: Duration(seconds: 1),
+                    pageBuilder: (context, a1, a2) => ViewLoans(
+                      loanInfo: _viewPerson,
+                    )
+                  ));
+                }),
               ),
             )
           ],
