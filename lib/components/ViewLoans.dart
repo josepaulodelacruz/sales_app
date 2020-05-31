@@ -92,7 +92,7 @@ class _ViewLoans extends State<ViewLoans> {
                   children: <Widget>[
                     Text('Worth', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300, color: Colors.black87)),
                     Text('P ${_worthOfItems}', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87)),
-                    Text('Loan items ${_loanInfo['loans'].length.toString()}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300, color: Colors.black87)),
+                    Text('Loan items ${_loanInfo['loans'].length.toString()}', textAlign: TextAlign.center, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300, color: Colors.black87)),
                   ],
                 )
               )
