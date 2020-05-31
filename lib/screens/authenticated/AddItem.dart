@@ -171,6 +171,8 @@ class _AddItemState extends State<AddItemState> {
                  children: <Widget>[
                    TextField(
                      controller: _productName,
+                     keyboardType: TextInputType.text,
+                     textCapitalization: TextCapitalization.words,
                      decoration: InputDecoration(
                        labelText: 'Product Name'
                      )

@@ -34,6 +34,8 @@ class _ViewLoans extends State<ViewLoans> {
 
   @override
   Widget build(BuildContext context) {
+    List _prices = _loans.map((loan) => loan['orderCount'] * loan['pPrice']).toList();
+    double _worthOfItems = _prices.fold(0, (previousValue, element) => previousValue + element);
 
     Widget _personInfo = Container(
       padding: EdgeInsets.symmetric(horizontal: 20),
@@ -54,8 +56,8 @@ class _ViewLoans extends State<ViewLoans> {
                     child: ClipOval(
                       child: Image.file(
                         File(_loanInfo['imagePath']),
-                        height: 90,
-                        width: 90,
+                        height: 85,
+                        width: 100,
                         fit: BoxFit.fill,
                       )
                     ),
@@ -88,8 +90,9 @@ class _ViewLoans extends State<ViewLoans> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Text(_loanInfo['loans'].length.toString(), style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87)),
-                    Text('Loan items', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300, color: Colors.black87)),
+                    Text('Worth', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300, color: Colors.black87)),
+                    Text('P ${_worthOfItems}', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87)),
+                    Text('Loan items ${_loanInfo['loans'].length.toString()}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300, color: Colors.black87)),
                   ],
                 )
               )

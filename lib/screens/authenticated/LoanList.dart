@@ -176,6 +176,8 @@ class _LoanList extends State<LoanList>{
                     child: TextField(
                       enabled: _viewPerson == null ? true : false,
                       controller: _firstName,
+                      keyboardType: TextInputType.text,
+                      textCapitalization: TextCapitalization.words,
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         focusedBorder: InputBorder.none,
@@ -205,6 +207,8 @@ class _LoanList extends State<LoanList>{
                     child: TextField(
                       enabled: _viewPerson == null ? true : false,
                       controller: _lastName,
+                      keyboardType: TextInputType.text,
+                      textCapitalization: TextCapitalization.words,
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         focusedBorder: InputBorder.none,
@@ -234,6 +238,7 @@ class _LoanList extends State<LoanList>{
                     child: TextField(
                       enabled: _viewPerson == null ? true : false,
                       controller: _contactNumber,
+                      keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         focusedBorder: InputBorder.none,
@@ -263,6 +268,8 @@ class _LoanList extends State<LoanList>{
                     child: TextField(
                       enabled: _viewPerson == null ? true : false,
                       controller: _address,
+                      keyboardType: TextInputType.text,
+                      textCapitalization: TextCapitalization.words,
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         focusedBorder: InputBorder.none,

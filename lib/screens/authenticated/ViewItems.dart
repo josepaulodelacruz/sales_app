@@ -90,7 +90,9 @@ class _ViewItemsState extends State<ViewItems> {
       if(widget.loanActive == true) {
         print('proceed to add loan');
         Loans.addItemLoan(_products, widget.personalLoan).then((res) {
-          Navigator.of(context).popUntil(ModalRoute.withName('/home'));
+          Navigator.pop(context);
+          Navigator.pop(context);
+          Navigator.pop(context);
         });
       }
 
