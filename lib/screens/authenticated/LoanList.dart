@@ -429,7 +429,17 @@ class _LoanList extends State<LoanList>{
                 backgroundColor: Color.fromARGB(255, 148, 231, 225),
                 child: CircleAvatar(
                   radius: 45,
-                  backgroundImage: AssetImage(_viewPerson['imagePath']),
+//                  backgroundImage: AssetImage(_viewPerson['imagePath']),
+                  child: Center(
+                    child: ClipOval(
+                        child: Image.file(
+                          File(_viewPerson['imagePath']),
+                          height: 90,
+                          width: 90,
+                          fit: BoxFit.fill,
+                        )
+                    ),
+                  )
                 ),
               ),
             ),
