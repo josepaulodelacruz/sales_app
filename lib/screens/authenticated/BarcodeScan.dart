@@ -104,13 +104,14 @@ class _BarcodeScanState extends State<BarcodeScan> {
         child: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
-            leading: IconButton(
-              icon: Icon(Icons.arrow_back_ios),
-              onPressed: () {
-                Navigator.pushNamedAndRemoveUntil(context, "/home", (r) => false);
-              },
-            ),
-            title: Text('Barcode Scanner')
+          backgroundColor: getColorFromHex('#20BDFF'),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios),
+            onPressed: () {
+              Navigator.pushNamedAndRemoveUntil(context, "/home", (r) => false);
+            },
+          ),
+          title: Text('Barcode Scanner')
         ),
         body: AnimatedOpacity(
           duration: Duration(milliseconds: 500),

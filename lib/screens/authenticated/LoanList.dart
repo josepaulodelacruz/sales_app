@@ -37,7 +37,9 @@ class _LoanList extends State<LoanList>{
   final _address = TextEditingController();
   String _signature;
   String _imagePath;
+  final _searchName = TextEditingController();
   List<dynamic> _personalLoans;
+  List<dynamic> _searchLoans;
   Map<String, dynamic> _viewPerson;
 
 
@@ -52,6 +54,7 @@ class _LoanList extends State<LoanList>{
     await Loans.getLoanInformation().then((res) {
       setState(() {
         _personalLoans = res;
+        _searchLoans = res;
       });
     });
   }
@@ -94,6 +97,15 @@ class _LoanList extends State<LoanList>{
     });
   }
 
+  @override
+  _fuzzySearch (val) {
+    setState(() {
+      _personalLoans = val == '' ?
+          _searchLoans?.map((loans) => loans)?.toList() ?? [] :
+          _searchLoans.where((element) => element['first'].toString().toLowerCase().contains(val.toString().toLowerCase())).toList();
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +128,7 @@ class _LoanList extends State<LoanList>{
                     _handleView(_personalLoans[index - 1]);
                   },
                   child: CircleAvatar(
-                    maxRadius: 33,
+                    maxRadius: 36,
                     backgroundColor: Colors.grey[300],
                     child: Center(
                       child: ClipOval(
@@ -477,16 +489,28 @@ class _LoanList extends State<LoanList>{
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
+        backgroundColor: getColorFromHex('#20BDFF'),
         title: Text('Loan List'),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(60.0),
           child: Container(
             margin: EdgeInsets.all(10),
             child: TextField(
+              controller: _searchName,
+              onChanged: (val) => _fuzzySearch(val),
               decoration: InputDecoration(
                 fillColor: Colors.white,
                 filled: true,
-                hintText: 'Search Person'
+                hintText: 'Search name',
+                suffixIcon: IconButton(
+                  icon: Icon(Icons.clear),
+                  onPressed: () {
+                    setState(() {
+                      _personalLoans = _searchLoans;
+                      _searchName.text = '';
+                    });
+                  },
+                )
               )
             )
           )

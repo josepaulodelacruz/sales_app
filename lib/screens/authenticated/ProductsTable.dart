@@ -128,7 +128,8 @@ class _ProductsTable extends State<ProductsTable> {
           child: Scaffold(
             backgroundColor: getColorFromHex('#f3f3f3'),
             appBar: AppBar(
-              bottom: TabBar(
+                backgroundColor: getColorFromHex('#20BDFF'),
+                bottom: TabBar(
                 controller: _tabController,
                 isScrollable: true,
                 tabs: _categories == null ? [] : _categories.map((cc) {

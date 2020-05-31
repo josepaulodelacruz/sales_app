@@ -103,6 +103,7 @@ class _ViewLoans extends State<ViewLoans> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: getColorFromHex('#20BDFF'),
         title: Text('Loan information'),
         actions: <Widget>[
           IconButton(

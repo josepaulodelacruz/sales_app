@@ -252,6 +252,7 @@ class _ViewItemsState extends State<ViewItems> {
       child: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
+            backgroundColor: getColorFromHex('#20BDFF'),
             title: Text('Items List')
         ),
         body: AnimatedOpacity(
