@@ -58,6 +58,24 @@ class Loans {
     sharedPrefs.setString('LoansList', decode);
   }
 
+  static deleteLoan (id, loanIndex) async {
+    final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
+    dynamic _LoansList = sharedPrefs.getString('LoansList');
+    List<dynamic> _loanList = jsonDecode(_LoansList);
+
+    _loanList.map((loan) {
+      if(loan['id'] == id) {
+        loan['loans'].removeAt(loanIndex);
+        return;
+      }
+    }).toList();
+
+    final decode = json.encode(_loanList);
+    sharedPrefs.setString('LoansList', decode);
+
+
+  }
+
   static getLoanInformation () async {
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
     dynamic _LoansList = sharedPrefs.getString('LoansList');

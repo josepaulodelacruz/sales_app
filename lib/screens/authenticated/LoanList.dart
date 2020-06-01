@@ -476,6 +476,9 @@ class _LoanList extends State<LoanList>{
                     transitionDuration: Duration(seconds: 1),
                     pageBuilder: (context, a1, a2) => ViewLoans(
                       loanInfo: _viewPerson,
+                      deleteLoan: (index) {
+                        _fetchLoansList();
+                      }
                     )
                   ));
                 }),

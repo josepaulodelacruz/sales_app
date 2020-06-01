@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:badges/badges.dart';
+import 'package:audioplayers/audio_cache.dart';
 import 'package:sari_sales/constants/colorsSequence.dart';
 import 'package:sari_sales/screens/authenticated/HomeScreen.dart';
 
@@ -72,16 +73,23 @@ class _BarcodeScanState extends State<BarcodeScan> {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) {
       if (!_isScan) {
-          setState(() {
-            _isScan = true;
-            _scanItem.text = scanData;
-          });
-          dynamic result = _products.where((pp) {
-            String codeString = pp['pCode'].toString();
-            return codeString.contains(_scanItem.text);
-          }).toList();
-          setState(() {
-            item = result[0];
+        final player = AudioCache();
+        setState(() => _isScan = true);
+        player.play('beep.mp3').then((res) {
+            //synchronize beep
+            Timer(Duration(milliseconds: 100), () {
+              setState(() {
+                _scanItem.text = scanData;
+              });
+              dynamic result = _products.where((pp) {
+                String codeString = pp['pCode'].toString();
+                return codeString.contains(_scanItem.text);
+              }).toList();
+              setState(() {
+                item = result[0];
+              });
+            });
+
           });
         }
       }
@@ -121,20 +129,20 @@ class _BarcodeScanState extends State<BarcodeScan> {
               height: MediaQuery.of(context).size.height * 0.92,
               child: Column(
                 children: <Widget>[
-                 Flexible(
-                   flex: 2,
-                   child: QRView(
-                     key: qrKey,
-                     onQRViewCreated: _onQRViewCreated,
-                     overlay: QrScannerOverlayShape(
-                       borderColor: Colors.red,
-                       borderRadius: 10,
-                       borderLength: 30,
-                       borderWidth: 10,
-                       cutOutSize: 300,
-                     ),
-                   ),
-                 ),
+//                 Flexible(
+//                   flex: 2,
+//                   child: QRView(
+//                     key: qrKey,
+//                     onQRViewCreated: _onQRViewCreated,
+//                     overlay: QrScannerOverlayShape(
+//                       borderColor: Colors.red,
+//                       borderRadius: 10,
+//                       borderLength: 30,
+//                       borderWidth: 10,
+//                       cutOutSize: 300,
+//                     ),
+//                   ),
+//                 ),
                 Flexible(
                   flex: 1,
                   child: Container(

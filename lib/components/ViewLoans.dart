@@ -4,16 +4,20 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:sari_sales/models/Loans.dart';
 import 'package:sari_sales/screens/authenticated/BarcodeScan.dart';
 
 import '../utils/colorParser.dart';
 
+//models
+import 'package:sari_sales/models/Transactions.dart';
+
 
 class ViewLoans extends StatefulWidget {
-
   Map<String, dynamic >loanInfo;
+  Function deleteLoan;
 
-  ViewLoans({Key key, this.loanInfo }) : super(key: key);
+  ViewLoans({Key key, this.loanInfo, this.deleteLoan });
 
   @override
   createState () => _ViewLoans();
@@ -30,6 +34,94 @@ class _ViewLoans extends State<ViewLoans> {
       _loans = widget.loanInfo['loans'];
     });
     super.initState();
+  }
+
+  @override
+  _deleteRow (index, BuildContext context) async {
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Payment verification'),
+        contentPadding: EdgeInsets.only(top: 20),
+        content: Container(
+          height: MediaQuery.of(context).size.height * 0.20,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text('By confirming yes the\nloan record will be deleted.', textAlign: TextAlign.start, style: TextStyle( fontSize: 20, fontWeight: FontWeight.bold, color: Colors.grey[500] )),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                child: Row(
+                  children: <Widget>[
+                    Flexible(
+                      flex: 1,
+                      child: InkWell(
+                        onTap: () => Navigator.of(context).pop(),
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: 50,
+                          decoration: new BoxDecoration(
+                            gradient: new LinearGradient(
+                              colors: [
+                                getColorFromHex('#DB3445'),
+                                getColorFromHex('#FF0000'),
+                              ],
+                            ),
+                          ),
+                          padding: const EdgeInsets.all(10.0),
+                          child: Center(
+                              child: Text(
+                                  'Cancel',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)
+                              )
+                          ),
+                        )
+                      )
+                    ),
+                    Flexible(
+                      flex: 1,
+                      child: InkWell(
+                        onTap: () async {
+                          await Loans.deleteLoan(_loanInfo['id'], index).then((res) {
+                            setState(() {
+                              _loans.removeAt(index);
+                            });
+                          }).then((res) {
+                            Navigator.pop(context);
+                          });
+                        },
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: 50,
+                          decoration: new BoxDecoration(
+                            gradient: new LinearGradient(
+                              colors: [
+                                getColorFromHex('#1FA2FF'),
+                                getColorFromHex('#12D8FA'),
+                              ],
+                            ),
+                          ),
+                          padding: const EdgeInsets.all(10.0),
+                          child: Center(
+                            child: Text(
+                              'Yes',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)
+                            )
+                          ),
+                        )
+                      )
+                    )
+                  ],
+                )
+              )
+            ],
+          )
+        )
+      )
+    );
+
   }
 
   @override
@@ -154,7 +246,12 @@ class _ViewLoans extends State<ViewLoans> {
                               int index = _loans.indexOf(product);
                               return DataRow(
                                 cells: <DataCell>[
-                                  DataCell(Text(product['pName'].toString())),
+                                  DataCell(
+                                    Text(product['pName'].toString()),
+                                    onTap: () async {
+                                      _deleteRow(index, context);
+                                    }
+                                  ),
                                   DataCell(Text(product['pPrice'].toString())),
                                   DataCell(Text(product['date'].toString())),
                                 ]

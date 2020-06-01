@@ -38,6 +38,7 @@ dependencies:
   charts_flutter: ^0.9.0
   signature: ^3.1.1
   image: ^2.1.12
+  audioplayers: ^0.15.1
 
 dev_dependencies:
   flutter_test:
@@ -57,6 +58,7 @@ flutter:
   assets:
     - images/Hero.png
     - images/gradien-bg.png
+    - assets/beep.mp3
 
   # To add assets to your application, add an assets section, like this:
   # assets:
