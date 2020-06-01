@@ -68,8 +68,15 @@ class _ReportScreen extends State<ReportScreen> {
      });
     }).then((res) async {
       await Transactions.getTransactionsDetails().then((res) {
+        //reverse list to latest dates
+        var _toLatestDates = res;
+        for(var i=0;i<_toLatestDates.length/2;i++){
+          var temp = _toLatestDates[i];
+          _toLatestDates[i] = _toLatestDates[_toLatestDates.length-1-i];
+          _toLatestDates[_toLatestDates.length-1-i] = temp;
+        }
         setState(() {
-          _transactions = res;
+          _transactions = _toLatestDates;
         });
       });
     });
@@ -210,7 +217,7 @@ class _ReportScreen extends State<ReportScreen> {
                         ],
                       ),
                     ) : SizedBox();
-                  })?.toList()?.reversed ?? [],
+                  })?.toList() ?? [],
                 ).toList(),
               )
             )
@@ -289,6 +296,7 @@ class _ReportScreen extends State<ReportScreen> {
                 expandedHeight: 200,
                 showCard: _showCard,
                 isAnimate: _isAnimateCard,
+                currentDate: formattedDate.toString(),
               ),
               pinned: true,
               floating: false,
@@ -318,10 +326,11 @@ class _ReportScreen extends State<ReportScreen> {
 class MySliverAppBar extends SliverPersistentHeaderDelegate {
   final double expandedHeight;
   String showCard;
+  String currentDate;
   bool isAnimate = false;
 
-
   List<dynamic> cards = [
+
     Reports(
       cardTitle: 'Sales',
       isCard: Container(
@@ -352,7 +361,16 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text('1,200.00', textAlign: TextAlign.start, style: TextStyle(color: Colors.white, fontSize: 40, fontWeight: FontWeight.bold)),
+                  FutureBuilder(
+                    future: Reports.computeTransaction(),
+                    builder: (context, snapshot) {
+                      if(snapshot.connectionState == ConnectionState.done) {
+                        return Text(snapshot.data, textAlign: TextAlign.start, style: TextStyle(color: Colors.white, fontSize: 40, fontWeight: FontWeight.bold));
+                      } else {
+                        return CircularProgressIndicator();
+                      }
+                    },
+                  ),
                   Icon(Icons.arrow_drop_up, color: Colors.white, size: 32)
                 ],
               )
@@ -361,7 +379,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
               flex: 1,
               child: Align(
                 alignment: Alignment.bottomRight,
-                child: Text('24 May, 2020', textAlign: TextAlign.end, style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700))
+                child: Text('${Reports.isDate()}', textAlign: TextAlign.end, style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700))
               ),
             )
           ],
@@ -415,7 +433,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
   ];
 
 
-  MySliverAppBar({@required this.expandedHeight, this.showCard, this.isAnimate });
+  MySliverAppBar({@required this.expandedHeight, this.showCard, this.isAnimate, this.currentDate });
 
   @override
   Widget build( BuildContext context, double shrinkOffset, bool overlapsContent) {

@@ -39,19 +39,34 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
       //sort all availables dates
       List d = res?.map((d) => d['dates'])?.toList() ?? [];
       List _sortedDates = d.toSet().toList();
+      List _toLatestDates = _sortedDates;
+      //reverse the list of dates
+      for(var i=0;i<_toLatestDates.length/2;i++){
+        var temp = _toLatestDates[i];
+        _toLatestDates[i] = _toLatestDates[_toLatestDates.length-1-i];
+        _toLatestDates[_toLatestDates.length-1-i] = temp;
+      }
       setState(() {
         _transactions = res;
         _dates = _sortedDates;
-        _sortDates = _sortedDates;
+        _sortDates = _toLatestDates;
       });
     });
   }
 
   void _salesBy (String val) {
-    setState(() {
-      _profitType = val;
-    });
+    var myList = _sortDates;
 
+    for(var i=0;i<myList.length/2;i++){
+      var temp = myList[i];
+      myList[i] = myList[myList.length-1-i];
+      myList[myList.length-1-i] = temp;
+    }
+
+    print(myList);
+//    setState(() {
+//      _profitType = val;
+//    });
   }
 
   void _fuzzySearch (val) {
