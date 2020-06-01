@@ -210,7 +210,7 @@ class _ReportScreen extends State<ReportScreen> {
                         ],
                       ),
                     ) : SizedBox();
-                  })?.toList() ?? [],
+                  })?.toList()?.reversed ?? [],
                 ).toList(),
               )
             )

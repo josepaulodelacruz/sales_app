@@ -139,7 +139,7 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
                                 ],
                               ),
                             ) : SizedBox();
-                          })?.toList() ?? [],
+                          })?.toList()?.reversed ?? [],
                         ).toList(),
                       )
                     )

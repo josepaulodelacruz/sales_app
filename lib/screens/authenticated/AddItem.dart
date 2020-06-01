@@ -85,7 +85,6 @@ class _AddItemState extends State<AddItemState> {
 
   @override
   Future<void> _saveToStorage (products) async {
-    print(products);
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
     final decode = json.encode(products);
     sharedPrefs.setString('ListProducts', decode).then((res) {
