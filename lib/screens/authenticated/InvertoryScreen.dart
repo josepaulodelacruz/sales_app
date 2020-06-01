@@ -60,9 +60,9 @@ class _InventoryScreen extends State<InventoryScreen> {
     });
   }
 
-  void _deleteToLocalStorage (int index) async {
+  void _deleteToLocalStorage (int index, del) async {
     setState(() {
-      _products.removeAt(index);
+      _products.removeWhere((element) => element['pId'] == del);
     });
     //update local storage
     await ListProducts.saveProductToLocalStorage(_products);
@@ -134,7 +134,7 @@ class _InventoryScreen extends State<InventoryScreen> {
                   productInfo: sortedProductList[index],
                   productIndex: index,
                   isDelete: (del) {
-                    _deleteToLocalStorage(index);
+                    _deleteToLocalStorage(index, del);
                   },
                   isEdit: (int editIndex) {
                     if(editIndex == index) {
