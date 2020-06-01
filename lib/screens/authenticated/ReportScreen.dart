@@ -213,7 +213,7 @@ class _ReportScreen extends State<ReportScreen> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: <Widget>[
                           Text(transaction['dates'].toString(), style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w500)),
-                          Text('P ${transaction['amount']}', style: TextStyle(color: Colors.red[500], fontWeight: FontWeight.w700)),
+                          Text('₱ ${transaction['amount']}', style: TextStyle(color: Colors.red[500], fontWeight: FontWeight.w700)),
                         ],
                       ),
                     ) : SizedBox();
@@ -355,7 +355,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                 child: Text('Sales Report', textAlign: TextAlign.start, style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w400))
               ),
             ),
-            Text('PHP', textAlign: TextAlign.start, style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.w500)),
+            Text('Daily', textAlign: TextAlign.start, style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.w500)),
             Flexible(
               flex: 1,
               child: Row(
@@ -365,7 +365,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                     future: Reports.computeTransaction(),
                     builder: (context, snapshot) {
                       if(snapshot.connectionState == ConnectionState.done) {
-                        return Text(snapshot.data, textAlign: TextAlign.start, style: TextStyle(color: Colors.white, fontSize: 40, fontWeight: FontWeight.bold));
+                        return Text('₱${snapshot.data}', textAlign: TextAlign.start, style: TextStyle(color: Colors.white, fontSize: 40, fontWeight: FontWeight.bold));
                       } else {
                         return CircularProgressIndicator();
                       }
