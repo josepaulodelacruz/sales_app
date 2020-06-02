@@ -12,13 +12,12 @@ class Categories {
     this.categoryImagePath,
   });
 
-  static toJson(String category, String categoryPath) {
-    if(category == '' || categoryPath == null) {
+  static toJson(String category) {
+    if(category == '') {
       return {'isValid': false };
     } else {
       return {
         'cTitle': category,
-        'cPath': categoryPath,
         'isValid': true
       };
     }
@@ -29,7 +28,7 @@ class Categories {
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
     dynamic categories = sharedPrefs.getString('categories');
     if(categories == null) {
-      return [{'cTitle': 'All', 'cPath': '', 'isValid': true}, {'cTitle': 'Noodles', 'cPath': '', 'isValid': true}];
+      return [{'cTitle': 'All', 'isValid': true}];
     } else {
       List<dynamic> decodedFiles = jsonDecode(categories);
       return decodedFiles;

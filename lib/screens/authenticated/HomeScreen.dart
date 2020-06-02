@@ -25,9 +25,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final _formKey = GlobalKey<FormState>();
   List categories;
   final _newCategory = TextEditingController();
-  String _imageCategoryPath;
   String _isCategoryActive = 'All';
   bool _animateText = false;
 
@@ -39,6 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   _fetchCategoriesLocalStorate () async {
     await Categories.getCategoryLocalStorage().then((res) {
+      print(res);
       setState(() {
         categories = res;
       });
@@ -47,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void _addNewCategory (context) async {
-    Map<String, dynamic> _categoryItem = await Categories.toJson(_newCategory.text, _imageCategoryPath);
+    Map<String, dynamic> _categoryItem = await Categories.toJson(_newCategory.text);
     if(!_categoryItem['isValid']) {
       print('Something went wrong');
       return;
@@ -57,7 +58,6 @@ class _HomeScreenState extends State<HomeScreen> {
       });
       Categories.saveCategoryToLocalStorage(categories).then((res) {
         setState(() {
-          _imageCategoryPath = null;
           _newCategory.text = '';
         });
         print(res);
@@ -83,66 +83,45 @@ class _HomeScreenState extends State<HomeScreen> {
               child: AlertDialog(
                 contentPadding: EdgeInsets.all(0),
                 content: Container(
-                  height: MediaQuery.of(context).size.height * 0.15,
+                  height: MediaQuery.of(context).size.height * 0.18,
                   width: MediaQuery.of(context).size.width * 0.50,
                   child: Row(
                     children: <Widget>[
                       Flexible(
                         flex: 1,
-                        child: InkWell(
-                          onTap: () async {
-                            FocusScope.of(context).unfocus();
-                            WidgetsFlutterBinding.ensureInitialized();
-
-                            // Obtain a list of the available cameras on the device.
-                            final cameras = await availableCameras();
-
-                            // Get a specific camera from the list of available cameras.
-                            final firstCamera = cameras.first;
-                            Navigator.push(context, PageRouteBuilder(
-                              pageBuilder: (context, a1, a2) => TakePhoto(camera: firstCamera, isCapture: (path, pictureId) {
-                                setState(() {
-                                  _imageCategoryPath = path;
-                                  Navigator.pop(context);
-                                  Navigator.pop(context);
-                                  _newCategoryModal(context);
-                                });
-
-                              }),
-                            ));
-                          },
-                          child: _imageCategoryPath == null ? Container(
-                              height: MediaQuery.of(context).size.height,
-                              width: MediaQuery.of(context).size.width,
-                              color: getColorFromHex('#373234'),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  IconButton(
-                                    icon: Icon(Icons.camera_front, size: 32, color: Colors.white),
-                                  ),
-                                  Text('Add Pictrue', style: TextStyle(color: Colors.white))
-                                ],
-                              )
-                          ) : Image.file(File(_imageCategoryPath))
-                        )
-
-                      ),
-                      Flexible(
-                        flex: 2,
                         child: Container(
                           padding: EdgeInsets.symmetric(horizontal: 10),
                           height: MediaQuery.of(context).size.height,
                           width: MediaQuery.of(context).size.width,
                           child: Column(
                             children: <Widget>[
-                              TextField(
-                                textCapitalization: TextCapitalization.words,
-                                controller: _newCategory,
-                                decoration: InputDecoration(
-                                    labelText: 'Input new Category'
-                                )
+                              Form(
+                                key: _formKey,
+                                child: TextFormField(
+                                  textCapitalization: TextCapitalization.words,
+                                  controller: _newCategory,
+                                  decoration: InputDecoration(
+                                      labelText: 'Input new Category'
+                                  ),
+                                  validator: (value) {
+                                    bool isExist = false;
+                                    if(value.isEmpty) {
+                                      return 'Please enter Category';
+                                    }
+                                    categories.map((cc) {
+                                      if(cc['cTitle'].toString().toLowerCase() == value.toLowerCase()) {
+                                        isExist = true;
+                                      }
+                                    }).toList();
+
+                                    if(isExist) {
+                                      return 'Category already Exist';
+                                    }
+
+                                    return null;
+
+                                  },
+                                ),
                               ),
                               Container(
                                 child: Row(
@@ -155,7 +134,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                     IconButton(
                                       icon: Icon(Icons.check, color: Colors.blue),
                                       onPressed: () {
-                                        _addNewCategory(context);
+                                        if(_formKey.currentState.validate()) {
+                                          _addNewCategory(context);
+                                        }
                                       },
                                     )
                                   ],
