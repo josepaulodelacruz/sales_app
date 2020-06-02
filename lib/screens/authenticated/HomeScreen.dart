@@ -353,7 +353,7 @@ class _HomeScreenState extends State<HomeScreen> {
           height: 300,
           width: MediaQuery.of(context).size.width * 0.75,
           decoration: BoxDecoration(
-          color: getColorFromHex('#f1f1f1'),
+          color: getColorFromHex('#f3f3f3'),
             borderRadius: BorderRadius.horizontal(
               right: Radius.elliptical(2000, 1000)
             )
