@@ -282,7 +282,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           children: sortedProducts.map((product) {
             int index = sortedProducts.indexOf(product);
-            return Container(
+            return product['pQuantity'] <= 5 ? Container(
               height: 165,
               width: MediaQuery.of(context).size.width  ,
               margin: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
@@ -328,7 +328,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 )
               )
-            );
+            ) : SizedBox();
           }).toList(),
         ),
       );
