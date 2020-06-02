@@ -26,6 +26,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  List<Color> activeColor = [getColorFromHex('#AAFFA9'), getColorFromHex('#11FFBD')];
+  List<Color> inActiveColor = [getColorFromHex('#ff9966'), getColorFromHex('#ff5e62'),];
+
   final _formKey = GlobalKey<FormState>();
   List categories;
   List _products;
@@ -244,6 +247,7 @@ class _HomeScreenState extends State<HomeScreen> {
             return Transform.scale(
               scale: _isCategoryActive == cc['cTitle'] ? 0.95 : 1,
               child: AnimatedContainer(
+                margin: EdgeInsets.symmetric(horizontal: 5),
                 duration: Duration(milliseconds: 300),
                 height: 150,
                 width: 120,
@@ -255,16 +259,25 @@ class _HomeScreenState extends State<HomeScreen> {
                     });
                     _isAnimateText(cc['cTitle']);
                   },
-                  child: Card(
-                    color: _isCategoryActive == cc['cTitle'] ? Colors.yellowAccent : Colors.white,
-                    elevation: _isCategoryActive == cc['cTitle'] ? 0 : 5,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        Text(cc['cTitle'].toString(), style: TextStyle(fontSize: 22,fontWeight: FontWeight.bold, color: Colors.black))
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      gradient: LinearGradient(
+                        colors: _isCategoryActive == cc['cTitle'] ? activeColor : inActiveColor,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 1,
+                          blurRadius: 1,
+                        ),
                       ],
                     ),
-                  )
+                    padding: EdgeInsets.all(10.0),
+                    child: Center(
+                      child: Text(cc['cTitle'].toString(), textAlign: TextAlign.center, style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold, color: Colors.white))
+                    )
+                  ),
                 ),
               )
             );
