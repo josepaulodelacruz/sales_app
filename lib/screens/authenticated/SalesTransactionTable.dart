@@ -84,7 +84,10 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
     String formattedDate = DateFormat.yMMMMd().format(now);
     //compute profits
     List _transactionAmounts = _transactions?.map((transaction) {
-      return transaction['dates'] == formattedDate.toString() ? double.parse(transaction['amount']) : 0;
+      return transaction['dates'].toString().toLowerCase() == (_searchDate.text.toLowerCase() == '' ?
+          formattedDate.toString().toLowerCase() :
+          (_sortDates.isEmpty ? formattedDate.toString().toLowerCase() : _sortDates[0].toString().toLowerCase())) ?
+          double.parse(transaction['amount']) : 0;
     })?.toList() ?? [];
     double _profitAmount = _transactionAmounts.fold(0, (i, j) => i + j);
 
