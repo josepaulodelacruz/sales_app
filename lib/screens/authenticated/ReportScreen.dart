@@ -69,15 +69,17 @@ class _ReportScreen extends State<ReportScreen> {
     }).then((res) async {
       await Transactions.getTransactionsDetails().then((res) {
         //reverse list to latest dates
-        var _toLatestDates = res;
-        for(var i=0;i<_toLatestDates.length/2;i++){
-          var temp = _toLatestDates[i];
-          _toLatestDates[i] = _toLatestDates[_toLatestDates.length-1-i];
-          _toLatestDates[_toLatestDates.length-1-i] = temp;
+        if(res != null) {
+          var _toLatestDates = res;
+          for(var i=0;i<_toLatestDates.length/2;i++){
+            var temp = _toLatestDates[i];
+            _toLatestDates[i] = _toLatestDates[_toLatestDates.length-1-i];
+            _toLatestDates[_toLatestDates.length-1-i] = temp;
+          }
+          setState(() {
+            _transactions = _toLatestDates;
+          });
         }
-        setState(() {
-          _transactions = _toLatestDates;
-        });
       });
     });
 

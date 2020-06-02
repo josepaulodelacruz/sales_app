@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "685116301295",
+    "firebase_url": "https://sales-app-e8acb.firebaseio.com",
+    "project_id": "sales-app-e8acb",
+    "storage_bucket": "sales-app-e8acb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:685116301295:android:cd96a24fc96d7cd86ea01a",
+        "android_client_info": {
+          "package_name": "com.example.sari_sales"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "685116301295-fu15tftc7vgsmue1c65a75qb9evkejom.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDUtDDotVEkll5Ex1mzSHzzgKguyAUpsnM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "685116301295-fu15tftc7vgsmue1c65a75qb9evkejom.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
