@@ -244,70 +244,70 @@ class _BarcodeScanState extends State<BarcodeScan> {
                                     ),
                                   ),
                                   Expanded(
-                                      flex: 2,
-                                      child: Container(
-                                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                            children: <Widget>[
-                                              Container(
-                                                  child: Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                      children: [
-                                                        Flexible(
-                                                          child: Text('Product Name:', style: TextStyle(fontSize: 15, color: Colors.grey[500], fontWeight: FontWeight.bold)),
-                                                        ),
-                                                        Text('${item['pName']}', style: TextStyle(fontSize: 15, color: Colors.grey[500], fontWeight: FontWeight.bold)),
-                                                      ]
+                                    flex: 2,
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        children: <Widget>[
+                                          Container(
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Flexible(
+                                                  child: Text('Product Name:', style: TextStyle(fontSize: 15, color: Colors.grey[500], fontWeight: FontWeight.bold)),
+                                                ),
+                                                Text('${item['pName']}', style: TextStyle(fontSize: 15, color: Colors.grey[500], fontWeight: FontWeight.bold)),
+                                              ]
+                                            )
+                                          ),
+                                          Container(
+                                            height: 20,
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Flexible(
+                                                  flex: 2,
+                                                  child: Text('Quantity:', style: TextStyle(fontSize: 15, color: Colors.grey[500], fontWeight: FontWeight.bold)),
+                                                ),
+                                                Flexible(
+                                                  flex: 1,
+                                                  child: TextField(
+                                                    textAlign: TextAlign.right,
+                                                    onChanged: (val) {
+                                                      setState(() {
+                                                        _orderCount = val.length > 0 ? int.parse(val): 1;
+                                                      });
+                                                    },
+                                                    decoration: InputDecoration(
+                                                        hintText: '1'
+                                                    ),
+                                                    keyboardType: TextInputType.numberWithOptions(
+                                                      decimal: false,
+                                                      signed: true,
+                                                    ),
                                                   )
-                                              ),
-                                              Container(
-                                                  height: 20,
-                                                  child: Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                      children: [
-                                                        Flexible(
-                                                          flex: 2,
-                                                          child: Text('Quantity:', style: TextStyle(fontSize: 15, color: Colors.grey[500], fontWeight: FontWeight.bold)),
-                                                        ),
-                                                        Flexible(
-                                                            flex: 1,
-                                                            child: TextField(
-                                                              textAlign: TextAlign.right,
-                                                              onChanged: (val) {
-                                                                setState(() {
-                                                                  _orderCount = val.length > 0 ? int.parse(val): 1;
-                                                                });
-                                                              },
-                                                              decoration: InputDecoration(
-                                                                  hintText: '1'
-                                                              ),
-                                                              keyboardType: TextInputType.numberWithOptions(
-                                                                decimal: false,
-                                                                signed: true,
-                                                              ),
-                                                            )
-                                                        ),
-                                                      ]
-                                                  )
-                                              ),
-                                              Container(
-                                                  child: Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                      children: [
-                                                        Flexible(
-                                                          child: Text('Price:', style: TextStyle(fontSize: 15, color: Colors.grey[500], fontWeight: FontWeight.bold)),
-                                                        ),
-                                                        Text('P${item['pPrice'] * _orderCount}', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
-                                                      ]
-                                                  )
-                                              ),
+                                                ),
+                                              ]
+                                            )
+                                          ),
+                                          Container(
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+//                                                        Flexible(
+//                                                          child: Text('Price:', style: TextStyle(fontSize: 15, color: Colors.grey[500], fontWeight: FontWeight.bold)),
+//                                                        ),
+                                                Text('Price ${item['pPrice'] * _orderCount}', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
+                                              ]
+                                            )
+                                          ),
 
-                                              Text('Barcode: ${item['pCode']}', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
-                                            ],
-                                          )
+                                          Text('Barcode: ${item['pCode']}', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
+                                        ],
                                       )
+                                    )
                                   )
                                 ],
                               )

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sari_sales/components/TabNavigator.dart';
+import 'package:sari_sales/screens/auth/LoginScreen.dart';
 import 'package:sari_sales/screens/authenticated/BarcodeScan.dart';
 import 'package:sari_sales/screens/authenticated/HomeScreen.dart';
 import 'package:sari_sales/screens/authenticated/InvertoryScreen.dart';
@@ -84,6 +85,8 @@ class _CurrentScreenState extends State<CurrentScreenState> {
                       ),
                       FlatButton(
                         onPressed: () {
+                          Navigator.of(context)
+                              .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
                         },
                         child: Text('Yes', style: TextStyle(color: Colors.grey[500]))
                       ),

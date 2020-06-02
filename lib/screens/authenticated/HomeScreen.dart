@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:sari_sales/models/ListProducts.dart';
 import 'package:sari_sales/utils/colorParser.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' show join;
@@ -27,6 +28,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final _formKey = GlobalKey<FormState>();
   List categories;
+  List _products;
   final _newCategory = TextEditingController();
   String _isCategoryActive = 'All';
   bool _animateText = false;
@@ -39,9 +41,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   _fetchCategoriesLocalStorate () async {
     await Categories.getCategoryLocalStorage().then((res) {
-      print(res);
       setState(() {
         categories = res;
+      });
+    });
+    await ListProducts.getProductLocalStorage().then((res) {
+      setState(() {
+        _products = res;
       });
     });
   }
@@ -60,7 +66,6 @@ class _HomeScreenState extends State<HomeScreen> {
         setState(() {
           _newCategory.text = '';
         });
-        print(res);
       }).then((res) {
         Navigator.pop(context);
       });
@@ -94,6 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           height: MediaQuery.of(context).size.height,
                           width: MediaQuery.of(context).size.width,
                           child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: <Widget>[
                               Form(
                                 key: _formKey,
@@ -267,62 +273,66 @@ class _HomeScreenState extends State<HomeScreen> {
       )
     );
 
-    Widget _productList = Container(
-      child: Column(
-        children: <Widget>[
-          Container(
-            height: 150,
-            width: MediaQuery.of(context).size.width  ,
-            margin: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-            child: Card(
-              elevation: 10,
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    flex: 1,
-                    child: Container(
-                      padding: EdgeInsets.all(10),
-                      color: getColorFromHex('#373234'),
-                      height: MediaQuery.of(context).size.height,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          Text('1', style: TextStyle(color: Colors.white)),
-                          Image.asset(
-                            'images/Hero.png',
-                            height: MediaQuery.of(context).size.height * 0.1,
-                            width: MediaQuery.of(context).size.width,
-                          ),
-                          Text('Expiree date: 10/20/21', style: TextStyle(fontSize: 12, color: Colors.white)),
-                        ],
-                      )
+    Widget _sortProducts () {
+      List<dynamic> sortedProducts = _isCategoryActive == 'All' ?
+          _products?.map((product) => product)?.toList() ?? [] :
+          _products.where((element) => element['pCategory'].toString().contains(_isCategoryActive.toString())).toList();
+
+      return Container(
+        child: Column(
+          children: sortedProducts.map((product) {
+            int index = sortedProducts.indexOf(product);
+            return Container(
+              height: 165,
+              width: MediaQuery.of(context).size.width  ,
+              margin: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+              child: Card(
+                elevation: 2,
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      flex: 1,
+                      child: Container(
+                        padding: EdgeInsets.all(0),
+                        color: getColorFromHex('#373234'),
+                        height: MediaQuery.of(context).size.height,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+//                            Text('${index + 1}', style: TextStyle(color: Colors.white)),
+                            Image.file(
+                              File(product['pImagePath']),
+                              fit: BoxFit.fill,
+                            ),
+//                            Text('${product['pExpiration']}', style: TextStyle(fontSize: 12, color: Colors.white)),
+                          ],
+                        )
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          Text('Product Name: Sample 1', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
-                          Text('ID: 1', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
-                          Text('Quantity: 12', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
-                          Text('Barcode: 203921', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
-                        ],
+                    Expanded(
+                      flex: 2,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            Text('Product ${product['pName']}', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
+                            Text('Quantity: ${product['pQuantity']}', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
+                            Text('Barcode: ${product['pCode']}', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
+                          ],
+                        )
                       )
                     )
-                  )
-                ],
+                  ],
+                )
               )
-            )
-          ),
-        ],
-      )
-    );
-
+            );
+          }).toList(),
+        ),
+      );
+    }
 
     return Stack(
       children: <Widget>[
@@ -350,7 +360,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Text('Categories', textAlign: TextAlign.start, style: TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold, shadows: _textShadow)),
+//                      Text('Categories', textAlign: TextAlign.start, style: TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold, shadows: _textShadow)),
+                      Text('Categories', style: TextStyle(color: Colors.black38, fontSize: 20, fontWeight: FontWeight.w500)),
                       Container(
                         height: 30,
                         width: MediaQuery.of(context).size.width * 0.35,
@@ -369,13 +380,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 _productCategory,
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 32, vertical: 5),
+                  padding: EdgeInsets.symmetric(horizontal: 25, vertical: 5),
                   child: Align(
                     alignment: Alignment.topLeft,
-                    child: Text('Products', textAlign: TextAlign.start, style: TextStyle(color: Colors.black, fontSize: 28, fontWeight: FontWeight.bold, shadows: _textShadow)),
+                    child: Text('Critical Products', style: TextStyle(color: Colors.black38, fontSize: 20, fontWeight: FontWeight.w700)),
                   ),
                 ),
-                _productList,
+                _sortProducts(),
               ],
             )
           )
