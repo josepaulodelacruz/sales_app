@@ -147,9 +147,14 @@ class _ViewItemsState extends State<ViewItems> {
                   }),
                   DataCell(TextField(
                     onChanged: (val) {
-                      setState(() {
-                        _products[index]['orderCount'] = int.parse(val);
-                      });
+                      if(int.parse(val) > _products[index]['pQuantity']) {
+                        _scaffoldKey.currentState.showSnackBar(new SnackBar(backgroundColor: Colors.redAccent, content: new Text('The order exceed the remaining quantity.')));
+                        return null;
+                      } else {
+                        setState(() {
+                          _products[index]['orderCount'] = int.parse(val);
+                        });
+                      }
                     },
                     keyboardType: TextInputType.numberWithOptions(
                       decimal: false,

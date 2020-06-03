@@ -286,64 +286,125 @@ class _HomeScreenState extends State<HomeScreen> {
       )
     );
 
-    Widget _sortProducts () {
+//    Widget _sortProducts () {
+//      List<dynamic> sortedProducts = _isCategoryActive == 'All' ?
+//          _products?.map((product) => product)?.toList() ?? [] :
+//          _products.where((element) => element['pCategory'].toString().contains(_isCategoryActive.toString())).toList();
+//
+//      return Container(
+//        child: Column(
+//          children: sortedProducts.map((product) {
+//            int index = sortedProducts.indexOf(product);
+//            return product['pQuantity'] <= 5 ? Container(
+//              height: 165,
+//              width: MediaQuery.of(context).size.width  ,
+//              margin: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+//              child: Card(
+//                elevation: 2,
+//                child: Row(
+//                  children: <Widget>[
+//                    Expanded(
+//                      flex: 1,
+//                      child: Container(
+//                        padding: EdgeInsets.all(0),
+//                        color: getColorFromHex('#373234'),
+//                        height: MediaQuery.of(context).size.height,
+//                        child: Column(
+//                          crossAxisAlignment: CrossAxisAlignment.start,
+//                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//                          children: <Widget>[
+////                            Text('${index + 1}', style: TextStyle(color: Colors.white)),
+//                            Image.file(
+//                              File(product['pImagePath']),
+//                              fit: BoxFit.fill,
+//                            ),
+////                            Text('${product['pExpiration']}', style: TextStyle(fontSize: 12, color: Colors.white)),
+//                          ],
+//                        )
+//                      ),
+//                    ),
+//                    Expanded(
+//                      flex: 2,
+//                      child: Container(
+//                        padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+//                        child: Column(
+//                          crossAxisAlignment: CrossAxisAlignment.start,
+//                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//                          children: <Widget>[
+//                            Text('Product ${product['pName']}', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
+//                            Text('Quantity: ${product['pQuantity']}', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
+//                            Text('Barcode: ${product['pCode']}', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
+//                          ],
+//                        )
+//                      )
+//                    )
+//                  ],
+//                )
+//              )
+//            ) : SizedBox();
+//          }).toList(),
+//        ),
+//      );
+//    }
+
+    Widget  _criticalProductList () {
       List<dynamic> sortedProducts = _isCategoryActive == 'All' ?
           _products?.map((product) => product)?.toList() ?? [] :
           _products.where((element) => element['pCategory'].toString().contains(_isCategoryActive.toString())).toList();
-
       return Container(
-        child: Column(
-          children: sortedProducts.map((product) {
-            int index = sortedProducts.indexOf(product);
-            return product['pQuantity'] <= 5 ? Container(
-              height: 165,
-              width: MediaQuery.of(context).size.width  ,
-              margin: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-              child: Card(
-                elevation: 2,
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      flex: 1,
-                      child: Container(
-                        padding: EdgeInsets.all(0),
-                        color: getColorFromHex('#373234'),
-                        height: MediaQuery.of(context).size.height,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-//                            Text('${index + 1}', style: TextStyle(color: Colors.white)),
-                            Image.file(
-                              File(product['pImagePath']),
-                              fit: BoxFit.fill,
-                            ),
-//                            Text('${product['pExpiration']}', style: TextStyle(fontSize: 12, color: Colors.white)),
-                          ],
-                        )
-                      ),
-                    ),
-                    Expanded(
-                      flex: 2,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            Text('Product ${product['pName']}', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
-                            Text('Quantity: ${product['pQuantity']}', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
-                            Text('Barcode: ${product['pCode']}', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
-                          ],
-                        )
-                      )
+        margin: EdgeInsets.only(top: 10),
+        width: MediaQuery.of(context).size.width,
+        child: Wrap(
+          children:  sortedProducts.map((product) {
+            return product['pQuantity'] <= 5 ? Stack(
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.all(5),
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                  width: MediaQuery.of(context).size.width * 0.50,
+                  height: MediaQuery.of(context).size.height * 0.25,
+                  child: Card(
+                    elevation: 5,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        Text('${product['pName']}', textAlign: TextAlign.center, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.black54)),
+                        Text('${product['pExpiration']}', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w300, color: Colors.grey[500])),
+                      ],
                     )
-                  ],
+                  ),
+                ),
+                Positioned(
+                  top: -10,
+                  left: MediaQuery.of(context).size.width * 0.05,
+                  child: Image.file(
+                      File(product['pImagePath']),
+                      width: MediaQuery.of(context).size.width * 0.40,
+                      height: MediaQuery.of(context).size.height * 0.20,
+                      fit: BoxFit.cover,
+                    ),
+                ),
+                Positioned  (
+                  left: MediaQuery.of(context).size.width * 0.28,
+                  child: Chip(
+                    backgroundColor: Colors.red[500],
+                    elevation: 5,
+                    label: Text('Qty: ${product['pQuantity']}', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700))
+                  )
+                ),
+                Positioned  (
+                  top: MediaQuery.of(context).size.width * 0.25,
+                  child: Chip(
+                    backgroundColor: Colors.lightBlue,
+                    elevation: 5,
+                    label: Text('₱${product['pPrice']}', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700))
+                  )
                 )
-              )
+              ],
             ) : SizedBox();
           }).toList(),
-        ),
+        )
       );
     }
 
@@ -399,7 +460,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Text('Critical Products', style: TextStyle(color: Colors.black38, fontSize: 20, fontWeight: FontWeight.w700)),
                   ),
                 ),
-                _sortProducts(),
+                _criticalProductList()
               ],
             )
           )
