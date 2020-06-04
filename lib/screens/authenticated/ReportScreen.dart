@@ -464,47 +464,47 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                 child: Column(
                   children: <Widget>[
                     Expanded(
-                        child:  Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Flexible(
-                              flex: 1,
-                              child: Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text('Inventory Report', textAlign: TextAlign.start, style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w400))
-                              ),
+                      child:  Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Flexible(
+                            flex: 1,
+                            child: Align(
+                                alignment: Alignment.topLeft,
+                                child: Text('Inventory Report', textAlign: TextAlign.start, style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w400))
                             ),
-                            Text('Remaining worth of', textAlign: TextAlign.start, style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w500)),
-                            Flexible(
-                                flex: 1,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    FutureBuilder(
-                                      future: ListProducts.remaningWorthOfItems(),
-                                      builder: (context, snapshot) {
-                                        if(snapshot.connectionState == ConnectionState.done) {
-                                          return Text('₱${snapshot.data}', textAlign: TextAlign.start, style: TextStyle(color: Colors.white, fontSize: 40, fontWeight: FontWeight.bold));
-                                        } else {
-                                          return CircularProgressIndicator();
-                                        }
-                                      },
-                                    ),
-                                    Icon(Icons.arrow_drop_up, color: Colors.white, size: 32)
-                                  ],
-                                )
-                            ),
-                            Text('products', textAlign: TextAlign.end, style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w700)),
-                            Flexible(
+                          ),
+                          Text('Remaining worth of', textAlign: TextAlign.start, style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w500)),
+                          Flexible(
                               flex: 1,
-                              child: Align(
-                                  alignment: Alignment.bottomRight,
-                                  child: Text('${Reports.isDate()}', textAlign: TextAlign.end, style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700))
-                              ),
-                            )
-                          ],
-                        )
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  FutureBuilder(
+                                    future: ListProducts.remaningWorthOfItems(),
+                                    builder: (context, snapshot) {
+                                      if(snapshot.connectionState == ConnectionState.done) {
+                                        return Text('₱${snapshot.data}', textAlign: TextAlign.start, style: TextStyle(color: Colors.white, fontSize: 40, fontWeight: FontWeight.bold));
+                                      } else {
+                                        return CircularProgressIndicator();
+                                      }
+                                    },
+                                  ),
+                                  Icon(Icons.arrow_drop_up, color: Colors.white, size: 32)
+                                ],
+                              )
+                          ),
+                          Text('products', textAlign: TextAlign.end, style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w700)),
+                          Flexible(
+                            flex: 1,
+                            child: Align(
+                                alignment: Alignment.bottomRight,
+                                child: Text('${Reports.isDate()}', textAlign: TextAlign.end, style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700))
+                            ),
+                          )
+                        ],
+                      )
                     )
                   ],
                 )

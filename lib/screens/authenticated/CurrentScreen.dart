@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:sari_sales/components/TabNavigator.dart';
 import 'package:sari_sales/screens/auth/LoginScreen.dart';
 import 'package:sari_sales/screens/authenticated/BarcodeScan.dart';
+import 'package:sari_sales/screens/authenticated/FirebaseBarcode.dart';
 import 'package:sari_sales/screens/authenticated/HomeScreen.dart';
 import 'package:sari_sales/screens/authenticated/InvertoryScreen.dart';
 import 'package:sari_sales/utils/colorParser.dart';
@@ -143,7 +144,8 @@ class _CurrentScreenState extends State<CurrentScreenState> {
           onPressed: () {
             Navigator.push(context, PageRouteBuilder(
               transitionDuration: Duration(milliseconds: 1000),
-              pageBuilder: (context, a1, a2) => BarcodeScan(),
+//              pageBuilder: (context, a1, a2) => BarcodeScan(),
+              pageBuilder: (context, a1, a2) => FirebaseBarcode(),
             ));
           },
           child: Container(
