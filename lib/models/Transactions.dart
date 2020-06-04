@@ -10,6 +10,23 @@ class Transactions {
 
   Transactions({this.productName, this.amount, this.quantity});
 
+  static totalItemSale () async {
+    final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
+    dynamic TransactionsDetails = sharedPrefs.getString('TransactionsDetails');
+    if(TransactionsDetails == null) {
+      return 0;
+    } else {
+      DateTime now = DateTime.now();
+      String formattedDate = DateFormat.yMMMMd().format(now);
+      List<dynamic> decodedFiles = jsonDecode(TransactionsDetails);
+      List<dynamic> _totalItemSold = decodedFiles.map((item) {
+        return item['dates'] == formattedDate.toString() ? item['quantity']: 0;
+      }).toList();
+      int isTotal = _totalItemSold.fold(0, (previousValue, element) => previousValue + element);
+      return isTotal;
+    }
+  }
+
   static getTransactionsDetails () async {
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
     dynamic TransactionsDetails = sharedPrefs.getString('TransactionsDetails');

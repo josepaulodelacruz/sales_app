@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:intl/intl.dart';
 import 'package:sari_sales/screens/authenticated/LoanList.dart';
 
@@ -10,9 +9,6 @@ import 'package:sari_sales/utils/colorParser.dart';
 //screens
 import 'package:sari_sales/screens/authenticated/ProductsTable.dart';
 import 'package:sari_sales/screens/authenticated/SalesTransactionTable.dart';
-
-//components
-import 'package:sari_sales/components/ProductChart.dart';
 
 //models
 import '../../models/Reports.dart';
@@ -404,7 +400,46 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
           child: Column(
             children: <Widget>[
               Expanded(
-                child: SparkBar(),
+                child:  Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Flexible(
+                      flex: 1,
+                      child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Text('Product Report', textAlign: TextAlign.start, style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w400))
+                      ),
+                    ),
+                    Text('Total Items Sold', textAlign: TextAlign.start, style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w500)),
+                    Flexible(
+                        flex: 1,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            FutureBuilder(
+                              future: Transactions.totalItemSale(),
+                              builder: (context, snapshot) {
+                                if(snapshot.connectionState == ConnectionState.done) {
+                                  return Text('${snapshot.data} sold', textAlign: TextAlign.start, style: TextStyle(color: Colors.white, fontSize: 40, fontWeight: FontWeight.bold));
+                                } else {
+                                  return CircularProgressIndicator();
+                                }
+                              },
+                            ),
+                            Icon(Icons.arrow_drop_up, color: Colors.white, size: 32)
+                          ],
+                        )
+                    ),
+                    Flexible(
+                      flex: 1,
+                      child: Align(
+                          alignment: Alignment.bottomRight,
+                          child: Text('${Reports.isDate()}', textAlign: TextAlign.end, style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700))
+                      ),
+                    )
+                  ],
+                )
               )
             ],
           )
@@ -426,7 +461,53 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
           child: Column(
             children: <Widget>[
               Expanded(
-                child: SparkBar()
+                child: Column(
+                  children: <Widget>[
+                    Expanded(
+                        child:  Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Flexible(
+                              flex: 1,
+                              child: Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Text('Inventory Report', textAlign: TextAlign.start, style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w400))
+                              ),
+                            ),
+                            Text('Remaining worth of', textAlign: TextAlign.start, style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w500)),
+                            Flexible(
+                                flex: 1,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    FutureBuilder(
+                                      future: ListProducts.remaningWorthOfItems(),
+                                      builder: (context, snapshot) {
+                                        if(snapshot.connectionState == ConnectionState.done) {
+                                          return Text('₱${snapshot.data}', textAlign: TextAlign.start, style: TextStyle(color: Colors.white, fontSize: 40, fontWeight: FontWeight.bold));
+                                        } else {
+                                          return CircularProgressIndicator();
+                                        }
+                                      },
+                                    ),
+                                    Icon(Icons.arrow_drop_up, color: Colors.white, size: 32)
+                                  ],
+                                )
+                            ),
+                            Text('products', textAlign: TextAlign.end, style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w700)),
+                            Flexible(
+                              flex: 1,
+                              child: Align(
+                                  alignment: Alignment.bottomRight,
+                                  child: Text('${Reports.isDate()}', textAlign: TextAlign.end, style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700))
+                              ),
+                            )
+                          ],
+                        )
+                    )
+                  ],
+                )
               )
             ],
           )

@@ -200,10 +200,10 @@ class _HomeScreenState extends State<HomeScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           IconButton(
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.person, color: Colors.white),
           ),
           IconButton(
-            icon: Icon(Icons.format_align_right),
+            icon: Icon(Icons.format_align_right, color: Colors.white),
           ),
         ],
       )
@@ -219,20 +219,29 @@ class _HomeScreenState extends State<HomeScreen> {
             AnimatedOpacity(
               duration: Duration(milliseconds: 500),
               opacity: _animateText ? 0 : 1,
-              child: Text(_isCategoryActive.toString(), style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600, color: Colors.black, shadows: _textShadow)),
+              child: Text(_isCategoryActive.toString(), style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600, color: Colors.white, shadows: _textShadow)),
             ),
-            Text('Products', style: TextStyle(fontSize: 34, fontWeight: FontWeight.bold, color: Colors.black, shadows: _textShadow)),
+            Text('Products', style: TextStyle(fontSize: 34, fontWeight: FontWeight.bold, color: Colors.white, shadows: _textShadow)),
           ],
         )
       )
     );
 
     Widget _searchBar = Container(
-      padding: EdgeInsets.symmetric(horizontal: 32, vertical: 10),
+      padding: EdgeInsets.symmetric(horizontal: 32),
+      margin: EdgeInsets.only(bottom: 30),
       child: TextField(
+        style: TextStyle(color: Colors.white),
         decoration: InputDecoration(
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.white),
+          ),
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.white),
+          ),
           labelText: 'Search',
-          prefixIcon: Icon(Icons.search)
+          labelStyle: TextStyle(color: Colors.white),
+          prefixIcon: Icon(Icons.search, color: Colors.white),
         )
       )
     );
@@ -359,6 +368,7 @@ class _HomeScreenState extends State<HomeScreen> {
             return product['pQuantity'] <= 5 ? Stack(
               children: <Widget>[
                 Container(
+                  color: Colors.white,
                   padding: EdgeInsets.all(5),
                   margin: EdgeInsets.symmetric(vertical: 10),
                   width: MediaQuery.of(context).size.width * 0.50,
@@ -410,58 +420,82 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Stack(
       children: <Widget>[
-        Container(
-          height: 300,
-          width: MediaQuery.of(context).size.width * 0.75,
-          decoration: BoxDecoration(
-          color: getColorFromHex('#f3f3f3'),
-            borderRadius: BorderRadius.horizontal(
-              right: Radius.elliptical(2000, 1000)
-            )
-          )
-        ),
-        Container(
-          padding: EdgeInsets.only(top: 32),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Column(
-              children: <Widget>[
-                _topHeader,
-                _topText,
-                _searchBar,
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 32, vertical: 5),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
+//        Container(
+//          height: 300,
+//          width: MediaQuery.of(context).size.width * 0.75,
+//          decoration: BoxDecoration(
+//          color: getColorFromHex('#f3f3f3'),
+//            borderRadius: BorderRadius.horizontal(
+//              right: Radius.elliptical(2000, 1000)
+//            )
+//          )
+//        ),
+        SafeArea(
+          child: Container(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
+                      gradient: LinearGradient(
+                        colors: [
+                          getColorFromHex('#56CCF2'),
+                          getColorFromHex('#2F80ED'),
+                        ],
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 5,
+                          blurRadius: 7,
+                          offset: Offset(0, 3), // changes position of shadow
+                        ),
+                        ]
+                    ),
+                    child: Column(
+                      children: <Widget>[
+                        _topHeader,
+                        _topText,
+                        _searchBar,
+                      ],
+                    )
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 32, vertical: 15),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
 //                      Text('Categories', textAlign: TextAlign.start, style: TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold, shadows: _textShadow)),
-                      Text('Categories', style: TextStyle(color: Colors.black38, fontSize: 20, fontWeight: FontWeight.w500)),
-                      Container(
-                        height: 30,
-                        width: MediaQuery.of(context).size.width * 0.35,
-                        child:  RaisedButton.icon(
-                          color: getColorFromHex('#36d1dc'),
-                          label: Text('New Category', style: TextStyle(fontSize: 11, color: Colors.white)),
-                          icon: Icon(Icons.add, color: Colors.white, size: 18),
-                          shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
-                          onPressed: () {
-                            _newCategoryModal(context);
-                          },
+                        Text('Categories', style: TextStyle(color: Colors.black38, fontSize: 20, fontWeight: FontWeight.w500)),
+                        Container(
+                            height: 30,
+                            width: MediaQuery.of(context).size.width * 0.35,
+                            child:  RaisedButton.icon(
+                              color: getColorFromHex('#36d1dc'),
+                              label: Text('New Category', style: TextStyle(fontSize: 11, color: Colors.white)),
+                              icon: Icon(Icons.add, color: Colors.white, size: 18),
+                              shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+                              onPressed: () {
+                                _newCategoryModal(context);
+                              },
+                            )
                         )
-                      )
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                _productCategory,
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 25, vertical: 5),
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: Text('Critical Products', style: TextStyle(color: Colors.black38, fontSize: 20, fontWeight: FontWeight.w700)),
+                  _productCategory,
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 25, vertical: 5),
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: Text('Critical Products', style: TextStyle(color: Colors.black38, fontSize: 20, fontWeight: FontWeight.w700)),
+                    ),
                   ),
-                ),
-                _criticalProductList()
-              ],
+                  _criticalProductList()
+                ],
+              )
             )
           )
         )

@@ -105,6 +105,7 @@ class _CurrentScreenState extends State<CurrentScreenState> {
       },
       child: _appearWidget ? Scaffold(
         resizeToAvoidBottomPadding: true,
+        backgroundColor: getColorFromHex('#f3f3f3'),
         body: Container(
           child: Stack(
             children: <Widget>[
