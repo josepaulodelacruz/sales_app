@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:sari_sales/models/ListProducts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 
@@ -9,6 +10,34 @@ class Transactions {
   int quantity;
 
   Transactions({this.productName, this.amount, this.quantity});
+
+  static frequentlyBought () async {
+    final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
+    dynamic TransactionsDetails = sharedPrefs.getString('TransactionsDetails');
+    if(TransactionsDetails == null) {
+      return null;
+    } else {
+      List _frequentlyBought = [];
+      List<dynamic> decodedFiles = jsonDecode(TransactionsDetails);
+      List _productName = decodedFiles.map((p) => p['productName']).toList();
+      List removeDuplicateElement = _productName.toSet().toList();
+      await ListProducts.getProductLocalStorage().then((res) {
+        removeDuplicateElement.map((p) {
+          res.map((product) {
+            if(p == product['pName']) {
+              _frequentlyBought.add({
+                'id': product['pId'],
+                'name': product['pName'],
+                'imagePath': product['pImagePath'],
+                'price': product['pPrice'],
+              });
+            }
+          }).toList();
+        }).toList();
+      });
+      return _frequentlyBought == null ? [] : _frequentlyBought;
+    }
+  }
 
   static totalItemSale () async {
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();

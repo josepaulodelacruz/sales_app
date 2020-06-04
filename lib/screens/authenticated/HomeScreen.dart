@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sari_sales/models/ListProducts.dart';
+import 'package:sari_sales/models/Transactions.dart';
 import 'package:sari_sales/utils/colorParser.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' show join;
@@ -32,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final _formKey = GlobalKey<FormState>();
   List categories;
   List _products;
+  List _frequentlyBuy;
   final _newCategory = TextEditingController();
   String _isCategoryActive = 'All';
   bool _animateText = false;
@@ -51,6 +53,11 @@ class _HomeScreenState extends State<HomeScreen> {
     await ListProducts.getProductLocalStorage().then((res) {
       setState(() {
         _products = res;
+      });
+    });
+    await Transactions.frequentlyBought().then((res) {
+      setState(() {
+        _frequentlyBuy = res;
       });
     });
   }
@@ -246,6 +253,38 @@ class _HomeScreenState extends State<HomeScreen> {
       )
     );
 
+    //frequently bought widget
+    Widget _frequentlyBought = Container(
+      width: MediaQuery.of(context).size.width,
+      height: 130,
+      margin: EdgeInsets.symmetric(vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(left: 20),
+            child: Text('Frequently Bought', style: TextStyle(color: Colors.black38, fontSize: 20, fontWeight: FontWeight.w500)),
+          ),
+          Container(
+            height: 100,
+            width: MediaQuery.of(context).size.width,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: _frequentlyBuy?.map((b) {
+                return Container(
+                  width: 100,
+                  child: Card()
+                );
+              })?.toList() ?? [],
+            )
+
+          )
+        ],
+      )
+
+    );
+
     Widget _productCategory = Container(
       width: MediaQuery.of(context).size.width,
       child: SingleChildScrollView(
@@ -253,42 +292,27 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Row(
           children: categories?.map((cc) {
             int cardIndex = categories.indexOf(cc);
-            return Transform.scale(
-              scale: _isCategoryActive == cc['cTitle'] ? 0.95 : 1,
-              child: AnimatedContainer(
-                margin: EdgeInsets.symmetric(horizontal: 5),
-                duration: Duration(milliseconds: 300),
-                height: 150,
-                width: 120,
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: InkWell(
-                  onTap: () {
-                    setState(() {
-                      _animateText = true;
-                    });
-                    _isAnimateText(cc['cTitle']);
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      gradient: LinearGradient(
-                        colors: _isCategoryActive == cc['cTitle'] ? activeColor : inActiveColor,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 1,
-                          blurRadius: 1,
-                        ),
-                      ],
-                    ),
-                    padding: EdgeInsets.all(10.0),
-                    child: Center(
-                      child: Text(cc['cTitle'].toString(), textAlign: TextAlign.center, style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold, color: Colors.white))
-                    )
-                  ),
-                ),
+            return AnimatedContainer(
+              duration: Duration(milliseconds: 1000),
+              curve: Curves.ease,
+              padding: EdgeInsets.only(left: 0),
+              margin: EdgeInsets.symmetric(horizontal: 5, vertical: 0),
+              child: _isCategoryActive == cc['cTitle'] ?
+                RaisedButton(
+                  color: getColorFromHex('#6DD5FA'),
+                  onPressed: () {},
+                  child: Text(cc['cTitle'], style: TextStyle(color: Colors.white)),
+                  shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
+                )
+                  : FlatButton(
+                child: Text(cc['cTitle'], style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w700)),
+                onPressed: ()  {
+                  setState(() => _animateText = true);
+                  _isAnimateText(cc['cTitle']);
+                },
+                shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
               )
+
             );
           })?.toList() ?? [],
         )
@@ -368,13 +392,13 @@ class _HomeScreenState extends State<HomeScreen> {
             return product['pQuantity'] <= 5 ? Stack(
               children: <Widget>[
                 Container(
-                  color: Colors.white,
+                  color: getColorFromHex('#f3f3f3'),
                   padding: EdgeInsets.all(5),
                   margin: EdgeInsets.symmetric(vertical: 10),
                   width: MediaQuery.of(context).size.width * 0.50,
                   height: MediaQuery.of(context).size.height * 0.25,
                   child: Card(
-                    elevation: 5,
+                    elevation: 2,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -420,16 +444,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Stack(
       children: <Widget>[
-//        Container(
-//          height: 300,
-//          width: MediaQuery.of(context).size.width * 0.75,
-//          decoration: BoxDecoration(
-//          color: getColorFromHex('#f3f3f3'),
-//            borderRadius: BorderRadius.horizontal(
-//              right: Radius.elliptical(2000, 1000)
-//            )
-//          )
-//        ),
+        Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
+          color: getColorFromHex('#f3f3f3'),
+
+          )
+        ),
         SafeArea(
           child: Container(
             child: SingleChildScrollView(
@@ -441,8 +463,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
                       gradient: LinearGradient(
                         colors: [
-                          getColorFromHex('#56CCF2'),
-                          getColorFromHex('#2F80ED'),
+                          getColorFromHex('#00d2ff'),
+                          getColorFromHex('#3a7bd5'),
                         ],
                       ),
                       boxShadow: [
@@ -462,12 +484,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     )
                   ),
+                  _frequentlyBought,
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 32, vertical: 15),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-//                      Text('Categories', textAlign: TextAlign.start, style: TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold, shadows: _textShadow)),
                         Text('Categories', style: TextStyle(color: Colors.black38, fontSize: 20, fontWeight: FontWeight.w500)),
                         Container(
                             height: 30,

@@ -2,11 +2,8 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sari_sales/components/TabNavigator.dart';
-import 'package:sari_sales/screens/auth/LoginScreen.dart';
 import 'package:sari_sales/screens/authenticated/BarcodeScan.dart';
-import 'package:sari_sales/screens/authenticated/FirebaseBarcode.dart';
 import 'package:sari_sales/screens/authenticated/HomeScreen.dart';
-import 'package:sari_sales/screens/authenticated/InvertoryScreen.dart';
 import 'package:sari_sales/utils/colorParser.dart';
 import 'dart:io';
 
@@ -106,7 +103,6 @@ class _CurrentScreenState extends State<CurrentScreenState> {
       },
       child: _appearWidget ? Scaffold(
         resizeToAvoidBottomPadding: true,
-        backgroundColor: getColorFromHex('#f3f3f3'),
         body: Container(
           child: Stack(
             children: <Widget>[
@@ -144,8 +140,7 @@ class _CurrentScreenState extends State<CurrentScreenState> {
           onPressed: () {
             Navigator.push(context, PageRouteBuilder(
               transitionDuration: Duration(milliseconds: 1000),
-//              pageBuilder: (context, a1, a2) => BarcodeScan(),
-              pageBuilder: (context, a1, a2) => FirebaseBarcode(),
+              pageBuilder: (context, a1, a2) => BarcodeScan(),
             ));
           },
           child: Container(

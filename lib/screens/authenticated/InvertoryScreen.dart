@@ -201,7 +201,7 @@ class _InventoryScreen extends State<InventoryScreen> {
                             padding: EdgeInsets.only(top: 20, bottom: 15, right: 20, left: 20),
                             height: 60,
                             decoration: BoxDecoration(
-                                color: getColorFromHex('#f3f3f3'),
+                                color: getColorFromHex( '#f3f3f3'),
                                 borderRadius: BorderRadius.only(
                                     topLeft: Radius.circular(50.0),
                                     topRight: Radius.circular(50.0)

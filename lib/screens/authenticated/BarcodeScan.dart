@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:badges/badges.dart';
@@ -199,17 +200,22 @@ class _BarcodeScanState extends State<BarcodeScan> {
                                     color: getColorFromHex(ColorSequence().collections[1]),
                                     onPressed: ()  {
                                       if(item.isNotEmpty) {
-                                        setState(() {
-                                          _soldItems.add({'orderCount': _orderCount, ...item });
-                                          item = {};
-                                          _scanItem.text = '';
-                                          _isScan = false;
-                                          _orderCount = 1;
-                                        });
+                                        List hasDuplicate = _soldItems.where((element) => element['pName'].toString().toLowerCase().contains(item['pName'].toString().toLowerCase())).toList();
+                                        //if has duplicate items in cart
+                                        if(hasDuplicate.isEmpty) {
+                                          setState(() {
+                                            _soldItems.add({'orderCount': _orderCount, ...item });
+                                            item = {};
+                                            _scanItem.text = '';
+                                            _isScan = false;
+                                            _orderCount = 1;
+                                          });
+                                        } else {
+                                          _scaffoldKey.currentState.showSnackBar(new SnackBar(backgroundColor: Colors.redAccent, content: new Text('Your item already exist in the cart.')));
+                                        }
                                       } else {
                                         _scaffoldKey.currentState.showSnackBar(new SnackBar(backgroundColor: Colors.redAccent, content: new Text('No items added.')));
                                       }
-
                                     },
                                     shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
                                 )
