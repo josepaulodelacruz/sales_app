@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sari_sales/components/AppDialog.dart';
 import 'package:sari_sales/components/SettingConfirmationModal.dart';
 
 import 'package:sari_sales/utils/colorParser.dart';
@@ -231,6 +232,14 @@ class _SettingScreen extends State<SettingScreen> {
                             title: Text('About Application', style: TextStyle(fontSize: 16, color: Colors.grey[500])),
                             leading: Icon(Icons.info),
                             trailing: IconButton(
+                              onPressed: () {
+                                return showAboutDialog(
+                                  context: context,
+                                  applicationVersion: '0.0.1',
+                                  applicationIcon: FlutterLogo(),
+                                  applicationLegalese: 'Hereby using this application avoiding altering data or tampering.'
+                                );
+                              },
                               icon: Icon(Icons.arrow_forward_ios),
                             )
                           ),
