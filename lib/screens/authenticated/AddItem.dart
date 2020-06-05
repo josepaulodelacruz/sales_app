@@ -140,9 +140,15 @@ class _AddItemState extends State<AddItemState> {
     if(productInfo['invalid']) {
       _scaffoldKey.currentState.showSnackBar(new SnackBar(backgroundColor: Colors.redAccent, content: new Text(productInfo['error'])));
     } else {
-      setState(() {
-        _products[widget.editIndex] = productInfo;
-      });
+      print(widget.editItem['pName']);
+      _products.map((product) {
+        int index = _products.indexOf(product);
+        if(product['pId'] == widget.editItem['pId'] ) {
+          setState(() {
+            _products[index] = productInfo;
+          });
+        }
+      }).toList();
 
       _saveToStorage(_products).then((res) {
         _scaffoldKey.currentState.showSnackBar(new SnackBar(backgroundColor: Colors.greenAccent, content: new Text('Successfully Edited!')));
