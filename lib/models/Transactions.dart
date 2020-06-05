@@ -35,6 +35,13 @@ class Transactions {
           }).toList();
         }).toList();
       });
+
+      for(var i=0;i<_frequentlyBought.length/2;i++){
+        var temp = _frequentlyBought[i];
+        _frequentlyBought[i] = _frequentlyBought[_frequentlyBought.length-1-i];
+        _frequentlyBought[_frequentlyBought.length-1-i] = temp;
+      }
+
       return _frequentlyBought == null ? [] : _frequentlyBought;
     }
   }

@@ -272,17 +272,38 @@ class _HomeScreenState extends State<HomeScreen> {
             child: ListView(
               scrollDirection: Axis.horizontal,
               children: _frequentlyBuy?.map((b) {
-                return Container(
-                  width: 100,
-                  child: Card()
-                );
+                int index = _frequentlyBuy.indexOf(b);
+                return index   < 7 ? Container(
+                    width: 80,
+                    child: Stack(
+                    children: <Widget>[
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.file(
+                          File(b['imagePath']),
+                          fit: BoxFit.contain,
+                        )
+                      ),
+                      Positioned(
+                        top: MediaQuery.of(context).size.height * 0.09,
+                        left: MediaQuery.of(context).size.width * 0.09,
+                        child: Transform(
+                          transform: new Matrix4.identity()..scale(0.7),
+                          child: Chip(
+                            backgroundColor: Colors.lightBlue,
+                            label: Text('₱${b['price']}'),
+                            labelStyle: TextStyle(fontSize: 12),
+                          )
+                        )
+                      )
+                    ],
+                  )
+                ) : SizedBox();
               })?.toList() ?? [],
             )
-
           )
         ],
       )
-
     );
 
     Widget _productCategory = Container(
