@@ -1,7 +1,8 @@
 import 'dart:convert';
-
+import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sari_sales/models/ListProducts.dart';
 
 class Categories {
   String categoryImagePath;
@@ -43,6 +44,28 @@ class Categories {
     return 'save';
   }
 
+  static resetCategories () async {
+    final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
+    final decode = json.encode([{'cTitle': 'All', 'isValid': true}]);
+    sharedPrefs.setString('categories', decode);
+  }
 
+  static deleteCategory (categoryName, index) async {
+    List updateProducts = [];
+    List updateCategories = [];
+    final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
+    dynamic categories = sharedPrefs.getString('categories');
+    List products = await ListProducts.getProductLocalStorage();
+    products.removeWhere((product) => product['pCategory'] == categoryName);
+    List decodedFiles = jsonDecode(categories);
+    decodedFiles.removeAt(index);
+
+
+    final decodeProducts = json.encode(products);
+    final decodeCategories = json.encode(decodedFiles);
+    sharedPrefs.setString('categories', decodeCategories);
+    sharedPrefs.setString('ListProducts', decodeProducts);
+
+  }
 
 }

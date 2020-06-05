@@ -83,9 +83,9 @@ class _InventoryScreen extends State<InventoryScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Text('Inventory List', textAlign: TextAlign.start, style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.black38, shadows: _textShadow)),
+            Text('Inventory List', textAlign: TextAlign.start, style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.white, shadows: _textShadow)),
             IconButton(
-              icon: Icon(Icons.add, color: Colors.black38),
+              icon: Icon(Icons.add, color: Colors.white),
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(
                   builder: (context) {
@@ -162,7 +162,10 @@ class _InventoryScreen extends State<InventoryScreen> {
           height: MediaQuery.of(context).size.height,
           decoration: BoxDecoration(
             gradient: LinearGradient(
-                colors: _colors,
+                colors: [
+                  getColorFromHex('#00d2ff'),
+                  getColorFromHex('#3a7bd5'),
+                ],
                 stops: [0, 0.7]
             ),
           ),

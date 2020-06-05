@@ -54,7 +54,10 @@ class _RegisterScreenState extends State<RegisterScreenState> {
         height: MediaQuery.of(context).size.height * 0.35,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: _colors,
+            colors: [
+              getColorFromHex('#00d2ff'),
+              getColorFromHex('#3a7bd5')
+            ],
             stops: [0.0, 0.9],
           ),
           borderRadius: BorderRadius.vertical(

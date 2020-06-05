@@ -41,7 +41,12 @@ class ListProducts {
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
     final decode = json.encode(products);
     sharedPrefs.setString('ListProducts', decode);
+  }
 
+  static resetProductInventory () async {
+    final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
+    final decode = json.encode([]);
+    sharedPrefs.setString('ListProducts', decode);
   }
 
 }

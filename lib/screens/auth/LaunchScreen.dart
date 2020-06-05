@@ -65,8 +65,8 @@ class _LaunchScreenState extends State<LaunchScreenState> {
               decoration: new BoxDecoration(
                   gradient: new LinearGradient(
                     colors: [
-                      Color.fromARGB(255, 148, 231, 225),
-                      Color.fromARGB(255, 62, 182, 226)
+                      getColorFromHex('#00d2ff'),
+                      getColorFromHex('#3a7bd5')
                     ],
                   )
               ),
@@ -91,8 +91,10 @@ class _LaunchScreenState extends State<LaunchScreenState> {
               decoration: new BoxDecoration(
                   gradient: new LinearGradient(
                     colors: [
-                      Color.fromARGB(255, 148, 231, 225),
-                      Color.fromARGB(255, 62, 182, 226)
+                      getColorFromHex('#00d2ff'),
+                      getColorFromHex('#3a7bd5')
+//                      Color.fromARGB(255, 148, 231, 225),
+//                      Color.fromARGB(255, 62, 182, 226)
                     ],
                   ),
                 ),

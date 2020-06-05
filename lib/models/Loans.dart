@@ -116,6 +116,12 @@ class Loans {
 
   }
 
+  static resetLoanList () async {
+    final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
+    final decode = json.encode([]);
+    sharedPrefs.setString('LoansList', decode);
+  }
+
   Map<String, dynamic> toJson() =>
     {
       'first': first,

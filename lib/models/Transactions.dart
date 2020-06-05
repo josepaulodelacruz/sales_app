@@ -104,8 +104,13 @@ class Transactions {
       }).toList();
       final decode = json.encode(uncodeDetails);
       sharedPrefs.setString('TransactionsDetails', decode);
-
     }
+  }
+
+  static resetTransactionDetails () async {
+    final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
+    final decode = json.encode([]);
+    sharedPrefs.setString('TransactionsDetails', decode);
   }
 
 }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:sari_sales/components/SettingConfirmationModal.dart';
 
 import 'package:sari_sales/utils/colorParser.dart';
 import 'package:sari_sales/models/Categories.dart';
+import 'package:sari_sales/models/ListProducts.dart';
 
 class SettingScreen extends StatefulWidget {
   @override
@@ -21,6 +23,18 @@ class _SettingScreen extends State<SettingScreen> {
     await Categories.getCategoryLocalStorage().then((res) {
       setState(() => _categories = res);
     });
+  }
+
+  @override
+   _buildShowModal(BuildContext context, type) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return SettingConfirmationModal(
+          typeReset: type,
+        );
+      }
+    );
   }
 
   @override
@@ -85,19 +99,22 @@ class _SettingScreen extends State<SettingScreen> {
                             )
                           ),
                           ListTile(
-                            title: Text('Sucription', style: TextStyle(fontSize: 16, color: Colors.grey[500])),
+                            title: Text('Subscription', style: TextStyle(fontSize: 16, color: Colors.grey[500])),
+                            leading: Icon(Icons.card_membership),
                             trailing: FlatButton(
                               child: Text('Trial',style: TextStyle(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.grey[500]))
                             )
                           ),
                           ListTile(
                             title: Text('Expired at', style: TextStyle(fontSize: 16, color: Colors.grey[500])),
+                            leading: Icon(Icons.date_range),
                             trailing: FlatButton(
                                 child: Text('Free',style: TextStyle(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.grey[500]))
                             )
                           ),
                           ListTile(
                             title: Text('Registered', style: TextStyle(fontSize: 16, color: Colors.grey[500])),
+                            leading: Icon(Icons.home),
                             trailing: FlatButton(
                                 child: Text('Juan Dela Cruz',style: TextStyle(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.grey[500]))
                             )
@@ -111,36 +128,82 @@ class _SettingScreen extends State<SettingScreen> {
                           ),
                           ExpansionTile(
                             title: Text('Categories', style: TextStyle(fontSize: 16, color: Colors.grey[500])),
+                            leading: Icon(Icons.list),
                             children: _categories?.map((cc) {
                               int index = _categories.indexOf(cc);
                               return index > 0 ? ListTile(
                                 title: Text(cc['cTitle'], style: TextStyle(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.grey[500])),
-                                trailing: IconButton(icon: Icon(Icons.delete)),
+                                trailing: IconButton(
+                                  icon: Icon(Icons.delete),
+                                  onPressed: () {
+                                    return showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                       title: Text('Remove ${cc['cTitle']}'),
+                                       content: Text(
+                                         'Are you sure you want to delete this category? All products asscociated with this category shall be deleted.',
+                                         style: TextStyle(color: Colors.grey[500], fontSize: 16, fontWeight: FontWeight.w500),
+                                       ),
+                                       actions: <Widget>[
+                                         FlatButton(
+                                           onPressed: () => Navigator.pop(context),
+                                           child: Text('No'),
+                                         ),
+                                         FlatButton(
+                                           child: Text('Yes'),
+                                           onPressed: () async {
+                                             await Categories.deleteCategory(cc['cTitle'], index).then((res) {
+                                               _fetchCategories();
+                                               Navigator.of(context).pop();
+                                             });
+                                           },
+                                         ),
+                                       ],
+                                      )
+                                    );
+                                  },
+                                ),
                               ) : SizedBox();
                             })?.toList() ?? [],
                           ),
                           ListTile(
                             title: Text('Product Inventory', style: TextStyle(fontSize: 16, color: Colors.grey[500])),
+                            leading: Icon(Icons.shopping_basket),
                             trailing: FlatButton(
-                                child: Text('RESET',style: TextStyle(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.grey[500]))
+                              onPressed: () async {
+                                _buildShowModal(context, 'ProductReset');
+                              },
+                              child: Text('RESET',style: TextStyle(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.grey[500]))
                             )
                           ),
                           ListTile(
-                            title: Text('Reports Inventory', style: TextStyle(fontSize: 16, color: Colors.grey[500])),
+                            title: Text('Reports', style: TextStyle(fontSize: 16, color: Colors.grey[500])),
+                            leading: Icon(Icons.table_chart),
                             trailing: FlatButton(
-                                child: Text('RESET',style: TextStyle(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.grey[500]))
+                                onPressed: () async {
+                                  _buildShowModal(context, 'ReportsReset');
+                                },
+                              child: Text('RESET',style: TextStyle(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.grey[500]))
                             )
                           ),
                           ListTile(
                             title: Text('Categories', style: TextStyle(fontSize: 16, color: Colors.grey[500])),
+                            leading: Icon(Icons.format_align_left),
                             trailing: FlatButton(
-                                child: Text('RESET',style: TextStyle(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.grey[500]))
+                              onPressed: () async {
+                                _buildShowModal(context, 'CategoriesReset');
+                              },
+                              child: Text('RESET',style: TextStyle(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.grey[500]))
                             )
                           ),
                           ListTile(
                             title: Text('Loan List', style: TextStyle(fontSize: 16, color: Colors.grey[500])),
+                            leading: Icon(Icons.local_atm),
                             trailing: FlatButton(
-                                child: Text('RESET',style: TextStyle(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.grey[500]))
+                              onPressed: () async {
+                                _buildShowModal(context, 'LoanReset');
+                              },
+                              child: Text('RESET',style: TextStyle(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.grey[500]))
                             )
                           ),
                           Align(
@@ -152,30 +215,35 @@ class _SettingScreen extends State<SettingScreen> {
                           ),
                           ListTile(
                             title: Text('Privacy Policy', style: TextStyle(fontSize: 16, color: Colors.grey[500])),
+                            leading: Icon(Icons.security),
                             trailing: IconButton(
                               icon: Icon(Icons.arrow_forward_ios),
                             )
                           ),
                           ListTile(
                             title: Text('Terms and Condition', style: TextStyle(fontSize: 16, color: Colors.grey[500])),
+                            leading: Icon(Icons.branding_watermark),
                             trailing: IconButton(
                               icon: Icon(Icons.arrow_forward_ios),
                             )
                           ),
                           ListTile(
-                              title: Text('About Application', style: TextStyle(fontSize: 16, color: Colors.grey[500])),
-                              trailing: IconButton(
-                                icon: Icon(Icons.arrow_forward_ios),
-                              )
+                            title: Text('About Application', style: TextStyle(fontSize: 16, color: Colors.grey[500])),
+                            leading: Icon(Icons.info),
+                            trailing: IconButton(
+                              icon: Icon(Icons.arrow_forward_ios),
+                            )
                           ),
                           ListTile(
-                              title: Text('Report a problem', style: TextStyle(fontSize: 16, color: Colors.grey[500])),
-                              trailing: IconButton(
-                                icon: Icon(Icons.arrow_forward_ios),
-                              )
+                            title: Text('Report a problem', style: TextStyle(fontSize: 16, color: Colors.grey[500])),
+                            leading: Icon(Icons.bug_report),
+                            trailing: IconButton(
+                              icon: Icon(Icons.arrow_forward_ios),
+                            )
                           ),
                           ListTile(
                               title: Text('Announcement', style: TextStyle(fontSize: 16, color: Colors.grey[500])),
+                              leading: Icon(Icons.new_releases),
                               trailing: IconButton(
                                 icon: Icon(Icons.arrow_forward_ios),
                               )
