@@ -202,18 +202,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
     Widget _topHeader = Container(
-      padding: EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          IconButton(
-            icon: Icon(Icons.person, color: Colors.white),
-          ),
-          IconButton(
-            icon: Icon(Icons.format_align_right, color: Colors.white),
-          ),
-        ],
-      )
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
     );
 
     Widget _topText = Align(
@@ -354,67 +343,6 @@ class _HomeScreenState extends State<HomeScreen> {
         )
       )
     );
-
-//    Widget _sortProducts () {
-//      List<dynamic> sortedProducts = _isCategoryActive == 'All' ?
-//          _products?.map((product) => product)?.toList() ?? [] :
-//          _products.where((element) => element['pCategory'].toString().contains(_isCategoryActive.toString())).toList();
-//
-//      return Container(
-//        child: Column(
-//          children: sortedProducts.map((product) {
-//            int index = sortedProducts.indexOf(product);
-//            return product['pQuantity'] <= 5 ? Container(
-//              height: 165,
-//              width: MediaQuery.of(context).size.width  ,
-//              margin: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-//              child: Card(
-//                elevation: 2,
-//                child: Row(
-//                  children: <Widget>[
-//                    Expanded(
-//                      flex: 1,
-//                      child: Container(
-//                        padding: EdgeInsets.all(0),
-//                        color: getColorFromHex('#373234'),
-//                        height: MediaQuery.of(context).size.height,
-//                        child: Column(
-//                          crossAxisAlignment: CrossAxisAlignment.start,
-//                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                          children: <Widget>[
-////                            Text('${index + 1}', style: TextStyle(color: Colors.white)),
-//                            Image.file(
-//                              File(product['pImagePath']),
-//                              fit: BoxFit.fill,
-//                            ),
-////                            Text('${product['pExpiration']}', style: TextStyle(fontSize: 12, color: Colors.white)),
-//                          ],
-//                        )
-//                      ),
-//                    ),
-//                    Expanded(
-//                      flex: 2,
-//                      child: Container(
-//                        padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-//                        child: Column(
-//                          crossAxisAlignment: CrossAxisAlignment.start,
-//                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                          children: <Widget>[
-//                            Text('Product ${product['pName']}', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
-//                            Text('Quantity: ${product['pQuantity']}', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
-//                            Text('Barcode: ${product['pCode']}', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
-//                          ],
-//                        )
-//                      )
-//                    )
-//                  ],
-//                )
-//              )
-//            ) : SizedBox();
-//          }).toList(),
-//        ),
-//      );
-//    }
 
     Widget  _criticalProductList () {
       List<dynamic> sortedProducts = _isCategoryActive == 'All' ?
