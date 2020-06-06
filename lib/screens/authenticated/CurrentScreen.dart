@@ -5,6 +5,7 @@ import 'package:sari_sales/components/TabNavigator.dart';
 import 'package:sari_sales/screens/authenticated/BarcodeScan.dart';
 import 'package:sari_sales/screens/authenticated/HomeScreen.dart';
 import 'package:sari_sales/utils/colorParser.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:io';
 
 class CurrentScreen extends StatelessWidget {
@@ -20,6 +21,7 @@ class CurrentScreenState extends StatefulWidget {
 }
 
 class _CurrentScreenState extends State<CurrentScreenState> {
+  final _auth = FirebaseAuth.instance;
   Widget _activeWidget = HomeScreen();
   Timer _timer;
   bool _appearWidget = false;
@@ -82,9 +84,10 @@ class _CurrentScreenState extends State<CurrentScreenState> {
                         child: Text('No', style: TextStyle(color: Colors.grey[500]))
                       ),
                       FlatButton(
-                        onPressed: () {
+                        onPressed: () async {
+                          await _auth.signOut();
                           Navigator.of(context)
-                              .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
+                              .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
                         },
                         child: Text('Yes', style: TextStyle(color: Colors.grey[500]))
                       ),
@@ -94,7 +97,7 @@ class _CurrentScreenState extends State<CurrentScreenState> {
               ),
             );
           },
-          transitionDuration: Duration(milliseconds: 500),
+          transitionDuration: Duration(milliseconds: 100),
           barrierDismissible: true,
           barrierLabel: '',
           context: context,

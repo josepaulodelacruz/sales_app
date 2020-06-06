@@ -3,10 +3,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 import '../../utils/colorParser.dart';
 
-
-import 'file:///D:/Projects/sari_sales/lib/screens/authenticated/CurrentScreen.dart';
+import 'package:sari_sales/screens/authenticated/CurrentScreen.dart';
 
 class LoginScreen extends StatelessWidget {
   @override
@@ -21,9 +23,14 @@ class LoginScreenState extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreenState> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final _auth = FirebaseAuth.instance;
   List<Color> _colors = [getColorFromHex('#5433FF '), getColorFromHex('#20BDFF')];
   Timer _timer;
+  String email;
+  String password;
   bool cardOpacity = false;
+  bool showSpinner = false;
 
 
   void initState () {
@@ -102,16 +109,26 @@ class _LoginScreenState extends State<LoginScreenState> {
                                   Container(
                                     padding: EdgeInsets.symmetric(horizontal: 32),
                                     child: TextFormField(
-                                        decoration: InputDecoration(
-                                            labelText: 'Username',
-                                            labelStyle: TextStyle(color: Colors.grey[500])
-                                        )
+                                      onChanged: (val) {
+                                        setState(() {
+                                          email = val;
+                                        });
+                                      },
+                                      decoration: InputDecoration(
+                                          labelText: 'Email',
+                                          labelStyle: TextStyle(color: Colors.grey[500])
+                                      )
                                     ),
                                   ),
                                   SizedBox(height: 30),
                                   Container(
                                     padding: EdgeInsets.symmetric(horizontal: 32, vertical: 10),
                                     child: TextFormField(
+                                      onChanged: (val) {
+                                        setState(() {
+                                          password = val;
+                                        });
+                                      },
                                       obscureText: true,
                                       decoration: InputDecoration(
                                         labelText: 'Password',
@@ -183,11 +200,31 @@ class _LoginScreenState extends State<LoginScreenState> {
               Container(
                 margin: EdgeInsets.only(right: 50, left: 50),
                 child: RaisedButton(
-                  onPressed: () {
-                    Navigator.push(context, PageRouteBuilder(
-                      transitionDuration: Duration(milliseconds: 2000),
-                      pageBuilder: (context, a1, a2) => CurrentScreen(),
-                    ));
+                  onPressed: () async {
+                    try {
+                      setState(() {
+                        showSpinner = true;
+                      });
+                      final signUser = await _auth.signInWithEmailAndPassword(email: email, password: password);
+
+                      if(signUser != null) {
+                        print(signUser);
+                        Navigator.push(context, PageRouteBuilder(
+                          transitionDuration: Duration(milliseconds: 2000),
+                          pageBuilder: (context, a1, a2) => CurrentScreen(),
+                        ));
+                        setState(() {
+                          showSpinner = false;
+                        });
+
+                      }
+
+                    } catch (e) {
+                      setState(() {
+                        showSpinner = false;
+                      });
+                      _scaffoldKey.currentState.showSnackBar(new SnackBar(backgroundColor: Colors.redAccent, content: new Text('Something went wrong please try again.')));
+                    }
                   },
                   textColor: Colors.white,
                   padding: const EdgeInsets.all(0),
@@ -220,43 +257,47 @@ class _LoginScreenState extends State<LoginScreenState> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          child: Stack(
-            children: <Widget>[
-              Hero(
-                tag: 'launch',
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 32),
-                  height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        colors: _colors,
-                        stops: [0, 0.7]
+      key: _scaffoldKey,
+      body: ModalProgressHUD(
+        inAsyncCall: showSpinner,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Container(
+            height: MediaQuery.of(context).size.height,
+            child: Stack(
+              children: <Widget>[
+                Hero(
+                  tag: 'launch',
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 32),
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          colors: _colors,
+                          stops: [0, 0.7]
+                      ),
                     ),
-                  ),
-                )
-              ),
-              AnimatedOpacity(
-                duration: Duration(milliseconds: 600),
-                opacity: !cardOpacity ? 0 : 1,
-                child: AnimatedContainer(
-                  duration: Duration(milliseconds: 700),
-                  margin: EdgeInsets.only(top: !cardOpacity ? 50 : 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      _iconBackBtn(context),
-                      _textBanner(context),
-                      _loginForm(context)
-                    ],
+                  )
+                ),
+                AnimatedOpacity(
+                  duration: Duration(milliseconds: 600),
+                  opacity: !cardOpacity ? 0 : 1,
+                  child: AnimatedContainer(
+                    duration: Duration(milliseconds: 700),
+                    margin: EdgeInsets.only(top: !cardOpacity ? 50 : 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        _iconBackBtn(context),
+                        _textBanner(context),
+                        _loginForm(context)
+                      ],
+                    )
                   )
                 )
-              )
-            ],
+              ],
+            )
           )
         )
       )
