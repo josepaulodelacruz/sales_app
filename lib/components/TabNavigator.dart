@@ -115,7 +115,7 @@ class _TabNavigator extends State<TabNavigator> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Icon(
-                        Icons.chat,
+                        Icons.settings,
                         color: widget.isActiveWidget == 'SettingScreen' ? Colors.yellow[300] : Colors.white,
                       ),
                       Text(

@@ -7,6 +7,7 @@ import 'package:badges/badges.dart';
 import 'package:audioplayers/audio_cache.dart';
 import 'package:sari_sales/constants/colorsSequence.dart';
 import 'package:sari_sales/screens/authenticated/HomeScreen.dart';
+import 'package:sari_sales/components/BottomModal.dart';
 
 //component
 import '../../components/ProductCard.dart';
@@ -98,6 +99,27 @@ class _BarcodeScanState extends State<BarcodeScan> {
   }
 
 
+  _addToCart () {
+    if(item.isNotEmpty) {
+      List hasDuplicate = _soldItems.where((element) => element['pName'].toString().toLowerCase().contains(item['pName'].toString().toLowerCase())).toList();
+      //if has duplicate items in cart
+      if(hasDuplicate.isEmpty) {
+        setState(() {
+          _soldItems.add({'orderCount': _orderCount, ...item });
+          item = {};
+          _scanItem.text = '';
+          _isScan = false;
+          _orderCount = 1;
+        });
+      } else {
+        _scaffoldKey.currentState.showSnackBar(new SnackBar(backgroundColor: Colors.redAccent, content: new Text('Your item already exist in the cart.')));
+      }
+    } else {
+      _scaffoldKey.currentState.showSnackBar(new SnackBar(backgroundColor: Colors.redAccent, content: new Text('No items added.')));
+    }
+  }
+
+
   @override
   void dispose () {
     controller.dispose();
@@ -120,7 +142,32 @@ class _BarcodeScanState extends State<BarcodeScan> {
               Navigator.pushNamedAndRemoveUntil(context, "/home", (r) => false);
             },
           ),
-          title: Text('Barcode Scanner')
+          title: Text('Barcode Scanner'),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.search, color: Colors.white),
+              onPressed: () {
+                print('Search');
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  builder: (context) => SingleChildScrollView(
+                      child:Container(
+                        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                        child: BottomModal(
+                          products: _products,
+                          addProduct: (addItem) {
+                            setState(() {
+                              item = addItem;
+                            });
+                          },
+                        ),
+                      )
+                  )
+                );
+              }
+            )
+          ]
         ),
         body: AnimatedOpacity(
           duration: Duration(milliseconds: 500),
@@ -199,23 +246,7 @@ class _BarcodeScanState extends State<BarcodeScan> {
                                     child: Text('Add', style: TextStyle(color: Colors.white)),
                                     color: getColorFromHex(ColorSequence().collections[1]),
                                     onPressed: ()  {
-                                      if(item.isNotEmpty) {
-                                        List hasDuplicate = _soldItems.where((element) => element['pName'].toString().toLowerCase().contains(item['pName'].toString().toLowerCase())).toList();
-                                        //if has duplicate items in cart
-                                        if(hasDuplicate.isEmpty) {
-                                          setState(() {
-                                            _soldItems.add({'orderCount': _orderCount, ...item });
-                                            item = {};
-                                            _scanItem.text = '';
-                                            _isScan = false;
-                                            _orderCount = 1;
-                                          });
-                                        } else {
-                                          _scaffoldKey.currentState.showSnackBar(new SnackBar(backgroundColor: Colors.redAccent, content: new Text('Your item already exist in the cart.')));
-                                        }
-                                      } else {
-                                        _scaffoldKey.currentState.showSnackBar(new SnackBar(backgroundColor: Colors.redAccent, content: new Text('No items added.')));
-                                      }
+                                      _addToCart();
                                     },
                                     shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
                                 )
@@ -233,20 +264,20 @@ class _BarcodeScanState extends State<BarcodeScan> {
                                   Expanded(
                                     flex: 1,
                                     child: Container(
-                                        padding: EdgeInsets.all(10),
-                                        color: getColorFromHex('#373234'),
-                                        height: MediaQuery.of(context).size.height,
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                          children: <Widget>[
-                                            Image.file(
-                                              File(item['pImagePath']),
-                                              height: MediaQuery.of(context).size.height * 0.15,
-                                              width: MediaQuery.of(context).size.width,
-                                            ),
-                                          ],
-                                        )
+                                      padding: EdgeInsets.all(10),
+                                      color: getColorFromHex('#373234'),
+                                      height: MediaQuery.of(context).size.height,
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        children: <Widget>[
+                                          Image.file(
+                                            File(item['pImagePath']),
+                                            height: MediaQuery.of(context).size.height * 0.15,
+                                            width: MediaQuery.of(context).size.width,
+                                          ),
+                                        ],
+                                      )
                                     ),
                                   ),
                                   Expanded(
@@ -302,14 +333,10 @@ class _BarcodeScanState extends State<BarcodeScan> {
                                             child: Row(
                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                               children: [
-//                                                        Flexible(
-//                                                          child: Text('Price:', style: TextStyle(fontSize: 15, color: Colors.grey[500], fontWeight: FontWeight.bold)),
-//                                                        ),
                                                 Text('Price ${item['pPrice'] * _orderCount}', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
                                               ]
                                             )
                                           ),
-
                                           Text('Barcode: ${item['pCode']}', style: TextStyle(fontSize: 15, color: Colors.grey[500])),
                                         ],
                                       )

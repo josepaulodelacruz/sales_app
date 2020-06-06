@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sari_sales/components/AppDialog.dart';
 import 'package:sari_sales/components/SettingConfirmationModal.dart';
+import 'package:sari_sales/components/MarkdownReader.dart';
 
 import 'package:sari_sales/utils/colorParser.dart';
 import 'package:sari_sales/models/Categories.dart';
@@ -218,6 +219,11 @@ class _SettingScreen extends State<SettingScreen> {
                             title: Text('Privacy Policy', style: TextStyle(fontSize: 16, color: Colors.grey[500])),
                             leading: Icon(Icons.security),
                             trailing: IconButton(
+                              onPressed: () {
+                                Navigator.push(context, MaterialPageRoute(
+                                  builder: (context) => MarkdownReader(typeTitle: 'Privacy Policy'),
+                                ));
+                              },
                               icon: Icon(Icons.arrow_forward_ios),
                             )
                           ),
@@ -225,6 +231,11 @@ class _SettingScreen extends State<SettingScreen> {
                             title: Text('Terms and Condition', style: TextStyle(fontSize: 16, color: Colors.grey[500])),
                             leading: Icon(Icons.branding_watermark),
                             trailing: IconButton(
+                              onPressed: () {
+                                Navigator.push(context, MaterialPageRoute(
+                                  builder: (context) => MarkdownReader(typeTitle: 'Terms and Condition'),
+                                ));
+                              },
                               icon: Icon(Icons.arrow_forward_ios),
                             )
                           ),
@@ -250,13 +261,13 @@ class _SettingScreen extends State<SettingScreen> {
                               icon: Icon(Icons.arrow_forward_ios),
                             )
                           ),
-                          ListTile(
-                              title: Text('Announcement', style: TextStyle(fontSize: 16, color: Colors.grey[500])),
-                              leading: Icon(Icons.new_releases),
-                              trailing: IconButton(
-                                icon: Icon(Icons.arrow_forward_ios),
-                              )
-                          ),
+//                          ListTile(
+//                              title: Text('Announcement', style: TextStyle(fontSize: 16, color: Colors.grey[500])),
+//                              leading: Icon(Icons.new_releases),
+//                              trailing: IconButton(
+//                                icon: Icon(Icons.arrow_forward_ios),
+//                              )
+//                          ),
                         ]
                       ).toList(),
                     )

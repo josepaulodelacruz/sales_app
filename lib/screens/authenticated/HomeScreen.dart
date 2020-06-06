@@ -16,7 +16,7 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 
 //components
 import '../../components/TakePhoto.dart';
-
+import '../../components/Search.dart';
 //models
 import '../../models/Categories.dart';
 
@@ -234,22 +234,37 @@ class _HomeScreenState extends State<HomeScreen> {
       )
     );
 
-    Widget _searchBar = Container(
-      padding: EdgeInsets.symmetric(horizontal: 32),
-      margin: EdgeInsets.only(bottom: 30),
-      child: TextField(
-        style: TextStyle(color: Colors.white),
-        decoration: InputDecoration(
-          enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.white),
-          ),
-          focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.white),
-          ),
-          labelText: 'Search',
-          labelStyle: TextStyle(color: Colors.white),
-          prefixIcon: Icon(Icons.search, color: Colors.white),
-        )
+    Widget _searchBar = Hero(
+        tag: 'search',
+        child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 32),
+        margin: EdgeInsets.only(bottom: 30),
+        child: Material(
+          color: Colors.transparent,
+          child: TextFormField(
+          showCursor: true,
+          readOnly: true,
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(
+              builder: (context) => Search(
+                products: _products,
+                categories: categories,
+              ),
+            ));
+          },
+          style: TextStyle(color: Colors.white),
+          decoration: InputDecoration(
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white),
+            ),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white),
+            ),
+            labelText: 'Search',
+            labelStyle: TextStyle(color: Colors.white),
+            prefixIcon: Icon(Icons.search, color: Colors.white),
+          )
+        ))
       )
     );
 

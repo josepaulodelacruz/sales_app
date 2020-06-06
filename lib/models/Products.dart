@@ -25,13 +25,15 @@ class Products {
   });
 
   static toJson(String pId, String pName, String pCode, String pCategory, String pPrice,String pQuantity, String pDescription, String pExpiration, String pImagePath) {
-    if(pName == '' || pCode == '' || pCategory == 'All' || pPrice == '' || pQuantity == '' || pImagePath == null) {
+    if(pName == '' || pCategory == 'All' || pPrice == '' || pQuantity == '' || pImagePath == null) {
+      print('inavlid');
       return {'error': 'Invalid inputs please fill up all the information.', 'invalid': true};
     } else {
+      print('true');
       return {
         'pId': pId,
         'pName': pName,
-        'pCode': int.parse(pCode),
+        'pCode': pCode == '' ? 0 : int.parse(pCode),
         'pCategory': pCategory,
         'pPrice': double.parse(pPrice),
         'pQuantity': int.parse(pQuantity),
