@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:sari_sales/models/ListProducts.dart';
 import 'package:sari_sales/utils/colorParser.dart';
 import 'package:intl/intl.dart';
@@ -182,6 +183,9 @@ class _AddItemState extends State<AddItemState> {
                      )
                    ),
                    TextField(
+                     inputFormatters: [
+                       new BlacklistingTextInputFormatter(new RegExp('[ -.,]'))
+                     ],
                      controller: _productCode,
                      onChanged: (val) {
                        setState(() {
@@ -304,6 +308,9 @@ class _AddItemState extends State<AddItemState> {
           Flexible(
             flex: 2,
             child: TextField(
+              inputFormatters: [
+                new BlacklistingTextInputFormatter(new RegExp('[ -.,]'))
+              ],
               controller: _productPrice,
               textAlign: TextAlign.end,
               decoration: InputDecoration(
@@ -331,6 +338,9 @@ class _AddItemState extends State<AddItemState> {
           Flexible(
             flex: 2,
             child: TextFormField(
+              inputFormatters: [
+                new BlacklistingTextInputFormatter(new RegExp('[ -.,]'))
+              ],
               controller: _productQuantity,
               textAlign: TextAlign.right,
               decoration: InputDecoration(

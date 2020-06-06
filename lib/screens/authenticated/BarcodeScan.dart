@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:badges/badges.dart';
 import 'package:audioplayers/audio_cache.dart';
@@ -311,18 +312,28 @@ class _BarcodeScanState extends State<BarcodeScan> {
                                                 Flexible(
                                                   flex: 1,
                                                   child: TextField(
+                                                    inputFormatters: [
+                                                      new BlacklistingTextInputFormatter(new RegExp('[ -.,]'))
+                                                    ],
                                                     textAlign: TextAlign.right,
                                                     onChanged: (val) {
-                                                      setState(() {
-                                                        _orderCount = val.length > 0 ? int.parse(val): 1;
-                                                      });
+                                                      if(int.parse(val) > item['pQuantity']) {
+                                                        _scaffoldKey.currentState.showSnackBar(new SnackBar(backgroundColor: Colors.redAccent, content: new Text('The order exceed the remaining quantity.')));
+                                                        return null;
+                                                      } else {
+                                                        setState(() {
+                                                          _orderCount = val.length > 0 ? int.parse(val): 1;
+                                                        });
+                                                      }
+
                                                     },
                                                     decoration: InputDecoration(
-                                                        hintText: '1'
+                                                        hintText: '1',
+
                                                     ),
                                                     keyboardType: TextInputType.numberWithOptions(
                                                       decimal: false,
-                                                      signed: true,
+                                                      signed: false,
                                                     ),
                                                   )
                                                 ),

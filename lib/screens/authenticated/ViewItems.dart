@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:sari_sales/components/DialogModal.dart';
 import 'package:intl/intl.dart';
 
@@ -111,6 +112,7 @@ class _ViewItemsState extends State<ViewItems> {
 
   @override
   Widget build(BuildContext context) {
+    print(_customerAmount.text);
 
     Widget _topHeader = Container(
       padding: EdgeInsets.all(20),
@@ -145,7 +147,11 @@ class _ViewItemsState extends State<ViewItems> {
                       widget.deleteItem(product['pId']);
                     });
                   }),
-                  DataCell(TextField(
+                  DataCell(
+                    TextField(
+                    inputFormatters: [
+                      new BlacklistingTextInputFormatter(new RegExp('[ -.,]'))
+                    ],
                     onChanged: (val) {
                       if(int.parse(val) > _products[index]['pQuantity']) {
                         _scaffoldKey.currentState.showSnackBar(new SnackBar(backgroundColor: Colors.redAccent, content: new Text('The order exceed the remaining quantity.')));
@@ -208,11 +214,15 @@ class _ViewItemsState extends State<ViewItems> {
           Container(
             width: MediaQuery.of(context).size.width * 0.30,
             child: TextField(
+              inputFormatters: [
+                new BlacklistingTextInputFormatter(new RegExp('[ -.,]'))
+              ],
+              controller: _customerAmount,
               textAlign: TextAlign.right,
               onChanged: (val) {
-                setState(() {
-                  _customerAmount.text = val;
-                });
+//                setState(() {
+//                  _customerAmount.text = val;
+//                });
               },
               decoration: InputDecoration(
                 hintText: 'Enter Amount',
