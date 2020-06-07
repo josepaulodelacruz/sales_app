@@ -4,10 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sari_sales/models/ListProducts.dart';
 import 'package:sari_sales/models/Transactions.dart';
+import 'package:sari_sales/models/Users.dart';
 import 'package:sari_sales/utils/colorParser.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:path/path.dart' show join;
-import 'package:path_provider/path_provider.dart';
 import 'package:camera/camera.dart';
 import 'package:provider/provider.dart';
 
@@ -38,6 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final _newCategory = TextEditingController();
   String _isCategoryActive = 'All';
   bool _animateText = false;
+  String _storeImage;
 
   @override
   void initState () {
@@ -59,6 +60,11 @@ class _HomeScreenState extends State<HomeScreen> {
     await Transactions.frequentlyBought().then((res) {
       setState(() {
         _frequentlyBuy = res;
+      });
+    });
+    await Users.getStorageImage().then((res) {
+      setState(() {
+        _storeImage = res;
       });
     });
   }
@@ -192,6 +198,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final Users userProvider = Provider.of<Users>(context);
 
     List _textShadow = <Shadow>[
       Shadow(
@@ -279,219 +286,219 @@ class _HomeScreenState extends State<HomeScreen> {
         children: <Widget>[
           Padding(
             padding: EdgeInsets.only(left: 20),
-            child: Text('Frequently Bought', style: TextStyle(color: Colors.black38, fontSize: 20, fontWeight: FontWeight.w500)),
-          ),
-          Container(
-            height: 100,
-            width: MediaQuery.of(context).size.width,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: _frequentlyBuy?.map((b) {
-                int index = _frequentlyBuy.indexOf(b);
-                return index   < 7 ? Container(
-                    width: 80,
-                    child: Stack(
-                    children: <Widget>[
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.file(
-                          File(b['imagePath']),
-                          fit: BoxFit.contain,
-                        )
-                      ),
-                      Positioned(
-                        top: MediaQuery.of(context).size.height * 0.09,
-                        left: MediaQuery.of(context).size.width * 0.09,
-                        child: Transform(
-                          transform: new Matrix4.identity()..scale(0.7),
-                          child: Chip(
-                            backgroundColor: Colors.lightBlue,
-                            label: Text('₱${b['price']}'),
-                            labelStyle: TextStyle(fontSize: 12),
+              child: Text('Frequently Bought', style: TextStyle(color: Colors.black38, fontSize: 20, fontWeight: FontWeight.w500)),
+            ),
+            Container(
+              height: 100,
+              width: MediaQuery.of(context).size.width,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: _frequentlyBuy?.map((b) {
+                  int index = _frequentlyBuy.indexOf(b);
+                  return index   < 7 ? Container(
+                      width: 80,
+                      child: Stack(
+                      children: <Widget>[
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.file(
+                            File(b['imagePath']),
+                            fit: BoxFit.contain,
+                          )
+                        ),
+                        Positioned(
+                          top: MediaQuery.of(context).size.height * 0.09,
+                          left: MediaQuery.of(context).size.width * 0.09,
+                          child: Transform(
+                            transform: new Matrix4.identity()..scale(0.7),
+                            child: Chip(
+                              backgroundColor: Colors.lightBlue,
+                              label: Text('₱${b['price']}'),
+                              labelStyle: TextStyle(fontSize: 12),
+                            )
                           )
                         )
-                      )
-                    ],
-                  )
-                ) : SizedBox();
-              })?.toList() ?? [],
-            )
-          )
-        ],
-      )
-    );
-
-    Widget _productCategory = Container(
-      width: MediaQuery.of(context).size.width,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: categories?.map((cc) {
-            int cardIndex = categories.indexOf(cc);
-            return AnimatedContainer(
-              duration: Duration(milliseconds: 1000),
-              curve: Curves.ease,
-              padding: EdgeInsets.only(left: 0),
-              margin: EdgeInsets.symmetric(horizontal: 5, vertical: 0),
-              child: _isCategoryActive == cc['cTitle'] ?
-                RaisedButton(
-                  color: getColorFromHex('#6DD5FA'),
-                  onPressed: () {},
-                  child: Text(cc['cTitle'], style: TextStyle(color: Colors.white)),
-                  shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
-                )
-                  : FlatButton(
-                child: Text(cc['cTitle'], style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w700)),
-                onPressed: ()  {
-                  setState(() => _animateText = true);
-                  _isAnimateText(cc['cTitle']);
-                },
-                shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
-              )
-
-            );
-          })?.toList() ?? [],
-        )
-      )
-    );
-
-    Widget  _criticalProductList () {
-      List<dynamic> sortedProducts = _isCategoryActive == 'All' ?
-          _products?.map((product) => product)?.toList() ?? [] :
-          _products.where((element) => element['pCategory'].toString().contains(_isCategoryActive.toString())).toList();
-      return Container(
-        margin: EdgeInsets.only(top: 10),
-        width: MediaQuery.of(context).size.width,
-        child: Wrap(
-          children:  sortedProducts.map((product) {
-            return product['pQuantity'] <= 5 ? Stack(
-              children: <Widget>[
-                Container(
-                  color: getColorFromHex('#f3f3f3'),
-                  padding: EdgeInsets.all(5),
-                  margin: EdgeInsets.symmetric(vertical: 10),
-                  width: MediaQuery.of(context).size.width * 0.50,
-                  height: MediaQuery.of(context).size.height * 0.25,
-                  child: Card(
-                    elevation: 2,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        Text('${product['pName']}', textAlign: TextAlign.center, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.black54)),
-                        Text('${product['pExpiration']}', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w300, color: Colors.grey[500])),
                       ],
                     )
-                  ),
-                ),
-                Positioned(
-                  top: -10,
-                  left: MediaQuery.of(context).size.width * 0.05,
-                  child: Image.file(
-                      File(product['pImagePath']),
-                      width: MediaQuery.of(context).size.width * 0.40,
-                      height: MediaQuery.of(context).size.height * 0.20,
-                      fit: BoxFit.cover,
-                    ),
-                ),
-                Positioned  (
-                  left: MediaQuery.of(context).size.width * 0.28,
-                  child: Chip(
-                    backgroundColor: Colors.red[500],
-                    elevation: 5,
-                    label: Text('Qty: ${product['pQuantity']}', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700))
-                  )
-                ),
-                Positioned  (
-                  top: MediaQuery.of(context).size.width * 0.25,
-                  child: Chip(
-                    backgroundColor: Colors.lightBlue,
-                    elevation: 5,
-                    label: Text('₱${product['pPrice']}', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700))
-                  )
-                )
-              ],
-            ) : SizedBox();
-          }).toList(),
+                  ) : SizedBox();
+                })?.toList() ?? [],
+              )
+            )
+          ],
         )
       );
-    }
 
-    return Scaffold(
-        key: _drawerKey,
-        extendBody: true,
-        body: Stack(
-        children: <Widget>[
-          Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
-            color: getColorFromHex('#f3f3f3'),
+      Widget _productCategory = Container(
+        width: MediaQuery.of(context).size.width,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: categories?.map((cc) {
+              int cardIndex = categories.indexOf(cc);
+              return AnimatedContainer(
+                duration: Duration(milliseconds: 1000),
+                curve: Curves.ease,
+                padding: EdgeInsets.only(left: 0),
+                margin: EdgeInsets.symmetric(horizontal: 5, vertical: 0),
+                child: _isCategoryActive == cc['cTitle'] ?
+                  RaisedButton(
+                    color: getColorFromHex('#6DD5FA'),
+                    onPressed: () {},
+                    child: Text(cc['cTitle'], style: TextStyle(color: Colors.white)),
+                    shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
+                  )
+                    : FlatButton(
+                  child: Text(cc['cTitle'], style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w700)),
+                  onPressed: ()  {
+                    setState(() => _animateText = true);
+                    _isAnimateText(cc['cTitle']);
+                  },
+                  shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
+                )
 
-            )
-          ),
-          SafeArea(
-            child: Container(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
-                        gradient: LinearGradient(
-                          colors: [
-                            getColorFromHex('#00d2ff'),
-                            getColorFromHex('#3a7bd5'),
-                          ],
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 5,
-                            blurRadius: 7,
-                            offset: Offset(0, 3), // changes position of shadow
-                          ),
-                        ]
-                      ),
+              );
+            })?.toList() ?? [],
+          )
+        )
+      );
+
+      Widget  _criticalProductList () {
+        List<dynamic> sortedProducts = _isCategoryActive == 'All' ?
+            _products?.map((product) => product)?.toList() ?? [] :
+            _products.where((element) => element['pCategory'].toString().contains(_isCategoryActive.toString())).toList();
+        return Container(
+          margin: EdgeInsets.only(top: 10),
+          width: MediaQuery.of(context).size.width,
+          child: Wrap(
+            children:  sortedProducts.map((product) {
+              return product['pQuantity'] <= 5 ? Stack(
+                children: <Widget>[
+                  Container(
+                    color: getColorFromHex('#f3f3f3'),
+                    padding: EdgeInsets.all(5),
+                    margin: EdgeInsets.symmetric(vertical: 10),
+                    width: MediaQuery.of(context).size.width * 0.50,
+                    height: MediaQuery.of(context).size.height * 0.25,
+                    child: Card(
+                      elevation: 2,
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
-                          _topHeader,
-                          _topText,
-                          _searchBar,
+                          Text('${product['pName']}', textAlign: TextAlign.center, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.black54)),
+                          Text('${product['pExpiration']}', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w300, color: Colors.grey[500])),
                         ],
                       )
                     ),
-                    _frequentlyBought,
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 32, vertical: 15),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text('Categories', style: TextStyle(color: Colors.black38, fontSize: 20, fontWeight: FontWeight.w500)),
-                          Container(
-                              height: 30,
-                              width: MediaQuery.of(context).size.width * 0.35,
-                              child:  RaisedButton.icon(
-                                color: getColorFromHex('#36d1dc'),
-                                label: Text('New Category', style: TextStyle(fontSize: 11, color: Colors.white)),
-                                icon: Icon(Icons.add, color: Colors.white, size: 18),
-                                shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
-                                onPressed: () {
-                                  _newCategoryModal(context);
-                                },
-                              )
-                          )
-                        ],
+                  ),
+                  Positioned(
+                    top: -10,
+                    left: MediaQuery.of(context).size.width * 0.05,
+                    child: Image.file(
+                        File(product['pImagePath']),
+                        width: MediaQuery.of(context).size.width * 0.40,
+                        height: MediaQuery.of(context).size.height * 0.20,
+                        fit: BoxFit.cover,
                       ),
-                    ),
-                    _productCategory,
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 25, vertical: 5),
-                      child: Align(
-                        alignment: Alignment.topLeft,
-                        child: Text('Critical Products', style: TextStyle(color: Colors.black38, fontSize: 20, fontWeight: FontWeight.w700)),
+                  ),
+                  Positioned  (
+                    left: MediaQuery.of(context).size.width * 0.28,
+                    child: Chip(
+                      backgroundColor: Colors.red[500],
+                      elevation: 5,
+                      label: Text('Qty: ${product['pQuantity']}', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700))
+                    )
+                  ),
+                  Positioned  (
+                    top: MediaQuery.of(context).size.width * 0.25,
+                    child: Chip(
+                      backgroundColor: Colors.lightBlue,
+                      elevation: 5,
+                      label: Text('₱${product['pPrice']}', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700))
+                    )
+                  )
+                ],
+              ) : SizedBox();
+            }).toList(),
+          )
+        );
+      }
+
+      return Scaffold(
+          key: _drawerKey,
+          extendBody: true,
+          body: Stack(
+          children: <Widget>[
+            Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+              color: getColorFromHex('#f3f3f3'),
+
+              )
+            ),
+            SafeArea(
+              child: Container(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
+                          gradient: LinearGradient(
+                            colors: [
+                              getColorFromHex('#00d2ff'),
+                              getColorFromHex('#3a7bd5'),
+                            ],
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 5,
+                              blurRadius: 7,
+                              offset: Offset(0, 3), // changes position of shadow
+                            ),
+                          ]
+                        ),
+                        child: Column(
+                          children: <Widget>[
+                            _topHeader,
+                            _topText,
+                            _searchBar,
+                          ],
+                        )
                       ),
+                      _frequentlyBought,
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 32, vertical: 15),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text('Categories', style: TextStyle(color: Colors.black38, fontSize: 20, fontWeight: FontWeight.w500)),
+                            Container(
+                                height: 30,
+                                width: MediaQuery.of(context).size.width * 0.35,
+                                child:  RaisedButton.icon(
+                                  color: getColorFromHex('#36d1dc'),
+                                  label: Text('New Category', style: TextStyle(fontSize: 11, color: Colors.white)),
+                                  icon: Icon(Icons.add, color: Colors.white, size: 18),
+                                  shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+                                  onPressed: () {
+                                    _newCategoryModal(context);
+                                  },
+                                )
+                            )
+                          ],
+                        ),
+                      ),
+                      _productCategory,
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 25, vertical: 5),
+                        child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Text('Critical Products', style: TextStyle(color: Colors.black38, fontSize: 20, fontWeight: FontWeight.w700)),
+                        ),
                     ),
                     _criticalProductList()
                   ],
@@ -502,63 +509,125 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       drawer: Drawer(
-        child: Container(
-          color: getColorFromHex('#f3f3f3'),
-          child: Column(
-            children: <Widget>[
-              DrawerHeader(
+        child: FutureBuilder(
+          future: userProvider.userInfoStorage(),
+          builder: (context, snapshot) {
+            if(snapshot.connectionState == ConnectionState.done) {
+              print(snapshot.data);
+              return Container(
+                color: getColorFromHex('#f3f3f3'),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-                    IconButton(
-                      icon: Icon(Icons.add_a_photo, size: 42, color: Colors.white),
+                    Hero(
+                      tag: 'takePhoto',
+                      child: Material(
+                          child: _storeImage != null ? InkWell(
+                              onTap: () async {
+                                FocusScope.of(context).unfocus();
+                                WidgetsFlutterBinding.ensureInitialized();
+
+                                // Obtain a list of the available cameras on the device.
+                                final cameras = await availableCameras();
+
+                                // Get a specific camera from the list of available cameras.
+                                final firstCamera = cameras.first;
+                                Navigator.push(context, PageRouteBuilder(
+                                  transitionDuration: Duration(seconds: 1),
+                                  pageBuilder: (context, a1, a2) => TakePhoto(
+                                    camera: firstCamera,
+                                    isCapture: (path, picture) async {
+                                      setState(() => _storeImage = path);
+                                      await Users.saveStorageImage(path);
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ));
+                              },
+                              child: Container(
+                                  height: 200,
+                                  width: MediaQuery.of(context).size.width,
+                                  child: Image.file(
+                                      File(_storeImage),
+                                      fit: BoxFit.fill
+                                  )
+                              )
+                          ) : Container(
+                              height: 200,
+                              color: Colors.lightBlue,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  IconButton(
+                                    icon: Icon(Icons.add_a_photo, size: 42, color: Colors.white),
+                                    onPressed: () async {
+                                      FocusScope.of(context).unfocus();
+                                      WidgetsFlutterBinding.ensureInitialized();
+
+                                      // Obtain a list of the available cameras on the device.
+                                      final cameras = await availableCameras();
+
+                                      // Get a specific camera from the list of available cameras.
+                                      final firstCamera = cameras.first;
+                                      Navigator.push(context, PageRouteBuilder(
+                                        transitionDuration: Duration(seconds: 1),
+                                        pageBuilder: (context, a1, a2) => TakePhoto(
+                                          camera: firstCamera,
+                                          isCapture: (path, picture) async {
+                                            setState(() => _storeImage = path);
+                                            await Users.saveStorageImage(path);
+                                            Navigator.pop(context);
+                                          },
+                                        ),
+                                      ));
+                                    },
+                                  ),
+                                  Text('Add photo of\nyour Store', textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w500)),
+                                ],
+                              )
+                          )
+                      )
                     ),
-                    Text('Add photo of\nyour Store', textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w500)),
+                    ListTile(
+                      leading: Icon(Icons.person),
+                      title: Text(snapshot.data['name'].toString(), style: TextStyle(color: Colors.black38, fontSize: 16, fontWeight: FontWeight.w500)),
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.email),
+                      title: Text(snapshot.data['email'].toString(), style: TextStyle(color: Colors.black38, fontSize: 16, fontWeight: FontWeight.w500)),
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.location_on),
+                      title: Text(snapshot.data['address'].toString(), style: TextStyle(color: Colors.black38, fontSize: 16, fontWeight: FontWeight.w500)),
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.contact_phone),
+                      title: Text(snapshot.data['contact'].toString(), style: TextStyle(color: Colors.black38, fontSize: 16, fontWeight: FontWeight.w500)),
+                    ),
+                    Expanded(
+                        flex: 1,
+                        child: Container()
+                    ),
+                    Expanded(
+                        flex: 1,
+                        child: ListTile(
+                          onTap: () async {
+                            await _auth.signOut();
+                            await Users.saveSession(false);
+                            Navigator.of(context)
+                                .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
+                          },
+                          leading: Icon(Icons.exit_to_app),
+                          title: Text('Logout', style: TextStyle(color: Colors.black38, fontSize: 16, fontWeight: FontWeight.w500)),
+                        )
+                    )
                   ],
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                ),
-              ),
-              ListTile(
-                leading: Icon(Icons.person),
-                title: Text('Sample name', style: TextStyle(color: Colors.black38, fontSize: 16, fontWeight: FontWeight.w500)),
-              ),
-              ListTile(
-                leading: Icon(Icons.local_convenience_store),
-                title: Text('Store name', style: TextStyle(color: Colors.black38, fontSize: 16, fontWeight: FontWeight.w500)),
-              ),
-              ListTile(
-                leading: Icon(Icons.email),
-                title: Text('Email', style: TextStyle(color: Colors.black38, fontSize: 16, fontWeight: FontWeight.w500)),
-              ),
-              ListTile(
-                leading: Icon(Icons.location_on),
-                title: Text('Address', style: TextStyle(color: Colors.black38, fontSize: 16, fontWeight: FontWeight.w500)),
-              ),
-              ListTile(
-                leading: Icon(Icons.contact_phone),
-                title: Text('Contact', style: TextStyle(color: Colors.black38, fontSize: 16, fontWeight: FontWeight.w500)),
-              ),
-              Expanded(
-                flex: 1,
-                child: Container()
-              ),
-              Expanded(
-                flex: 1,
-                child: ListTile(
-                  onTap: () async {
-                    await _auth.signOut();
-                    Navigator.of(context)
-                        .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
-                  },
-                  leading: Icon(Icons.exit_to_app),
-                  title: Text('Logout', style: TextStyle(color: Colors.black38, fontSize: 16, fontWeight: FontWeight.w500)),
                 )
-              )
-            ],
-          )
+              );
+            } else {
+              return Text('Loading...');
+            }
+          },
         )
       )
     );

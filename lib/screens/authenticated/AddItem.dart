@@ -5,7 +5,9 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:sari_sales/models/ListProducts.dart';
+import 'package:sari_sales/models/Users.dart';
 import 'package:sari_sales/utils/colorParser.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' show join;
@@ -46,9 +48,11 @@ class _AddItemState extends State<AddItemState> {
   String _productExpiration = new DateFormat.yMd().format(DateTime.now());
   String _productId;
   List _categories = [];
+  String _status;
 
   @override
   void initState () {
+    _fetchStatus();
     setState(() {
       _products = widget.products;
       _categories = widget.categories;
@@ -67,6 +71,15 @@ class _AddItemState extends State<AddItemState> {
       });
     }
     super.initState();
+  }
+
+  _fetchStatus () async {
+    await Users.userGetStatusPersistent().then((res) {
+      print(res);
+      setState(() {
+        _status = res;
+      });
+    });
   }
 
   @override
@@ -95,6 +108,7 @@ class _AddItemState extends State<AddItemState> {
 
   @override
   void _addProduct () {
+    final Users userProvider = Provider.of<Users>(context, listen: false);
     final productInfo = Products.toJson(
         _productId,
         _productName.text,
@@ -110,16 +124,39 @@ class _AddItemState extends State<AddItemState> {
     if(productInfo['invalid']) {
       _scaffoldKey.currentState.showSnackBar(new SnackBar(backgroundColor: Colors.redAccent, content: new Text(productInfo['error'])));
     } else {
-      setState(() {
-        _products.add(productInfo);
-      });
+      if (_status == 'trial') {
+        if (_products.length >= 10) {
+          print('your only in a trial version');
+          _scaffoldKey.currentState.showSnackBar(new SnackBar(
+              backgroundColor: Colors.redAccent,
+              content: new Text('This is only a trial version')));
+          return null;
+        } else {
+          setState(() {
+            _products.add(productInfo);
+          });
+          _saveToStorage(_products).then((res) {
+            _scaffoldKey.currentState.showSnackBar(new SnackBar(
+                backgroundColor: Colors.greenAccent,
+                content: new Text('Successfully added!')));
+            widget.updateProduct();
+            print('success');
+          });
+        }
+      } else {
+        print('paid');
+        setState(() {
+          _products.add(productInfo);
+        });
 
-      _saveToStorage(_products).then((res) {
-        _scaffoldKey.currentState.showSnackBar(new SnackBar(backgroundColor: Colors.greenAccent, content: new Text('Successfully added!')));
-        widget.updateProduct();
-        print('success');
-      });
-
+        _saveToStorage(_products).then((res) {
+          _scaffoldKey.currentState.showSnackBar(new SnackBar(
+              backgroundColor: Colors.greenAccent,
+              content: new Text('Successfully added!')));
+          widget.updateProduct();
+          print('success');
+        });
+      }
     }
 
   }
@@ -309,12 +346,12 @@ class _AddItemState extends State<AddItemState> {
             flex: 2,
             child: TextField(
               inputFormatters: [
-                new BlacklistingTextInputFormatter(new RegExp('[ -.,]'))
+                new BlacklistingTextInputFormatter(new RegExp('[ -,]'))
               ],
               controller: _productPrice,
               textAlign: TextAlign.end,
               decoration: InputDecoration(
-                hintText: '32.00',
+                hintText: '0',
               ),
               keyboardType: TextInputType.numberWithOptions(
                 decimal: true,

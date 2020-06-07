@@ -5,6 +5,7 @@ import 'package:sari_sales/components/MarkdownReader.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:provider/provider.dart';
 
 import '../../utils/colorParser.dart';
 import 'package:sari_sales/models/Users.dart';
@@ -43,6 +44,7 @@ class _RegisterScreenState extends State<RegisterScreenState> {
   }
 
   _handleSignUp (context) async {
+    final Users userProvider = Provider.of<Users>(context, listen: false);
     final _user = Users(
       userName: name,
       userAddress: address,
@@ -51,8 +53,14 @@ class _RegisterScreenState extends State<RegisterScreenState> {
       userPassword: password,
       userConfirmPassword: confirmPassword,
     );
+    userProvider.name = name;
+    userProvider.address= address;
+    userProvider.contact = contact;
+    userProvider.email = email;
+    userProvider.password = password;
+    userProvider.confirmPassword = password;
 
-    bool isValidate = Users.validateUserInputs(_user);
+    bool isValidate = userProvider.validateUserInputs(_user);
     if(!isValidate) {
       //failed
       _scaffoldKey.currentState.showSnackBar(new SnackBar(backgroundColor: Colors.redAccent, content: new Text('Please fill up all the information.')));
@@ -65,8 +73,6 @@ class _RegisterScreenState extends State<RegisterScreenState> {
         print('password not match');
         return null;
       }
-
-      print('proceed');
 
       setState(() {
         showSpinner = true;
@@ -86,8 +92,10 @@ class _RegisterScreenState extends State<RegisterScreenState> {
             'status': 'trial',
             'email': _user.email,
           }).then((res) async {
-            Map<String, dynamic> jsonUser = _user.toJson();
-            await Users.saveUserInformation(jsonUser);
+            //provider
+            await Users.userSaveStatusPersistent('trial');
+            await Users.saveUserInformation(_user);
+            userProvider.loginUser(userProvider.toJson());
           });
 
           Navigator.of(context)
@@ -201,6 +209,7 @@ class _RegisterScreenState extends State<RegisterScreenState> {
             height: 70,
             width: MediaQuery.of(context).size.width * 0.90,
             child: Card(
+              elevation: _activeInput == 'Contact' ? 10 : 1,
               child: TextField(
                 onChanged: (val) {
                   setState(() => contact = val);

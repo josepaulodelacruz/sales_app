@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sari_sales/components/TabNavigator.dart';
+import 'package:sari_sales/models/Users.dart';
 import 'package:sari_sales/screens/authenticated/BarcodeScan.dart';
 import 'package:sari_sales/screens/authenticated/HomeScreen.dart';
 import 'package:sari_sales/utils/colorParser.dart';
@@ -31,13 +32,18 @@ class _CurrentScreenState extends State<CurrentScreenState> {
 
   @override
   void initState () {
-    _timer = Timer(Duration(milliseconds: 1000), () {
+    _timer = Timer(Duration(milliseconds: 300), () {
       setState(() {
         _appearWidget = true;
       });
     });
 
+    _fetchActiveSession();
     super.initState();
+  }
+
+  _fetchActiveSession () async {
+    await Users.saveSession(true);
   }
 
 
@@ -86,6 +92,7 @@ class _CurrentScreenState extends State<CurrentScreenState> {
                       ),
                       FlatButton(
                         onPressed: () async {
+                          await Users.saveSession(true);
                           exit(0);
                         },
                         child: Text('Yes', style: TextStyle(color: Colors.grey[500]))

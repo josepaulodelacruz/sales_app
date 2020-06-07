@@ -3,8 +3,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:sari_sales/models/Users.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
+
 
 import '../../utils/colorParser.dart';
 
@@ -25,6 +29,7 @@ class LoginScreenState extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreenState> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final _auth = FirebaseAuth.instance;
+  final _firestore = Firestore.instance;
   List<Color> _colors = [getColorFromHex('#5433FF '), getColorFromHex('#20BDFF')];
   Timer _timer;
   String email;
@@ -201,6 +206,7 @@ class _LoginScreenState extends State<LoginScreenState> {
                 margin: EdgeInsets.only(right: 50, left: 50),
                 child: RaisedButton(
                   onPressed: () async {
+                    final Users userProvider = Provider.of<Users>(context, listen: false);
                     try {
                       setState(() {
                         showSpinner = true;
@@ -208,8 +214,27 @@ class _LoginScreenState extends State<LoginScreenState> {
                       final signUser = await _auth.signInWithEmailAndPassword(email: email, password: password);
 
                       if(signUser != null) {
+                        final userId = await _auth.currentUser();
+                        DocumentSnapshot querySnapshot = await Firestore.instance
+                            .collection('users')
+                            .document(userId.uid)
+                            .get();
+
+                        if (querySnapshot.exists) {
+                          print('success');
+                          userProvider.name = querySnapshot.data['name'];
+                          userProvider.address = querySnapshot.data['address'];
+                          userProvider.contact = querySnapshot.data['contact'];
+                          userProvider.email = querySnapshot.data['email'];
+
+                          await Users.saveUserInformation(userProvider.toJson());
+                          await Users.userSaveStatusPersistent(querySnapshot.data['status']);
+//                          userProvider.loginUser(userProvider.toJson());
+                        }
+
                         Navigator.of(context)
                             .pushNamedAndRemoveUntil('/home', (Route<dynamic> route) => false);
+
                         setState(() {
                           showSpinner = false;
                         });
