@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:sari_sales/models/ListProducts.dart';
 import 'package:sari_sales/models/Users.dart';
+import 'package:sari_sales/models/Categories.dart';
 import 'package:sari_sales/utils/colorParser.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' show join;
@@ -37,6 +38,7 @@ class AddItemState extends StatefulWidget {
 
 class _AddItemState extends State<AddItemState> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final _formKey = GlobalKey<FormState>();
   List _products = [];
   String _imagePath;
   final _productName = TextEditingController();
@@ -48,6 +50,7 @@ class _AddItemState extends State<AddItemState> {
   String _productExpiration = new DateFormat.yMd().format(DateTime.now());
   String _productId;
   List _categories = [];
+  final _newCategory = TextEditingController();
   String _status;
 
   @override
@@ -196,6 +199,124 @@ class _AddItemState extends State<AddItemState> {
 
     }
 
+  }
+
+  @override
+  void _addNewCategory (context) async {
+    Map<String, dynamic> _categoryItem = await Categories.toJson(_newCategory.text);
+    if(!_categoryItem['isValid']) {
+      print('Something went wrong');
+      return;
+    } else {
+      setState(() {
+        _categories.add(_categoryItem);
+      });
+      Categories.saveCategoryToLocalStorage(_categories).then((res) {
+        setState(() {
+          _newCategory.text = '';
+        });
+      }).then((res) {
+        widget.updateProduct();
+        Navigator.pop(context);
+      });
+    }
+  }
+
+  @override
+  void _newCategoryModal (context) async {
+    return showGeneralDialog(
+        barrierDismissible: false,
+        barrierColor: Colors.black.withOpacity(0.5),
+        transitionBuilder: (context, a1, a2, widget) {
+          final curvedValue = Curves.easeInOutBack.transform(a1.value) - 1.0;
+          return WillPopScope(
+            onWillPop: () {},
+            child: Transform(
+              transform: Matrix4.translationValues(0.0, curvedValue * 200, 0.0),
+              child: Opacity(
+                  opacity: a1.value,
+                  child: AlertDialog(
+                    contentPadding: EdgeInsets.all(0),
+                    content: Container(
+                        height: MediaQuery.of(context).size.height * 0.18,
+                        width: MediaQuery.of(context).size.width * 0.50,
+                        child: Row(
+                          children: <Widget>[
+                            Flexible(
+                                flex: 1,
+                                child: Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 10),
+                                    height: MediaQuery.of(context).size.height,
+                                    width: MediaQuery.of(context).size.width,
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                      children: <Widget>[
+                                        Form(
+                                          key: _formKey,
+                                          child: TextFormField(
+                                            textCapitalization: TextCapitalization.words,
+                                            controller: _newCategory,
+                                            decoration: InputDecoration(
+                                                labelText: 'Input new Category'
+                                            ),
+                                            validator: (value) {
+                                              bool isExist = false;
+                                              if(value.isEmpty) {
+                                                return 'Please enter Category';
+                                              }
+                                              _categories.map((cc) {
+                                                if(cc['cTitle'].toString().toLowerCase() == value.toLowerCase()) {
+                                                  isExist = true;
+                                                }
+                                              }).toList();
+
+                                              if(isExist) {
+                                                return 'Category already Exist';
+                                              }
+
+                                              return null;
+
+                                            },
+                                          ),
+                                        ),
+                                        Container(
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            children: <Widget>[
+                                              IconButton(
+                                                icon: Icon(Icons.clear, color: Colors.red),
+                                                onPressed: () => Navigator.of(context).pop(),
+                                              ),
+                                              IconButton(
+                                                icon: Icon(Icons.check, color: Colors.blue),
+                                                onPressed: () {
+                                                  if(_formKey.currentState.validate()) {
+                                                    _addNewCategory(context);
+                                                  }
+                                                },
+                                              )
+                                            ],
+                                          ),
+                                        )
+
+                                      ],
+                                    )
+                                )
+                            )
+                          ],
+                        )
+                    ),
+                  )
+              ),
+            )
+        );
+
+        },
+        transitionDuration: Duration(milliseconds: 500),
+        barrierLabel: '',
+        context: context,
+        pageBuilder: (context, animation1, animation2) {}
+    );
   }
 
   @override
@@ -456,6 +577,15 @@ class _AddItemState extends State<AddItemState> {
       appBar: AppBar(
         title: Text(widget.editItem.isEmpty ? 'Add item' : 'Edit item'),
         backgroundColor: getColorFromHex('#20BDFF'),
+        actions: <Widget>[
+          FlatButton.icon(
+            icon: Icon(Icons.add, color: Colors.white),
+            label: Text('Add category', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500)),
+            onPressed: () {
+              _newCategoryModal(context);
+            }
+          )
+        ],
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sari_sales/components/AppDialog.dart';
 import 'package:sari_sales/components/SettingConfirmationModal.dart';
 import 'package:sari_sales/components/MarkdownReader.dart';
+import 'package:sari_sales/models/Users.dart';
 
 import 'package:sari_sales/utils/colorParser.dart';
 import 'package:sari_sales/models/Categories.dart';
@@ -13,6 +14,7 @@ class SettingScreen extends StatefulWidget {
 }
 
 class _SettingScreen extends State<SettingScreen> {
+  String _status;
   List _categories;
 
   @override
@@ -24,6 +26,9 @@ class _SettingScreen extends State<SettingScreen> {
   _fetchCategories () async {
     await Categories.getCategoryLocalStorage().then((res) {
       setState(() => _categories = res);
+    });
+    await Users.userGetStatusPersistent().then((res) {
+      _status = res;
     });
   }
 
@@ -104,7 +109,7 @@ class _SettingScreen extends State<SettingScreen> {
                             title: Text('Subscription', style: TextStyle(fontSize: 16, color: Colors.grey[500])),
                             leading: Icon(Icons.card_membership),
                             trailing: FlatButton(
-                              child: Text('Trial',style: TextStyle(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.grey[500]))
+                              child: Text(_status == 'trial' ? 'Trial' : 'Premium',style: TextStyle(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.grey[500]))
                             )
                           ),
                           ListTile(
@@ -118,7 +123,7 @@ class _SettingScreen extends State<SettingScreen> {
                             title: Text('Registered', style: TextStyle(fontSize: 16, color: Colors.grey[500])),
                             leading: Icon(Icons.home),
                             trailing: FlatButton(
-                                child: Text('Juan Dela Cruz',style: TextStyle(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.grey[500]))
+                                child: Text('N/A',style: TextStyle(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.grey[500]))
                             )
                           ),
                           Align(
