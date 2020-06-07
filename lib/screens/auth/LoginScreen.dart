@@ -208,15 +208,11 @@ class _LoginScreenState extends State<LoginScreenState> {
                       final signUser = await _auth.signInWithEmailAndPassword(email: email, password: password);
 
                       if(signUser != null) {
-                        print(signUser);
-                        Navigator.push(context, PageRouteBuilder(
-                          transitionDuration: Duration(milliseconds: 2000),
-                          pageBuilder: (context, a1, a2) => CurrentScreen(),
-                        ));
+                        Navigator.of(context)
+                            .pushNamedAndRemoveUntil('/home', (Route<dynamic> route) => false);
                         setState(() {
                           showSpinner = false;
                         });
-
                       }
 
                     } catch (e) {

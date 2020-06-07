@@ -77,18 +77,21 @@ class _RegisterScreenState extends State<RegisterScreenState> {
         final newUser = await _auth.createUserWithEmailAndPassword(email: email, password: password);
         if(newUser != null) {
           final uid = await FirebaseAuth.instance.currentUser();
-          print(uid.uid);
+          _user.uuid = uid.uid;
           //saving information to database
           _firestore.collection('users').document(uid.uid).setData({
             'name': _user.name,
             'address': _user.address,
             'contact': _user.contact,
             'status': 'trial',
+            'email': _user.email,
+          }).then((res) async {
+            Map<String, dynamic> jsonUser = _user.toJson();
+            await Users.saveUserInformation(jsonUser);
           });
 
-          Navigator.push(context, MaterialPageRoute(
-            builder: (context) => CurrentScreen(),
-          ));
+          Navigator.of(context)
+            .pushNamedAndRemoveUntil('/home', (Route<dynamic> route) => false);
 
           setState(() {
             showSpinner = false;
@@ -103,6 +106,7 @@ class _RegisterScreenState extends State<RegisterScreenState> {
         return null;
       }
     }
+
 
   }
 

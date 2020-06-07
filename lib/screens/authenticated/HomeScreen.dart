@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:sari_sales/models/ListProducts.dart';
 import 'package:sari_sales/models/Transactions.dart';
 import 'package:sari_sales/utils/colorParser.dart';
-import 'package:intl/intl.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';
 import 'package:camera/camera.dart';
-import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:provider/provider.dart';
 
 //constant
 //import '../../constants/categoriesList.dart';
@@ -27,9 +27,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
+  final _auth = FirebaseAuth.instance;
   List<Color> activeColor = [getColorFromHex('#AAFFA9'), getColorFromHex('#11FFBD')];
   List<Color> inActiveColor = [getColorFromHex('#ff9966'), getColorFromHex('#ff5e62'),];
-
   final _formKey = GlobalKey<FormState>();
   List categories;
   List _products;
@@ -203,6 +204,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
     Widget _topHeader = Container(
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      child: Row(
+        children: <Widget>[
+          IconButton(
+            icon: Icon(Icons.person, color: Colors.white),
+            onPressed: () {
+              _drawerKey.currentState.openDrawer();
+            }
+          )
+        ],
+      )
     );
 
     Widget _topText = Align(
@@ -406,86 +417,150 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     }
 
-    return Stack(
-      children: <Widget>[
-        Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(
-          color: getColorFromHex('#f3f3f3'),
+    return Scaffold(
+        key: _drawerKey,
+        extendBody: true,
+        body: Stack(
+        children: <Widget>[
+          Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+            color: getColorFromHex('#f3f3f3'),
 
-          )
-        ),
-        SafeArea(
-          child: Container(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
-                      gradient: LinearGradient(
-                        colors: [
-                          getColorFromHex('#00d2ff'),
-                          getColorFromHex('#3a7bd5'),
+            )
+          ),
+          SafeArea(
+            child: Container(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
+                        gradient: LinearGradient(
+                          colors: [
+                            getColorFromHex('#00d2ff'),
+                            getColorFromHex('#3a7bd5'),
+                          ],
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 5,
+                            blurRadius: 7,
+                            offset: Offset(0, 3), // changes position of shadow
+                          ),
+                        ]
+                      ),
+                      child: Column(
+                        children: <Widget>[
+                          _topHeader,
+                          _topText,
+                          _searchBar,
+                        ],
+                      )
+                    ),
+                    _frequentlyBought,
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 32, vertical: 15),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text('Categories', style: TextStyle(color: Colors.black38, fontSize: 20, fontWeight: FontWeight.w500)),
+                          Container(
+                              height: 30,
+                              width: MediaQuery.of(context).size.width * 0.35,
+                              child:  RaisedButton.icon(
+                                color: getColorFromHex('#36d1dc'),
+                                label: Text('New Category', style: TextStyle(fontSize: 11, color: Colors.white)),
+                                icon: Icon(Icons.add, color: Colors.white, size: 18),
+                                shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+                                onPressed: () {
+                                  _newCategoryModal(context);
+                                },
+                              )
+                          )
                         ],
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 5,
-                          blurRadius: 7,
-                          offset: Offset(0, 3), // changes position of shadow
-                        ),
-                      ]
                     ),
-                    child: Column(
-                      children: <Widget>[
-                        _topHeader,
-                        _topText,
-                        _searchBar,
-                      ],
-                    )
-                  ),
-                  _frequentlyBought,
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 32, vertical: 15),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Text('Categories', style: TextStyle(color: Colors.black38, fontSize: 20, fontWeight: FontWeight.w500)),
-                        Container(
-                            height: 30,
-                            width: MediaQuery.of(context).size.width * 0.35,
-                            child:  RaisedButton.icon(
-                              color: getColorFromHex('#36d1dc'),
-                              label: Text('New Category', style: TextStyle(fontSize: 11, color: Colors.white)),
-                              icon: Icon(Icons.add, color: Colors.white, size: 18),
-                              shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
-                              onPressed: () {
-                                _newCategoryModal(context);
-                              },
-                            )
-                        )
-                      ],
+                    _productCategory,
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 25, vertical: 5),
+                      child: Align(
+                        alignment: Alignment.topLeft,
+                        child: Text('Critical Products', style: TextStyle(color: Colors.black38, fontSize: 20, fontWeight: FontWeight.w700)),
+                      ),
                     ),
-                  ),
-                  _productCategory,
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 25, vertical: 5),
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      child: Text('Critical Products', style: TextStyle(color: Colors.black38, fontSize: 20, fontWeight: FontWeight.w700)),
-                    ),
-                  ),
-                  _criticalProductList()
-                ],
+                    _criticalProductList()
+                  ],
+                )
               )
             )
           )
+        ],
+      ),
+      drawer: Drawer(
+        child: Container(
+          color: getColorFromHex('#f3f3f3'),
+          child: Column(
+            children: <Widget>[
+              DrawerHeader(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    IconButton(
+                      icon: Icon(Icons.add_a_photo, size: 42, color: Colors.white),
+                    ),
+                    Text('Add photo of\nyour Store', textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w500)),
+                  ],
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                ),
+              ),
+              ListTile(
+                leading: Icon(Icons.person),
+                title: Text('Sample name', style: TextStyle(color: Colors.black38, fontSize: 16, fontWeight: FontWeight.w500)),
+              ),
+              ListTile(
+                leading: Icon(Icons.local_convenience_store),
+                title: Text('Store name', style: TextStyle(color: Colors.black38, fontSize: 16, fontWeight: FontWeight.w500)),
+              ),
+              ListTile(
+                leading: Icon(Icons.email),
+                title: Text('Email', style: TextStyle(color: Colors.black38, fontSize: 16, fontWeight: FontWeight.w500)),
+              ),
+              ListTile(
+                leading: Icon(Icons.location_on),
+                title: Text('Address', style: TextStyle(color: Colors.black38, fontSize: 16, fontWeight: FontWeight.w500)),
+              ),
+              ListTile(
+                leading: Icon(Icons.contact_phone),
+                title: Text('Contact', style: TextStyle(color: Colors.black38, fontSize: 16, fontWeight: FontWeight.w500)),
+              ),
+              Expanded(
+                flex: 1,
+                child: Container()
+              ),
+              Expanded(
+                flex: 1,
+                child: ListTile(
+                  onTap: () async {
+                    await _auth.signOut();
+                    Navigator.of(context)
+                        .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
+                  },
+                  leading: Icon(Icons.exit_to_app),
+                  title: Text('Logout', style: TextStyle(color: Colors.black38, fontSize: 16, fontWeight: FontWeight.w500)),
+                )
+              )
+            ],
+          )
         )
-      ],
+      )
     );
   }
 }

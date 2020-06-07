@@ -30,6 +30,7 @@ dependencies:
   camera: ^0.5.8+1
   path_provider: ^1.6.8
   path: ^1.6.4
+  provider: ^4.1.3
   uuid: 2.0.4
   shared_preferences: ^0.5.7+2
   badges: ^1.1.1

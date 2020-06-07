@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:sari_sales/components/TabNavigator.dart';
 import 'package:sari_sales/screens/authenticated/BarcodeScan.dart';
 import 'package:sari_sales/screens/authenticated/HomeScreen.dart';
@@ -85,9 +86,7 @@ class _CurrentScreenState extends State<CurrentScreenState> {
                       ),
                       FlatButton(
                         onPressed: () async {
-                          await _auth.signOut();
-                          Navigator.of(context)
-                              .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
+                          exit(0);
                         },
                         child: Text('Yes', style: TextStyle(color: Colors.grey[500]))
                       ),
@@ -105,7 +104,8 @@ class _CurrentScreenState extends State<CurrentScreenState> {
         );
       },
       child: _appearWidget ? Scaffold(
-        resizeToAvoidBottomPadding: true,
+        extendBody: true,
+        resizeToAvoidBottomPadding: false,
         body: Container(
           child: Stack(
             children: <Widget>[
@@ -135,6 +135,7 @@ class _CurrentScreenState extends State<CurrentScreenState> {
           setState(() {
             _activeWidget = val;
           });
+
         },
           isActiveWidget: _activeWidget.toString(),
         ) : null,
