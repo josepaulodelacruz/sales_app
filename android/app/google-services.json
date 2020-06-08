@@ -8,9 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:685116301295:android:cd96a24fc96d7cd86ea01a",
+        "mobilesdk_app_id": "1:685116301295:android:93045d62ee88dd916ea01a",
         "android_client_info": {
-          "package_name": "com.example.sari_sales"
+          "package_name": "com.jeyps.sari_sales"
         }
       },
       "oauth_client": [
