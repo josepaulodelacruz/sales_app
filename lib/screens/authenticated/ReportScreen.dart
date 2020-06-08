@@ -27,7 +27,7 @@ class ReportScreen extends StatefulWidget {
 class _ReportScreen extends State<ReportScreen> {
   List _categories;
   List _products;
-  List _transactions;
+  List _transactions = [];
   String _showCard = 'Sales';
   bool _isAnimateCard = false;
 
@@ -52,33 +52,25 @@ class _ReportScreen extends State<ReportScreen> {
   }
 
   _fetchLocalStorage () async {
-    await Categories.getCategoryLocalStorage().then((res) {
-      setState(() {
-        _categories = res;
-      });
-    }).then((res) async {
-     await ListProducts.getProductLocalStorage().then((res) {
-       setState(() {
-         _products = res;
-       });
-     });
-    }).then((res) async {
-      await Transactions.getTransactionsDetails().then((res) {
-        //reverse list to latest dates
-        if(res != null) {
-          var _toLatestDates = res;
-          for(var i=0;i<_toLatestDates.length/2;i++){
-            var temp = _toLatestDates[i];
-            _toLatestDates[i] = _toLatestDates[_toLatestDates.length-1-i];
-            _toLatestDates[_toLatestDates.length-1-i] = temp;
-          }
-          setState(() {
-            _transactions = _toLatestDates;
-          });
+    List<Future> futures = [
+      Categories.getCategoryLocalStorage(),
+      ListProducts.getProductLocalStorage(),
+      Transactions.getTransactionsDetails(),
+    ];
+    List results = await Future.wait(futures);
+    setState(() {
+      _categories = results[0];
+      _products = results[1];
+      if(results[2] != null) {
+        var _toLatestDates = results[2];
+        for(var i=0;i<_toLatestDates.length/2;i++){
+          var temp = _toLatestDates[i];
+          _toLatestDates[i] = _toLatestDates[_toLatestDates.length-1-i];
+          _toLatestDates[_toLatestDates.length-1-i] = temp;
         }
-      });
+        _transactions = _toLatestDates;
+      }
     });
-
   }
 
   @override
@@ -198,7 +190,7 @@ class _ReportScreen extends State<ReportScreen> {
             padding: EdgeInsets.only(top: 10),
             width: MediaQuery.of(context).size.width * 0.90,
             child: Card(
-              child: Column(
+              child: _transactions.length > 0 ? Column(
                 children: ListTile.divideTiles(
                   context: context,
                   tiles: _transactions?.map((transaction) {
@@ -217,6 +209,10 @@ class _ReportScreen extends State<ReportScreen> {
                     ) : SizedBox();
                   })?.toList() ?? [],
                 ).toList(),
+              ) : ListTile(
+                  title: Text('No Transaction yet', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
+                  subtitle: Text('is recorded for this day.'),
+                  trailing: Icon(Icons.warning),
               )
             )
           )

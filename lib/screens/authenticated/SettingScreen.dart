@@ -24,11 +24,14 @@ class _SettingScreen extends State<SettingScreen> {
   }
 
   _fetchCategories () async {
-    await Categories.getCategoryLocalStorage().then((res) {
-      setState(() => _categories = res);
-    });
-    await Users.userGetStatusPersistent().then((res) {
-      _status = res;
+    List<Future> futures = [
+      Categories.getCategoryLocalStorage(),
+      Users.userGetStatusPersistent()
+    ];
+    List results = await Future.wait(futures);
+    setState(() {
+      _categories = results[0];
+      _status = results[1];
     });
   }
 

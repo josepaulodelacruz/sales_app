@@ -48,28 +48,20 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   _fetchCategoriesLocalStorate () async {
-    await Categories.getCategoryLocalStorage().then((res) {
-      setState(() {
-        categories = res;
-      });
-    });
-    await ListProducts.getProductLocalStorage().then((res) {
-      setState(() {
-        _products = res;
-      });
-    });
-    await Transactions.frequentlyBought().then((res) {
-      setState(() {
-        _frequentlyBuy = res;
-      });
-    });
-    await Users.getStorageImage().then((res) {
-      setState(() {
-        _storeImage = res;
-      });
-    });
-    await Users.userGetStatusPersistent().then((res) {
-      _status = res;
+    List<Future> futures = [
+      Categories.getCategoryLocalStorage(),
+      ListProducts.getProductLocalStorage(),
+      Transactions.frequentlyBought(),
+      Users.getStorageImage(),
+      Users.userGetStatusPersistent()
+    ];
+    List results = await Future.wait(futures);
+    setState(() {
+      categories = results[0];
+      _products = results[1];
+      _frequentlyBuy = results[2];
+      _storeImage = results[3];
+      _status = results[4];
     });
   }
 
