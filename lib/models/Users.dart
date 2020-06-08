@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
 
 class Users extends ChangeNotifier {
   String name;
@@ -61,14 +63,38 @@ class Users extends ChangeNotifier {
     if(logStatus == null) {
       return false;
     } else {
+      final _auth = FirebaseAuth.instance;
       dynamic decode = jsonDecode(logStatus);
-      return decode;
+      Map<String, dynamic> session = {
+        'isLoggedIn': decode['isLoggedIn'],
+        'created_data': DateTime.parse(decode['created_data']),
+        'expiration': DateTime.parse(decode['expiration']),
+      };
+
+      DateTime now = DateTime.now();
+      DateTime currentDate = session['created_data'];
+      DateTime expirationDate = session['expiration'];
+      if(currentDate.isAfter(expirationDate)) {
+        await _auth.signOut();
+        session['isLoggedIn'] = false;
+        return session;
+      } else {
+        return session;
+      }
     }
   }
 
   static saveSession (isLogged) async {
+    DateTime now = DateTime.now();
+    DateTime tokenExpiration = now.add(Duration(days: 3));
+    Map<String, dynamic> session = {
+      'isLoggedIn': isLogged,
+      'created_data': now.toString(),
+      'expiration': tokenExpiration.toString(),
+    };
+    print(session);
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
-    final decode = json.encode(isLogged);
+    final decode = json.encode(session);
     sharedPrefs.setString('session', decode);
   }
 

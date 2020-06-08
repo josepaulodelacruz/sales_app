@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:sari_sales/models/Users.dart';
+import 'package:intl/intl.dart';
 
 //screens
 import 'package:sari_sales/screens/auth/LaunchScreen.dart';
@@ -29,12 +30,10 @@ class MyApp extends StatelessWidget {
       child: FutureBuilder(
         future: Users.getSession(),
         builder: (context, snapshot) {
-          print(snapshot.connectionState);
-          print(snapshot.data);
           if(snapshot.connectionState == ConnectionState.done) {
             return MaterialApp(
               title: 'Sari Sales Application',
-              initialRoute: !snapshot.data ? '/' : '/home',
+              initialRoute: !snapshot.data['isLoggedIn'] ? '/' : '/home',
               routes: {
                 '/': (context) => LaunchScreen(),
                 '/register': (context) => RegisterScreen(),
