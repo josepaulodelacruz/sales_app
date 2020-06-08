@@ -39,6 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String _isCategoryActive = 'All';
   bool _animateText = false;
   String _storeImage;
+  String _status;
 
   @override
   void initState () {
@@ -66,6 +67,9 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         _storeImage = res;
       });
+    });
+    await Users.userGetStatusPersistent().then((res) {
+      _status = res;
     });
   }
 
@@ -619,22 +623,46 @@ class _HomeScreenState extends State<HomeScreen> {
                       leading: Icon(Icons.contact_phone),
                       title: Text(snapshot.data['contact'].toString(), style: TextStyle(color: Colors.black38, fontSize: 16, fontWeight: FontWeight.w500)),
                     ),
+                    ListTile(
+                      leading: Icon(Icons.card_membership),
+                      title: Text('Subscription: $_status', style: TextStyle(color: Colors.black38, fontSize: 16, fontWeight: FontWeight.w500)),
+                    ),
                     Expanded(
                         flex: 1,
                         child: Container()
                     ),
                     Expanded(
-                        flex: 1,
-                        child: ListTile(
-                          onTap: () async {
-                            await _auth.signOut();
-                            await Users.saveSession(false);
-                            Navigator.of(context)
-                                .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
-                          },
-                          leading: Icon(Icons.exit_to_app),
-                          title: Text('Logout', style: TextStyle(color: Colors.black38, fontSize: 16, fontWeight: FontWeight.w500)),
-                        )
+                      flex: 1,
+                      child: ListTile(
+                        onTap: () async {
+                          return showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text('Logout'),
+                              content: Text('Are you sure you want to logout?'),
+                              actions: <Widget>[
+                                FlatButton(
+                                  child: Text('No'),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                                FlatButton(
+                                  child: Text('Yes'),
+                                  onPressed: () async {
+                                    await _auth.signOut();
+                                    await Users.saveSession(false);
+                                    Navigator.of(context)
+                                        .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
+                                  },
+                                ),
+                              ],
+                            )
+                          );
+                        },
+                        leading: Icon(Icons.exit_to_app),
+                        title: Text('Logout', style: TextStyle(color: Colors.black38, fontSize: 16, fontWeight: FontWeight.w500)),
+                      )
                     )
                   ],
                 )
