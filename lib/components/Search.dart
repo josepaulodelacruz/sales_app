@@ -57,6 +57,10 @@ class _Search extends State<Search> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Search'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(60.0),
           child: Hero(

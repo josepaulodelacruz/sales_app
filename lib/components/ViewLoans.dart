@@ -197,6 +197,10 @@ class _ViewLoans extends State<ViewLoans> {
       appBar: AppBar(
         backgroundColor: getColorFromHex('#20BDFF'),
         title: Text('Loan information'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.add_shopping_cart, color: Colors.white),

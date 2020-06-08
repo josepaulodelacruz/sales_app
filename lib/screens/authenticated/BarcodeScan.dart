@@ -178,20 +178,20 @@ class _BarcodeScanState extends State<BarcodeScan> {
               height: MediaQuery.of(context).size.height * 0.92,
               child: Column(
                 children: <Widget>[
-                 Flexible(
-                   flex: 2,
-                   child: QRView(
-                     key: qrKey,
-                     onQRViewCreated: _onQRViewCreated,
-                     overlay: QrScannerOverlayShape(
-                       borderColor: Colors.red,
-                       borderRadius: 10,
-                       borderLength: 30,
-                       borderWidth: 10,
-                       cutOutSize: 300,
-                     ),
-                   ),
-                 ),
+//                 Flexible(
+//                   flex: 2,
+//                   child: QRView(
+//                     key: qrKey,
+//                     onQRViewCreated: _onQRViewCreated,
+//                     overlay: QrScannerOverlayShape(
+//                       borderColor: Colors.red,
+//                       borderRadius: 10,
+//                       borderLength: 30,
+//                       borderWidth: 10,
+//                       cutOutSize: 300,
+//                     ),
+//                   ),
+//                 ),
                 Flexible(
                   flex: 1,
                   child: Container(

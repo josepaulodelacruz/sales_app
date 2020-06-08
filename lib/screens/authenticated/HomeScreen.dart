@@ -32,8 +32,8 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Color> activeColor = [getColorFromHex('#AAFFA9'), getColorFromHex('#11FFBD')];
   List<Color> inActiveColor = [getColorFromHex('#ff9966'), getColorFromHex('#ff5e62'),];
   final _formKey = GlobalKey<FormState>();
-  List categories;
-  List _products;
+  List categories = [];
+  List _products = [];
   List _frequentlyBuy = [];
   final _newCategory = TextEditingController();
   String _isCategoryActive = 'All';
@@ -69,7 +69,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void _addNewCategory (context) async {
     Map<String, dynamic> _categoryItem = await Categories.toJson(_newCategory.text);
     if(!_categoryItem['isValid']) {
-      print('Something went wrong');
       return;
     } else {
       setState(() {
@@ -194,7 +193,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final Users userProvider = Provider.of<Users>(context);
 
     List _textShadow = <Shadow>[
       Shadow(
@@ -271,7 +269,6 @@ class _HomeScreenState extends State<HomeScreen> {
       )
     );
 
-    print(_frequentlyBuy);
     //frequently bought widget
     Widget _frequentlyBought = Container(
       width: MediaQuery.of(context).size.width,
@@ -324,7 +321,11 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 100,
               child: Card(
                 child: Center(
-                  child: Text('No Items bought', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w500, fontSize: 22))
+                  child: ListTile(
+                    title: Text('No bought items', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
+                    subtitle: Text('Please add items in the inventory.'),
+                    trailing: Icon(Icons.warning),
+                  )
                 )
               )
             )
@@ -426,12 +427,16 @@ class _HomeScreenState extends State<HomeScreen> {
             }).toList(),
           )
         ) : Container(
-            height: 100,
-            child: Card(
-                child: Center(
-                    child: Text('No Critical Products', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w500, fontSize: 22))
-                )
+          height: 100,
+          child: Card(
+            child: Center(
+              child: ListTile(
+                title: Text('No Critical products', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
+                subtitle: Text('Products below less than 5 shall be indicated here.'),
+                trailing: Icon(Icons.check),
+              )
             )
+          )
         );
       }
 
@@ -521,10 +526,10 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       drawer: Drawer(
         child: FutureBuilder(
-          future: userProvider.userInfoStorage(),
+//          future: userProvider.userInfoStorage(),
+          future: Users.getUserInformation(),
           builder: (context, snapshot) {
             if(snapshot.connectionState == ConnectionState.done) {
-              print(snapshot.data);
               return Container(
                 color: getColorFromHex('#f3f3f3'),
                 child: Column(

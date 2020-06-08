@@ -15,7 +15,8 @@ class ListProducts {
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
     dynamic ListProducts = sharedPrefs.getString('ListProducts');
     if(ListProducts == null) {
-      return [];
+      double a = 0;
+      return a;
     } else {
       List<dynamic> decodedFiles = jsonDecode(ListProducts);
       List worthItems = decodedFiles.map((item) {

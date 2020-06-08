@@ -17,7 +17,7 @@ class Users extends ChangeNotifier {
   String status;
 
   int _counter = 20;
-  Map<String, dynamic> loggedUser;
+  Map<String, dynamic> loggedUser = {};
   int get counter => _counter;
 
   set counter (int val) {
@@ -34,6 +34,7 @@ class Users extends ChangeNotifier {
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
     dynamic user = sharedPrefs.getString('user');
     Map<String, dynamic> decode = jsonDecode(user);
+    print(decode);
     return decode;
   }
 
@@ -61,7 +62,13 @@ class Users extends ChangeNotifier {
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
     final logStatus = sharedPrefs.get('session');
     if(logStatus == null) {
-      return false;
+      Map<String, dynamic> session = {
+        'isLoggedIn': false,
+        'created_data': '',
+        'expiration': '',
+      };
+
+      return session;
     } else {
       final _auth = FirebaseAuth.instance;
       dynamic decode = jsonDecode(logStatus);

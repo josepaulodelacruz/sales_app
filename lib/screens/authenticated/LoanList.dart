@@ -494,6 +494,10 @@ class _LoanList extends State<LoanList>{
       appBar: AppBar(
         backgroundColor: getColorFromHex('#20BDFF'),
         title: Text('Loan List'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(60.0),
           child: Container(

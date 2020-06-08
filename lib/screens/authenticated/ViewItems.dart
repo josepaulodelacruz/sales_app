@@ -268,7 +268,11 @@ class _ViewItemsState extends State<ViewItems> {
         key: _scaffoldKey,
         appBar: AppBar(
             backgroundColor: getColorFromHex('#20BDFF'),
-            title: Text('Items List')
+            title: Text('Items List'),
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
         ),
         body: AnimatedOpacity(
           duration: Duration(milliseconds: 700),

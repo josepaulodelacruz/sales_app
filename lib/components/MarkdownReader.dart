@@ -116,7 +116,11 @@ class MarkdownReader extends StatelessWidget {
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(
-        title: Text(typeTitle)
+        title: Text(typeTitle),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
       body: Markdown(data: typeTitle == 'Privacy Policy' ? privacy : terms),
     );

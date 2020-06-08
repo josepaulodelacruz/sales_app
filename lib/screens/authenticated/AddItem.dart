@@ -577,6 +577,10 @@ class _AddItemState extends State<AddItemState> {
       appBar: AppBar(
         title: Text(widget.editItem.isEmpty ? 'Add item' : 'Edit item'),
         backgroundColor: getColorFromHex('#20BDFF'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         actions: <Widget>[
           FlatButton.icon(
             icon: Icon(Icons.add, color: Colors.white),

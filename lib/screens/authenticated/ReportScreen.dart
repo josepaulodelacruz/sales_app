@@ -481,7 +481,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                                     future: ListProducts.remaningWorthOfItems(),
                                     builder: (context, snapshot) {
                                       if(snapshot.connectionState == ConnectionState.done) {
-                                        return Text('₱${snapshot.data}', textAlign: TextAlign.start, style: TextStyle(color: Colors.white, fontSize: 40, fontWeight: FontWeight.bold));
+                                        return Text('₱ ${snapshot.data}', textAlign: TextAlign.start, style: TextStyle(color: Colors.white, fontSize: 40, fontWeight: FontWeight.bold));
                                       } else {
                                         return CircularProgressIndicator();
                                       }

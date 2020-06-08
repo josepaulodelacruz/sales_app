@@ -136,7 +136,11 @@ class _ProductsTable extends State<ProductsTable> {
                   return Tab(text: cc['cTitle']);
                 }).toList(),
               ),
-              title: Text('Products')
+              title: Text('Products'),
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
             ),
             body: Container(
               child: Column(
