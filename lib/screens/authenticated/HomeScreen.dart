@@ -34,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final _formKey = GlobalKey<FormState>();
   List categories;
   List _products;
-  List _frequentlyBuy;
+  List _frequentlyBuy = [];
   final _newCategory = TextEditingController();
   String _isCategoryActive = 'All';
   bool _animateText = false;
@@ -275,6 +275,7 @@ class _HomeScreenState extends State<HomeScreen> {
       )
     );
 
+    print(_frequentlyBuy);
     //frequently bought widget
     Widget _frequentlyBought = Container(
       width: MediaQuery.of(context).size.width,
@@ -288,14 +289,14 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: EdgeInsets.only(left: 20),
               child: Text('Frequently Bought', style: TextStyle(color: Colors.black38, fontSize: 20, fontWeight: FontWeight.w500)),
             ),
-            Container(
+            _frequentlyBuy.length > 0 ? Container(
               height: 100,
               width: MediaQuery.of(context).size.width,
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: _frequentlyBuy?.map((b) {
                   int index = _frequentlyBuy.indexOf(b);
-                  return index   < 7 ? Container(
+                  return index  < 7 ? Container(
                       width: 80,
                       child: Stack(
                       children: <Widget>[
@@ -321,7 +322,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     )
                   ) : SizedBox();
-                })?.toList() ?? [],
+                })?.toList() ?? [SizedBox()],
+              )
+            ) : Container(
+              height: 100,
+              child: Card(
+                child: Center(
+                  child: Text('No Items bought', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w500, fontSize: 22))
+                )
               )
             )
           ],
@@ -366,7 +374,7 @@ class _HomeScreenState extends State<HomeScreen> {
         List<dynamic> sortedProducts = _isCategoryActive == 'All' ?
             _products?.map((product) => product)?.toList() ?? [] :
             _products.where((element) => element['pCategory'].toString().contains(_isCategoryActive.toString())).toList();
-        return Container(
+        return sortedProducts.length > 0 ? Container(
           margin: EdgeInsets.only(top: 10),
           width: MediaQuery.of(context).size.width,
           child: Wrap(
@@ -421,6 +429,13 @@ class _HomeScreenState extends State<HomeScreen> {
               ) : SizedBox();
             }).toList(),
           )
+        ) : Container(
+            height: 100,
+            child: Card(
+                child: Center(
+                    child: Text('No Critical Products', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w500, fontSize: 22))
+                )
+            )
         );
       }
 

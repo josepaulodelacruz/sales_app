@@ -8,6 +8,7 @@ import '../../utils/colorParser.dart';
 
 //components
 import '../../components/ProductCard.dart';
+import '../../components/Search.dart';
 
 //models
 import '../../models/ListProducts.dart';
@@ -103,6 +104,17 @@ class _InventoryScreen extends State<InventoryScreen> {
 //                  },
 //                ));
               },
+            ),
+            IconButton(
+              icon: Icon(Icons.search, color: Colors.white),
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => Search(
+                    products: _products,
+                    categories: _categories,
+                  ),
+                ));
+              },
             )
           ],
         )
@@ -118,7 +130,7 @@ class _InventoryScreen extends State<InventoryScreen> {
       child: Container(
         padding: EdgeInsets.only(right: 20, left: 20),
         color: getColorFromHex('#f3f3f3'),
-        child: ListView.builder(
+        child: _products.length > 0 ? ListView.builder(
           controller: _scrollController,
           itemCount: sortedProductList.length,
           itemBuilder: (context, int index) {
@@ -149,6 +161,17 @@ class _InventoryScreen extends State<InventoryScreen> {
               )
             ) : null;
           },
+        ) : Container(
+          width: MediaQuery.of(context).size.width,
+          child: Text(
+              'No items save',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.grey[500],
+                fontWeight: FontWeight.w500,
+                fontSize: 22,
+              )
+          )
         )
       )
     );
