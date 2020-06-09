@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'file:///D:/Projects/sari_sales/lib/screens/auth/LoginScreen.dart';
@@ -38,10 +40,32 @@ class _LaunchScreenState extends State<LaunchScreenState> {
               bottom: Radius.elliptical(MediaQuery.of(context).size.width, curvedEdge)
             ),
           ),
-          child: Center(
-            child: Image.asset(
-              'images/Hero.png',
-            )
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Image.asset(
+                  'images/sarisalesLogo.png',
+                  fit: BoxFit.contain,
+                  height: 200,
+                ),
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: Text(
+                    'Sari Sales\nApplication',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 32,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                    )
+                  )
+                ),
+                Text('Track your inventory and Sales', style: TextStyle(color: Colors.white, height: 2, fontWeight: FontWeight.w300, fontSize: 18)),
+                Text('Mobile Barcode', style: TextStyle(color: Colors.white, height: 2, fontWeight: FontWeight.w300, fontSize: 18))
+
+
+              ],
+
           )
         )
       )

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:sari_sales/models/ListProducts.dart';
 import 'package:sari_sales/models/Transactions.dart';
 import 'package:sari_sales/models/Users.dart';
@@ -193,6 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final Users userProvider = Provider.of<Users>(context, listen: false);
 
     List _textShadow = <Shadow>[
       Shadow(
@@ -371,11 +373,13 @@ class _HomeScreenState extends State<HomeScreen> {
         List<dynamic> sortedProducts = _isCategoryActive == 'All' ?
             _products?.map((product) => product)?.toList() ?? [] :
             _products.where((element) => element['pCategory'].toString().contains(_isCategoryActive.toString())).toList();
+
         return sortedProducts.length > 0 ? Container(
           margin: EdgeInsets.only(top: 10),
           width: MediaQuery.of(context).size.width,
           child: Wrap(
-            children:  sortedProducts.map((product) {
+            children: sortedProducts.map((product) {
+              int index = sortedProducts.indexOf(product);
               return product['pQuantity'] <= 5 ? Stack(
                 children: <Widget>[
                   Container(
@@ -526,7 +530,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       drawer: Drawer(
         child: FutureBuilder(
-//          future: userProvider.userInfoStorage(),
           future: Users.getUserInformation(),
           builder: (context, snapshot) {
             if(snapshot.connectionState == ConnectionState.done) {

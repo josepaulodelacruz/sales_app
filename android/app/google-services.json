@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "685116301295-q4cd59rj809del23b307ahjjagk1296n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jeyps.sari_sales",
+            "certificate_hash": "e7dd636b0e3dccf9bf7e7236cda0fafa54dea98f"
+          }
+        },
+        {
           "client_id": "685116301295-fu15tftc7vgsmue1c65a75qb9evkejom.apps.googleusercontent.com",
           "client_type": 3
         }

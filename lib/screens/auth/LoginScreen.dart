@@ -8,7 +8,7 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
-
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../utils/colorParser.dart';
 
@@ -29,6 +29,7 @@ class LoginScreenState extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreenState> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final _auth = FirebaseAuth.instance;
+  final GoogleSignIn googleSignIn = GoogleSignIn();
   final _firestore = Firestore.instance;
   List<Color> _colors = [getColorFromHex('#5433FF '), getColorFromHex('#20BDFF')];
   Timer _timer;
@@ -47,6 +48,63 @@ class _LoginScreenState extends State<LoginScreenState> {
     });
     super.initState();
   }
+//
+//  Future signInWithGoogle(context) async {
+//    final Users userProvider = Provider.of<Users>(context, listen: false);
+//    final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
+//    final GoogleSignInAuthentication googleSignInAuthentication =
+//    await googleSignInAccount.authentication;
+//
+//    final AuthCredential credential = GoogleAuthProvider.getCredential(
+//      accessToken: googleSignInAuthentication.accessToken,
+//      idToken: googleSignInAuthentication.idToken,
+//    );
+//
+//    final AuthResult authResult = await _auth.signInWithCredential(credential);
+//    final FirebaseUser user = authResult.user;
+//
+//    assert(!user.isAnonymous);
+//    assert(await user.getIdToken() != null);
+//
+//    final FirebaseUser currentUser = await _auth.currentUser();
+//    print('get user details');
+//    print(user.providerData);
+//    print(user.metadata);
+//    print(currentUser.email);
+//    print(currentUser.displayName);
+//    print(currentUser.phoneNumber);
+//    print(currentUser.providerId);
+//    print(currentUser.uid);
+//
+//    userProvider.name = currentUser.displayName;
+//    userProvider.address= 'Philippines';
+//    userProvider.contact = currentUser.phoneNumber;
+//    userProvider.email = currentUser.email;
+//
+//    _firestore.collection('users').document(currentUser.uid).setData({
+//      'name': userProvider.name,
+//      'address': userProvider.address,
+//      'contact': userProvider.contact,
+//      'status': 'trial',
+//      'email': userProvider.email,
+//    }).then((res) async {
+//      //provider
+//      await Users.userSaveStatusPersistent('trial');
+//      await Users.saveUserInformation(userProvider.toJson());
+//      userProvider.loginUser(userProvider.toJson());
+//    });
+//
+//    assert(user.uid == currentUser.uid);
+//
+//    return 'signInWithGoogle succeeded: $user';
+//  }
+//
+//  void signOutGoogle() async{
+//    print('trying to sign out');
+//    await googleSignIn.signOut();
+//
+//    print("User Sign Out");
+//  }
 
   @override
   Widget _iconBackBtn (BuildContext context) {
@@ -147,8 +205,6 @@ class _LoginScreenState extends State<LoginScreenState> {
                                   Container(
                                       margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                                       child: RaisedButton(
-                                        onPressed: () {
-                                        },
                                         textColor: Colors.white,
                                         padding: const EdgeInsets.all(0),
                                         child: Container(
@@ -165,6 +221,7 @@ class _LoginScreenState extends State<LoginScreenState> {
                                           child: Text(
                                             "Sign in with Google?",
                                             textAlign: TextAlign.center,
+                                            style: TextStyle(color: Colors.white),
                                           ),
                                         ),
                                       )
@@ -172,8 +229,6 @@ class _LoginScreenState extends State<LoginScreenState> {
                                   Container(
                                       margin: EdgeInsets.symmetric(horizontal: 10),
                                       child: RaisedButton(
-                                        onPressed: () {
-                                        },
                                         textColor: Colors.white,
                                         padding: const EdgeInsets.all(0),
                                         child: Container(
@@ -190,6 +245,7 @@ class _LoginScreenState extends State<LoginScreenState> {
                                           child: Text(
                                             "Sign in with Facebook?",
                                             textAlign: TextAlign.center,
+                                            style: TextStyle(color: Colors.white),
                                           ),
                                         ),
                                       )
@@ -229,7 +285,7 @@ class _LoginScreenState extends State<LoginScreenState> {
 
                           await Users.saveUserInformation(userProvider.toJson());
                           await Users.userSaveStatusPersistent(querySnapshot.data['status']);
-//                          userProvider.loginUser(userProvider.toJson());
+                          userProvider.loginUser(userProvider.toJson());
                         }
 
                         Navigator.of(context)

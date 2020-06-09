@@ -81,6 +81,8 @@ class _RegisterScreenState extends State<RegisterScreenState> {
       //sign up
       try {
         final newUser = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+        await Users.saveUserInformation(_user.toJson());
+        await Users.userSaveStatusPersistent('trial');
         if(newUser != null) {
           final uid = await FirebaseAuth.instance.currentUser();
           _user.uuid = uid.uid;
@@ -91,11 +93,6 @@ class _RegisterScreenState extends State<RegisterScreenState> {
             'contact': _user.contact,
             'status': 'trial',
             'email': _user.email,
-          }).then((res) async {
-            //provider
-            await Users.userSaveStatusPersistent('trial');
-            await Users.saveUserInformation(_user);
-            userProvider.loginUser(userProvider.toJson());
           });
 
           Navigator.of(context)

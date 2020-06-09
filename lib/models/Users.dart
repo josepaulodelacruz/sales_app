@@ -34,7 +34,6 @@ class Users extends ChangeNotifier {
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
     dynamic user = sharedPrefs.getString('user');
     Map<String, dynamic> decode = jsonDecode(user);
-    print(decode);
     return decode;
   }
 
@@ -99,7 +98,6 @@ class Users extends ChangeNotifier {
       'created_data': now.toString(),
       'expiration': tokenExpiration.toString(),
     };
-    print(session);
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
     final decode = json.encode(session);
     sharedPrefs.setString('session', decode);
@@ -138,13 +136,9 @@ class Users extends ChangeNotifier {
   static getUserInformation () async {
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
     dynamic user = sharedPrefs.getString('user');
-    if(user == null) {
-      return 'not found';
-    } else {
-      Map<String, dynamic> decode = jsonDecode(user);
-      return decode;
-    }
-
+    Map<String, dynamic> decode = jsonDecode(user);
+    print(decode);
+    return decode;
   }
 
   static saveUserInformation (user) async {
