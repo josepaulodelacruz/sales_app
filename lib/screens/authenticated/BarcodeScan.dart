@@ -37,6 +37,7 @@ class BarcodeScan extends StatefulWidget {
 
 class _BarcodeScanState extends State<BarcodeScan> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  bool _flashCamera = false;
   List _products = [];
   List _soldItems = [];
   bool _isScan = false;
@@ -92,7 +93,6 @@ class _BarcodeScanState extends State<BarcodeScan> {
                 item = result[0];
               });
             });
-
           });
         }
       }
@@ -118,6 +118,7 @@ class _BarcodeScanState extends State<BarcodeScan> {
     } else {
       _scaffoldKey.currentState.showSnackBar(new SnackBar(backgroundColor: Colors.redAccent, content: new Text('No items added.')));
     }
+
   }
 
 
@@ -145,6 +146,15 @@ class _BarcodeScanState extends State<BarcodeScan> {
           ),
           title: Text('Barcode Scanner'),
           actions: [
+            IconButton(
+              icon: Icon(_flashCamera ? Icons.flash_on : Icons.flash_off, color: Colors.white),
+              onPressed: () {
+                setState(() {
+                  _flashCamera = !_flashCamera;
+                });
+                controller.toggleFlash();
+              },
+            ),
             IconButton(
               icon: Icon(Icons.search, color: Colors.white),
               onPressed: () {
@@ -369,6 +379,12 @@ class _BarcodeScanState extends State<BarcodeScan> {
         floatingActionButton: FloatingActionButton(
           heroTag: 'soldItems',
           onPressed: () {
+            if(_flashCamera) {
+              setState(() {
+                _flashCamera = false;
+              });
+              controller.toggleFlash();
+            }
             Navigator.push(context, PageRouteBuilder(
               transitionDuration: Duration(seconds: 1),
               pageBuilder: (context, a1, a2) => ViewItems(
