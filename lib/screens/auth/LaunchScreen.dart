@@ -30,42 +30,44 @@ class _LaunchScreenState extends State<LaunchScreenState> {
       flex: 6,
       child: Hero(
         tag: 'launch',
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: _colors,
-              stops: [0, 0.7]
+        child: Material(
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: _colors,
+                stops: [0, 0.7]
+              ),
+              borderRadius: BorderRadius.vertical(
+                bottom: Radius.elliptical(MediaQuery.of(context).size.width, curvedEdge)
+              ),
             ),
-            borderRadius: BorderRadius.vertical(
-              bottom: Radius.elliptical(MediaQuery.of(context).size.width, curvedEdge)
-            ),
-          ),
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Image.asset(
-                  'images/sarisalesLogo.png',
-                  fit: BoxFit.contain,
-                  height: 200,
-                ),
-                Align(
-                  alignment: Alignment.topCenter,
-                  child: Text(
-                    'Sari Sales\nApplication',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontSize: 32,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Image.asset(
+                    'images/sarisalesLogo.png',
+                    fit: BoxFit.contain,
+                    height: 200,
+                  ),
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: Text(
+                      'Sari Sales\nApplication',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 32,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                      )
                     )
-                  )
-                ),
-                Text('Track your inventory and Sales', style: TextStyle(color: Colors.white, height: 2, fontWeight: FontWeight.w300, fontSize: 18)),
-                Text('Mobile Barcode', style: TextStyle(color: Colors.white, height: 2, fontWeight: FontWeight.w300, fontSize: 18))
+                  ),
+                  Text('Track your inventory and Sales', style: TextStyle(color: Colors.white, height: 2, fontWeight: FontWeight.w300, fontSize: 18)),
+                  Text('Mobile Barcode', style: TextStyle(color: Colors.white, height: 2, fontWeight: FontWeight.w300, fontSize: 18))
 
 
-              ],
+                ],
 
+            )
           )
         )
       )
