@@ -374,13 +374,20 @@ class _HomeScreenState extends State<HomeScreen> {
             _products?.map((product) => product)?.toList() ?? [] :
             _products.where((element) => element['pCategory'].toString().contains(_isCategoryActive.toString())).toList();
 
-        return sortedProducts.length > 0 ? Container(
+        List items = [];
+        sortedProducts?.map((x) {
+          if(x['pQuantity'] <= 5) {
+            items.add(x);
+            return;
+          }
+        })?.toList() ?? [];
+
+        return items.length > 0 ? Container(
           margin: EdgeInsets.only(top: 10),
           width: MediaQuery.of(context).size.width,
           child: Wrap(
-            children: sortedProducts.map((product) {
-              int index = sortedProducts.indexOf(product);
-              return product['pQuantity'] <= 5 ? Stack(
+            children: items.map((product) {
+              return Stack(
                 children: <Widget>[
                   Container(
                     color: getColorFromHex('#f3f3f3'),
@@ -427,7 +434,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     )
                   )
                 ],
-              ) : SizedBox();
+              );
             }).toList(),
           )
         ) : Container(
@@ -608,23 +615,23 @@ class _HomeScreenState extends State<HomeScreen> {
                       )
                     ),
                     ListTile(
-                      leading: Icon(Icons.person),
+                      leading: Icon(Icons.person, color: Colors.lightBlue),
                       title: Text(snapshot.data['name'].toString(), style: TextStyle(color: Colors.black38, fontSize: 16, fontWeight: FontWeight.w500)),
                     ),
                     ListTile(
-                      leading: Icon(Icons.email),
+                      leading: Icon(Icons.email, color: Colors.lightBlue),
                       title: Text(snapshot.data['email'].toString(), style: TextStyle(color: Colors.black38, fontSize: 16, fontWeight: FontWeight.w500)),
                     ),
                     ListTile(
-                      leading: Icon(Icons.location_on),
+                      leading: Icon(Icons.location_on, color: Colors.lightBlue),
                       title: Text(snapshot.data['address'].toString(), style: TextStyle(color: Colors.black38, fontSize: 16, fontWeight: FontWeight.w500)),
                     ),
                     ListTile(
-                      leading: Icon(Icons.contact_phone),
+                      leading: Icon(Icons.contact_phone, color: Colors.lightBlue),
                       title: Text(snapshot.data['contact'].toString(), style: TextStyle(color: Colors.black38, fontSize: 16, fontWeight: FontWeight.w500)),
                     ),
                     ListTile(
-                      leading: Icon(Icons.card_membership),
+                      leading: Icon(Icons.card_membership, color: Colors.lightBlue),
                       title: Text('Subscription: $_status', style: TextStyle(color: Colors.black38, fontSize: 16, fontWeight: FontWeight.w500)),
                     ),
                     Expanded(
