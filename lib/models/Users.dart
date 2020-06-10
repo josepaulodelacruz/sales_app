@@ -137,7 +137,6 @@ class Users extends ChangeNotifier {
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
     dynamic user = sharedPrefs.getString('user');
     Map<String, dynamic> decode = jsonDecode(user);
-    print(decode);
     return decode;
   }
 

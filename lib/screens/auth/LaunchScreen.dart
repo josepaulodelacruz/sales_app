@@ -42,31 +42,28 @@ class _LaunchScreenState extends State<LaunchScreenState> {
               ),
             ),
             child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Image.asset(
-                    'images/sarisalesLogo.png',
-                    fit: BoxFit.contain,
-                    height: 200,
-                  ),
-                  Align(
-                    alignment: Alignment.topCenter,
-                    child: Text(
-                      'Sari Sales\nApplication',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontSize: 32,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                      )
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Image.asset(
+                  'images/sarisalesLogo.png',
+                  fit: BoxFit.contain,
+                  height: 200,
+                ),
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: Text(
+                    'Sari Sales\nApplication',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 32,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
                     )
-                  ),
-                  Text('Track your inventory and Sales', style: TextStyle(color: Colors.white, height: 2, fontWeight: FontWeight.w300, fontSize: 18)),
-                  Text('Mobile Barcode', style: TextStyle(color: Colors.white, height: 2, fontWeight: FontWeight.w300, fontSize: 18))
-
-
-                ],
-
+                  )
+                ),
+                Text('Track your inventory and Sales', style: TextStyle(color: Colors.white, height: 2, fontWeight: FontWeight.w300, fontSize: 18)),
+                Text('Mobile Barcode', style: TextStyle(color: Colors.white, height: 2, fontWeight: FontWeight.w300, fontSize: 18))
+              ],
             )
           )
         )
