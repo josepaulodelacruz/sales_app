@@ -226,6 +226,7 @@ class _ViewLoans extends State<ViewLoans> {
               ],
             )
           ),
+          FlatButton.icon(onPressed: null, icon: Icon(Icons.info), label: Text('To Delete loans just tap the name of the product.')),
           Container(
             width: MediaQuery.of(context).size.width,
             margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.25),

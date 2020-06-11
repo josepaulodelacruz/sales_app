@@ -634,6 +634,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       leading: Icon(Icons.card_membership, color: Colors.lightBlue),
                       title: Text('Subscription: $_status', style: TextStyle(color: Colors.black38, fontSize: 16, fontWeight: FontWeight.w500)),
                     ),
+                    ListTile(
+                      leading: Icon(Icons.save, color: Colors.lightBlue),
+                      title: Text('Save Products to cloud', style: TextStyle(color: Colors.black38, fontSize: 16, fontWeight: FontWeight.w500)),
+                    ),
                     Expanded(
                         flex: 1,
                         child: Container()

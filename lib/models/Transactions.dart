@@ -85,6 +85,7 @@ class Transactions {
       List<dynamic> _details = products.map((product) {
         uncodeDetails.add({
           'dates': formattedDate.toString(),
+          'parseDates': now.toString(),
           'productName': product['pName'],
           'amount': (product['pPrice'] * product['orderCount']).toString(),
           'quantity': product['orderCount'],
@@ -97,6 +98,7 @@ class Transactions {
       List<dynamic> _details = products.map((product) {
         uncodeDetails.add({
           'dates': formattedDate.toString(),
+          'parseDates': now.toString(),
           'productName': product['pName'],
           'amount': (product['pPrice'] * product['orderCount']).toString(),
           'quantity': product['orderCount'],

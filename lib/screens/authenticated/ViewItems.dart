@@ -35,6 +35,7 @@ class _ViewItemsState extends State<ViewItems> {
   List _updatingProducts = [];
   List _transactions = [];
   Timer _timer;
+  bool _generateReceipts = false;
   bool _onMountWidget = false;
   final _customerAmount = TextEditingController();
 
@@ -273,6 +274,11 @@ class _ViewItemsState extends State<ViewItems> {
               icon: Icon(Icons.arrow_back_ios, color: Colors.white),
               onPressed: () => Navigator.of(context).pop(),
             ),
+            actions: [
+              IconButton(
+                  icon: Icon(Icons.print, color: Colors.white)
+              )
+            ]
         ),
         body: AnimatedOpacity(
           duration: Duration(milliseconds: 700),
@@ -280,7 +286,31 @@ class _ViewItemsState extends State<ViewItems> {
           child: Container(
             child: Column(
               children: <Widget>[
+                FlatButton.icon(onPressed: null, icon: Icon(Icons.info), label: Text('To Delete just tap the name of the product.')),
                 _listProducts,
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Checkbox(
+                        value: _generateReceipts,
+                        onChanged: (val) {
+                          setState(() {
+                            _generateReceipts = !_generateReceipts;
+                          });
+                        }
+                      ),
+                      Text(
+                        'Generate printed receipt',
+                        style: TextStyle(
+                          color: Colors.grey[500],
+                          fontWeight: FontWeight.w400,
+                        )
+                      )
+                    ],
+                  )
+                ),
                 Card(
                   elevation: 5,
                   child: Column(
@@ -288,16 +318,16 @@ class _ViewItemsState extends State<ViewItems> {
                       _totalComputation(),
                       _amount,
                       Align(
-                          alignment: Alignment.topRight,
-                          child: Container(
-                              width: MediaQuery.of(context).size.width * 0.40,
-                              margin: const EdgeInsets.only(left: 10.0, right: 20.0),
-                              child: Divider(
-                                thickness: 5,
-                                color: Colors.grey[300],
-                                height: 36,
-                              )
+                        alignment: Alignment.topRight,
+                        child: Container(
+                          width: MediaQuery.of(context).size.width * 0.40,
+                          margin: const EdgeInsets.only(left: 10.0, right: 20.0),
+                          child: Divider(
+                            thickness: 5,
+                            color: Colors.grey[300],
+                            height: 36,
                           )
+                        )
                       ),
                     ],
                   )

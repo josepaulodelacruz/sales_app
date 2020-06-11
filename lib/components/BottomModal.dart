@@ -128,19 +128,16 @@ class _BottomModal extends State<BottomModal> {
                                 children: [
                                   Flexible(
                                     flex: 2,
-                                    child: Text('Quantity:', style: TextStyle(fontSize: 15, color: Colors.grey[500], fontWeight: FontWeight.bold)),
+                                    child: Text('Stocks:', style: TextStyle(fontSize: 15, color: Colors.grey[500], fontWeight: FontWeight.bold)),
                                   ),
                                   Flexible(
                                     flex: 1,
                                     child: TextField(
+                                      showCursor: true,
+                                      readOnly: true,
                                       textAlign: TextAlign.right,
-                                      onChanged: (val) {
-                                        setState(() {
-                                          _orderCount = val.length > 0 ? int.parse(val): 1;
-                                        });
-                                      },
                                       decoration: InputDecoration(
-                                          hintText: '1'
+                                          hintText: '${item['pQuantity']}'
                                       ),
                                       keyboardType: TextInputType.numberWithOptions(
                                         decimal: false,

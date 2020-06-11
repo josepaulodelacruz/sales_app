@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import'package:flutter/material.dart';
 
 import '../../utils/colorParser.dart';
+import '../../utils/dateTimeParse.dart';
 
 //models
 import '../../models/Transactions.dart';
@@ -19,6 +20,7 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
   List _sortDates;
   String _profitType = 'Daily';
   bool _isLoading = true;
+  int dateCalculation = 0;
   final _searchDate = TextEditingController();
 
   @override
@@ -37,7 +39,9 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
   _fetchTransactionDetails () async {
     await Transactions.getTransactionsDetails().then((res) {
       //sort all availables dates
-      List d = res?.map((d) => d['dates'])?.toList() ?? [];
+      List d = res?.map((d) {
+        return  d['dates'];
+      })?.toList() ?? [];
       List _sortedDates = d.toSet().toList();
       List _toLatestDates = _sortedDates;
       //reverse the list of dates
@@ -54,26 +58,19 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
     });
   }
 
-  void _salesBy (String val) {
-    var myList = _sortDates;
-
-    for(var i=0;i<myList.length/2;i++){
-      var temp = myList[i];
-      myList[i] = myList[myList.length-1-i];
-      myList[myList.length-1-i] = temp;
-    }
-
-    print(myList);
-//    setState(() {
-//      _profitType = val;
-//    });
+  void _salesBy (int val) {
+    setState(() {
+      dateCalculation = val;
+    });
   }
 
   void _fuzzySearch (val) {
     setState(() {
       _sortDates = val == '' ?
           _dates?.map((d) => d)?.toList() ?? [] :
-          _dates.where((element) => element.toString().toLowerCase().contains(_searchDate.text.toString().toLowerCase())).toList();
+          _dates.where((element) {
+            return element.toString().toLowerCase().contains(_searchDate.text.toString().toLowerCase());
+          }).toList();
     });
   }
 
@@ -82,8 +79,11 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
     String formattedDate = DateFormat.yMMMMd().format(now);
-    //compute profits
+//    DateTime parsedDate = parseDate(_sortDates[0]);
+//    DateTime dateComputation = parsedDate.add(Duration(days: dateCalculation));
+
     List _transactionAmounts = _transactions?.map((transaction) {
+      DateTime parsedDate = parseDate(transaction['parseDates']);
       return transaction['dates'].toString().toLowerCase() == (_searchDate.text.toLowerCase() == '' ?
           formattedDate.toString().toLowerCase() :
           (_sortDates.isEmpty ? formattedDate.toString().toLowerCase() : _sortDates[0].toString().toLowerCase())) ?
@@ -145,7 +145,7 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
                         children: ListTile.divideTiles(
                           context: context,
                           tiles: _transactions?.map((transaction) {
-                            return d == transaction['dates'] ? ListTile(
+                            return d.toString() == transaction['dates'].toString() ? ListTile(
                               title: Text(transaction['productName'], style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
                               subtitle: Text('Purchased Item'),
                               trailing: Column(
@@ -203,9 +203,8 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text('P ${_profitAmount}', style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold)),
+                  Text('₱ ${_profitAmount}', style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold)),
                   SizedBox(width: 10),
-                  Text('+5%', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
                 ],
               ),
             ),
@@ -221,37 +220,37 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
                     height: 20,
                     child: RaisedButton(
                       onPressed: () {
-                        _salesBy('Daily');
+                        _salesBy(0);
                       },
                       child: Text('Daily', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                       color: getColorFromHex('#36d1dc'),
                       shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
                     )
                   ),
-//                  SizedBox(width: 10),
-//                  Container(
-//                    height: 20,
-//                    child: RaisedButton(
-//                      onPressed: () {
-//                        _salesBy('Weekly');
-//                      },
-//                      color: getColorFromHex('#ffb88c'),
-//                      child: Text('Weekly', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-//                      shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
-//                    )
-//                  ),
-//                  SizedBox(width: 10),
-//                  Container(
-//                    height: 20,
-//                    child: RaisedButton(
-//                      onPressed: () {
-//                        _salesBy('Monthly');
-//                      },
-//                      color: getColorFromHex('#b06ab3'),
-//                      child: Text('Montly', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-//                      shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
-//                    )
-//                  ),
+                  SizedBox(width: 10),
+                  Container(
+                    height: 20,
+                    child: RaisedButton(
+                      onPressed: () {
+                        _salesBy(7);
+                      },
+                      color: getColorFromHex('#ffb88c'),
+                      child: Text('Weekly', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                      shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
+                    )
+                  ),
+                  SizedBox(width: 10),
+                  Container(
+                    height: 20,
+                    child: RaisedButton(
+                      onPressed: () {
+                        _salesBy(30);
+                      },
+                      color: getColorFromHex('#b06ab3'),
+                      child: Text('Montly', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                      shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
+                    )
+                  ),
 
                 ],
               ),
