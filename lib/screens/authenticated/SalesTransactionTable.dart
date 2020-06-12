@@ -18,8 +18,6 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
   List _transactions;
   List _dates;
   List _sortDates;
-  String _profitType = 'Daily';
-  bool _isLoading = true;
   int dateCalculation = 0;
   final _searchDate = TextEditingController();
 
@@ -27,11 +25,6 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
   void initState () {
 
     _fetchTransactionDetails();
-    Timer(Duration(milliseconds: 1000), () {
-      setState(() {
-        _isLoading = false;
-      });
-    });
     super.initState();
   }
 
@@ -79,18 +72,35 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
     String formattedDate = DateFormat.yMMMMd().format(now);
-
 //    DateTime parsedDate = parseDate(_sortDates[0]);
 //    DateTime dateComputation = parsedDate.add(Duration(days: dateCalculation));
 
+    String profitDate = 'Current Date';
+    List _computeDates = [];
     List _transactionAmounts = _transactions?.map((transaction) {
-      DateTime parsedDate = parseDate(transaction['parseDates']);
       return transaction['dates'].toString().toLowerCase() == (_searchDate.text.toLowerCase() == '' ?
           formattedDate.toString().toLowerCase() :
           (_sortDates.isEmpty ? formattedDate.toString().toLowerCase() : _sortDates[0].toString().toLowerCase())) ?
-          double.parse(transaction['amount']) : 0;
+          _computeDates.add(transaction) : 0;
     })?.toList() ?? [];
-    double _profitAmount = _transactionAmounts.fold(0, (i, j) => i + j);
+
+    List profitReport = _transactions?.map((transaction) {
+      DateTime pickDate = parseDate(_computeDates[0]['parseDates']);
+      DateTime dateTransaction = parseDate(transaction['parseDates']);
+      DateTime generateProfit = pickDate.add(Duration(days: dateCalculation));
+      profitDate = DateFormat.yMMMMd().format(generateProfit);
+
+      if(generateProfit.isAfter(dateTransaction)) {
+          return double.parse(transaction['amount']);
+      } else {
+        if(pickDate == dateTransaction) {
+          return double.parse(transaction['amount']);
+        }
+      }
+      return 0;
+    })?.toList() ?? [];
+
+    double _profitAmount = profitReport.fold(0, (i, j) => i + j);
 
     Widget _searchBar () {
       DateTime now = DateTime.now();
@@ -194,7 +204,14 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
             margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.12),
             child: Align(
               alignment: Alignment.topCenter,
-              child: Text('Profit Margin', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+              child: Column(
+                children: <Widget>[
+                  Text('Profit Margin', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                  _computeDates.isNotEmpty && _computeDates[0]['dates'] != formattedDate ?
+                    Text('${_computeDates[0]['dates']} - ${profitDate}', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)) :
+                    Text('${formattedDate}', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold))
+                ],
+              )
             ),
           ),
           Container(
@@ -233,9 +250,9 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
                     height: 20,
                     child: RaisedButton(
                       onPressed: () {
-                        _salesBy(7);
+                        _computeDates.isNotEmpty && _computeDates[0]['dates'] == formattedDate ? null : _salesBy(7);
                       },
-                      color: getColorFromHex('#ffb88c'),
+                      color: _computeDates.isNotEmpty && _computeDates[0]['dates'] == formattedDate ? Colors.grey[500] : getColorFromHex('#ffb88c'),
                       child: Text('Weekly', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                       shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
                     )
@@ -245,9 +262,9 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
                     height: 20,
                     child: RaisedButton(
                       onPressed: () {
-                        _salesBy(30);
+                        _computeDates.isNotEmpty && _computeDates[0]['dates'] == formattedDate ? null : _salesBy(30);
                       },
-                      color: getColorFromHex('#b06ab3'),
+                      color: _computeDates.isNotEmpty && _computeDates[0]['dates'] == formattedDate ? Colors.grey[500] : getColorFromHex('#b06ab3'),
                       child: Text('Montly', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                       shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
                     )
