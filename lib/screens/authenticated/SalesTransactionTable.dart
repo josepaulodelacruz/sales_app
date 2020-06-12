@@ -84,21 +84,24 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
           _computeDates.add(transaction) : 0;
     })?.toList() ?? [];
 
-    List profitReport = _transactions?.map((transaction) {
+    List profitReport = _computeDates.isNotEmpty && _computeDates[0]['dates'] != formattedDate ? _transactions?.map((transaction) {
       DateTime pickDate = parseDate(_computeDates[0]['parseDates']);
       DateTime dateTransaction = parseDate(transaction['parseDates']);
+      String stringDate = DateFormat.yMMMMd().format(pickDate);
       DateTime generateProfit = pickDate.add(Duration(days: dateCalculation));
       profitDate = DateFormat.yMMMMd().format(generateProfit);
 
       if(generateProfit.isAfter(dateTransaction)) {
-          return double.parse(transaction['amount']);
+        return double.parse(transaction['amount']);
       } else {
-        if(pickDate == dateTransaction) {
+        if(stringDate == transaction['dates']) {
           return double.parse(transaction['amount']);
         }
+        return 0;
       }
       return 0;
-    })?.toList() ?? [];
+    })?.toList() ?? [] : _computeDates?.map((dd) => double.parse(dd['amount']))?.toList() ?? [];
+    print(profitReport);
 
     double _profitAmount = profitReport.fold(0, (i, j) => i + j);
 

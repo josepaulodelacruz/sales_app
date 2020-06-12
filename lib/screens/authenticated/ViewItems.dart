@@ -113,8 +113,6 @@ class _ViewItemsState extends State<ViewItems> {
 
   @override
   Widget build(BuildContext context) {
-    print(_customerAmount.text);
-
     Widget _topHeader = Container(
       padding: EdgeInsets.all(20),
       child: Row(
