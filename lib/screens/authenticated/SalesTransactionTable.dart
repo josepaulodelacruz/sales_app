@@ -79,6 +79,7 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
     String formattedDate = DateFormat.yMMMMd().format(now);
+
 //    DateTime parsedDate = parseDate(_sortDates[0]);
 //    DateTime dateComputation = parsedDate.add(Duration(days: dateCalculation));
 

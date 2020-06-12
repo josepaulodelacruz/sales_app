@@ -77,6 +77,13 @@ class _ReportScreen extends State<ReportScreen> {
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
     String formattedDate = DateFormat.yMMMMd().format(now);
+    List _currentSales = [];
+    List _currentTransactions = _transactions?.map((d) {
+      if(d['dates'] == formattedDate) {
+        _currentSales.add(d);
+        return null;
+      }
+    })?.toList() ?? [];
 
     Widget _topButtons = Container(
       margin: EdgeInsets.symmetric(horizontal: 40),
@@ -190,7 +197,7 @@ class _ReportScreen extends State<ReportScreen> {
             padding: EdgeInsets.only(top: 10),
             width: MediaQuery.of(context).size.width * 0.90,
             child: Card(
-              child: _transactions.length > 0 ? Column(
+              child: _currentSales.length > 0 ? Column(
                 children: ListTile.divideTiles(
                   context: context,
                   tiles: _transactions?.map((transaction) {
