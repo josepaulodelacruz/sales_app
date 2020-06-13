@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:sari_sales/models/ListProducts.dart';
 import 'package:sari_sales/models/Transactions.dart';
 import 'package:sari_sales/models/Users.dart';
+import 'package:sari_sales/screens/authenticated/ContactScreen.dart';
 import 'package:sari_sales/utils/colorParser.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:path/path.dart' show join;
@@ -496,6 +497,73 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         )
                       ),
+                      Container(
+                        padding: EdgeInsets.only(top: 10),
+                        height: 60,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            Hero(
+                              tag: 'contacts',
+                              child: RaisedButton(
+                                shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+                                elevation: 15,
+                                padding: EdgeInsets.all(0),
+                                onPressed: () {
+                                  Navigator.push(context, MaterialPageRoute(
+                                    builder: (context) => ContactScreen(),
+                                  ));
+                                },
+                                child: Container(
+                                  decoration: new BoxDecoration(
+                                    borderRadius: new BorderRadius.circular(10),
+                                    gradient: new LinearGradient(
+                                      colors: [
+                                        getColorFromHex('#00B4DB'),
+                                        getColorFromHex('#0083B0'),
+                                      ],
+                                    ),
+                                  ),
+                                  padding: EdgeInsets.all(10.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                    children: <Widget>[
+                                      Icon(Icons.contacts, color: Colors.white),
+                                      SizedBox(width: 5),
+                                      Text('Contact Supplier', textAlign: TextAlign.center, style: TextStyle(color: Colors.white))
+                                    ],
+                                  )
+                                )
+                              ),
+                            ),
+                            RaisedButton(
+                              shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+                              elevation: 15,
+                              padding: EdgeInsets.all(0),
+                              child:  Container(
+                                decoration: new BoxDecoration(
+                                  borderRadius: new BorderRadius.circular(10),
+                                  gradient: new LinearGradient(
+                                    colors: [
+                                      getColorFromHex('#00B4DB'),
+                                      getColorFromHex('#0083B0'),
+                                    ],
+                                  ),
+                                ),
+                                padding: EdgeInsets.all(10.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    Icon(Icons.cloud_upload, color: Colors.white),
+                                    SizedBox(width: 5),
+                                    Text('Share your Reports', textAlign: TextAlign.center, style: TextStyle(color: Colors.white))
+                                  ],
+                                )
+                              )
+                            )
+                          ],
+                        )
+                      ),
                       _frequentlyBought,
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 32, vertical: 15),
@@ -633,10 +701,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     ListTile(
                       leading: Icon(Icons.card_membership, color: Colors.lightBlue),
                       title: Text('Subscription: $_status', style: TextStyle(color: Colors.black38, fontSize: 16, fontWeight: FontWeight.w500)),
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.save, color: Colors.lightBlue),
-                      title: Text('Save Products to cloud', style: TextStyle(color: Colors.black38, fontSize: 16, fontWeight: FontWeight.w500)),
                     ),
                     Expanded(
                         flex: 1,

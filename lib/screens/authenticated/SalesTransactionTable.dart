@@ -91,19 +91,23 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
       DateTime generateProfit = pickDate.add(Duration(days: dateCalculation));
       profitDate = DateFormat.yMMMMd().format(generateProfit);
 
+//      print('${generateProfit} - ${dateTransaction} = ${generateProfit.isAfter(dateTransaction)}');
+
       if(generateProfit.isAfter(dateTransaction)) {
-        return double.parse(transaction['amount']);
+          return double.parse(transaction['amount']);
       } else {
         if(stringDate == transaction['dates']) {
           return double.parse(transaction['amount']);
         }
         return 0;
       }
-      return 0;
+
+
     })?.toList() ?? [] : _computeDates?.map((dd) => double.parse(dd['amount']))?.toList() ?? [];
     print(profitReport);
 
     double _profitAmount = profitReport.fold(0, (i, j) => i + j);
+    print(_profitAmount);
 
     Widget _searchBar () {
       DateTime now = DateTime.now();
