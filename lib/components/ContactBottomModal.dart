@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:sari_sales/models/Contact.dart';
 import 'dart:io';
 import 'package:sari_sales/utils/colorParser.dart';
 import 'package:sari_sales/components/TakePhoto.dart';
 import 'package:camera/camera.dart';
+import 'package:provider/provider.dart';
 
-class ContactBottomModal extends StatefulWidget {
+import 'package:sari_sales/providers/contact_data.dart';
 
-  @override
-  createState () => _ContactBottomModal();
-}
+class ContactBottomModal extends StatelessWidget {
+  Map<String, dynamic> contactUser;
+  final Function reupdateContacts;
 
-class _ContactBottomModal extends State<ContactBottomModal> {
-  String _imagePath;
+  ContactBottomModal({this.reupdateContacts, this.contactUser});
 
   @override
   Widget build(BuildContext context) {
+    final contactData = Provider.of<ContactData>(context);
+
     return Container(
       color: Color(0xff757575),
       child: Container(
@@ -54,10 +57,12 @@ class _ContactBottomModal extends State<ContactBottomModal> {
                             width: MediaQuery.of(context).size.width,
                             child: Card(
                               child: TextField(
+                                controller: TextEditingController(text: contactUser == null ? contactData.persistName : contactUser['name']),
+                                onChanged: (val) {
+                                  contactData.persistName = val;
+                                },
                                 decoration: InputDecoration(
-                                  suffixIcon: IconButton(
-                                    icon: Icon(Icons.clear),
-                                  ),
+                                  suffixIcon: Icon(Icons.person),
                                   border: InputBorder.none,
                                   focusedBorder: InputBorder.none,
                                   enabledBorder: InputBorder.none,
@@ -77,14 +82,16 @@ class _ContactBottomModal extends State<ContactBottomModal> {
                             width: MediaQuery.of(context).size.width,
                             child: Card(
                               child: TextField(
+                                controller: TextEditingController(text: contactUser == null ? contactData.persistPhone : contactUser['contact']),
+                                onChanged: (val) {
+                                  contactData.persistPhone = val;
+                                },
                                 keyboardType: TextInputType.numberWithOptions(
                                   decimal: false,
                                   signed: false,
                                 ),
                                 decoration: InputDecoration(
-                                  suffixIcon: IconButton(
-                                    icon: Icon(Icons.clear),
-                                  ),
+                                  suffixIcon: Icon(Icons.phone),
                                   border: InputBorder.none,
                                   focusedBorder: InputBorder.none,
                                   enabledBorder: InputBorder.none,
@@ -116,20 +123,18 @@ class _ContactBottomModal extends State<ContactBottomModal> {
 
                           // Get a specific camera from the list of available cameras.
                           final firstCamera = cameras.first;
-                          Navigator.push(context, PageRouteBuilder(
-                            transitionDuration: Duration(seconds: 1),
-                            pageBuilder: (context, a1, a2) => TakePhoto(camera: firstCamera, isCapture: (path, pictureId) {
-                              setState(() {
-                                _imagePath = path;
-                              });
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) => TakePhoto(camera: firstCamera, isCapture: (path, pictureId) {
+                              contactData.persistImage(path);
+
                               Navigator.pop(context);
                             }),
 
                           ));
                         },
-                        child: Card(
+                        child:  Card(
                           elevation: 5,
-                          child: _imagePath == null ? Hero(tag: 'takePhoto',child: Center(
+                          child: Center(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
@@ -137,14 +142,11 @@ class _ContactBottomModal extends State<ContactBottomModal> {
                                 Text('Add Picture', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w300))
                               ],
                             )
-                          )) : Hero(
-                            tag: 'takePhoto',
-                            child: Image.file(
-                              File(_imagePath),
-                              fit: BoxFit.fill,
-                            )
-                          )
-                        )
+                          ))
+//                            Image.file(
+//                                File(contactData.imagePath),
+//                                fit: BoxFit.fill)
+
                       )
                     )
                   )
@@ -163,10 +165,12 @@ class _ContactBottomModal extends State<ContactBottomModal> {
                     width: MediaQuery.of(context).size.width,
                     child: Card(
                       child: TextField(
+                        controller: TextEditingController(text: contactUser == null ? contactData.persistSupply : contactUser['supply']),
+                        onChanged: (val) {
+                          contactData.persistSupply = val;
+                        },
                         decoration: InputDecoration(
-                          suffixIcon: IconButton(
-                            icon: Icon(Icons.clear),
-                          ),
+                          suffixIcon: Icon(Icons.library_books, color: Colors.grey),
                           border: InputBorder.none,
                           focusedBorder: InputBorder.none,
                           enabledBorder: InputBorder.none,
@@ -174,7 +178,7 @@ class _ContactBottomModal extends State<ContactBottomModal> {
                           disabledBorder: InputBorder.none,
                           contentPadding:
                           EdgeInsets.only(left: 15, bottom: 11, top: 15, right: 15),
-                          hintText: 'Enter Product',
+                          hintText: 'Enter Company Product/Company name.'
                         ),
                       )
                     ),
@@ -190,7 +194,9 @@ class _ContactBottomModal extends State<ContactBottomModal> {
                 ),
               ),
               color: Colors.lightBlueAccent,
-              onPressed: () {
+              onPressed: () async {
+                await contactData.handleSubmit();
+                reupdateContacts();
                 Navigator.pop(context);
               },
             ),

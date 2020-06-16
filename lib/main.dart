@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:sari_sales/models/Users.dart';
 import 'package:intl/intl.dart';
 
 //screens
@@ -10,6 +9,12 @@ import 'package:sari_sales/screens/auth/LoginScreen.dart';
 import 'package:sari_sales/screens/auth/RegisterScreen.dart';
 import 'package:sari_sales/screens/authenticated/CurrentScreen.dart';
 import 'package:sari_sales/screens/authenticated/HomeScreen.dart';
+
+
+//models
+import 'package:sari_sales/models/Users.dart';
+import 'package:sari_sales/providers/contact_data.dart';
+
 
 Future<void> main() async => runApp(MyApp(
 
@@ -23,8 +28,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
   return MultiProvider(
       providers: [
-        ChangeNotifierProvider<Users>.value(
-          value: Users(),
+//        ChangeNotifierProvider<Users>.value(
+//          value: Users(),
+//        ),
+        ChangeNotifierProvider<Users>(
+          create: (_) => Users(),
+        ),
+        ChangeNotifierProvider<ContactData>(
+          create: (_) => ContactData(),
         ),
       ],
       child: MaterialApp(
