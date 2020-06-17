@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:sari_sales/components/ContactBottomModal.dart';
 import 'package:provider/provider.dart';
 import 'package:sari_sales/components/EditContactBottomModal.dart';
@@ -16,7 +15,6 @@ class ContactScreen extends StatefulWidget {
 }
 
 class _ContactScreen extends State<ContactScreen>{
-  String _searchContacts;
   List _contacts = [];
   List _searchContactsList = [];
 
@@ -142,6 +140,7 @@ class _ContactScreen extends State<ContactScreen>{
                         children: ListTile.divideTiles(
                           context: context,
                           tiles: _contacts.map<Widget>((contact) {
+                            int index = _contacts.indexOf(contact);
                             return Container(
                               child: Center(
                                 child: ExpansionTile(
