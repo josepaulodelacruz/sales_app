@@ -16,6 +16,9 @@ class ContactScreen extends StatefulWidget {
 }
 
 class _ContactScreen extends State<ContactScreen>{
+  String _searchContacts;
+  List _contacts = [];
+  List _searchContactsList = [];
 
   void initState () {
     super.initState();
@@ -23,7 +26,20 @@ class _ContactScreen extends State<ContactScreen>{
   }
 
   _fetchContacts () async {
-    return await Contact.getContact();
+    await Contact.getContact().then((res) {
+      setState(() {
+        _contacts = res;
+        _searchContactsList = res;
+      });
+    });
+  }
+
+  _fuzzySearchContacts (val) {
+    setState(() {
+      _contacts = val == '' ?
+          _searchContactsList:
+          _searchContactsList.where((element) => element['name'].toString().toLowerCase().contains(val.toString().toLowerCase())).toList();
+    });
   }
 
   @override
@@ -71,9 +87,13 @@ class _ContactScreen extends State<ContactScreen>{
                         width: MediaQuery.of(context).size.width,
                         child: Card(
                           child: TextField(
+                            onChanged: _fuzzySearchContacts,
                             decoration: InputDecoration(
                                 suffixIcon: IconButton(
-                                  icon: Icon(Icons.clear),
+                                  onPressed: () {
+
+                                  },
+                                  icon: Icon(Icons.search),
                                 ),
                                 border: InputBorder.none,
                                 focusedBorder: InputBorder.none,
@@ -114,87 +134,80 @@ class _ContactScreen extends State<ContactScreen>{
                       ],
                     )
                   ),
-                  FutureBuilder(
-                    future: _fetchContacts(),
-                    builder: (context, snapshot) {
-                      if(snapshot.connectionState == ConnectionState.done) {
-                        return snapshot.data.length > 0 ? Card(
-                          elevation: 5,
-                          margin: EdgeInsets.symmetric(horizontal: 10),
-                          child: Column(
-                            children: ListTile.divideTiles(
-                              context: context,
-                              tiles: snapshot.data.map<Widget>((contact) {
-                                return Container(
-                                  child: Center(
-                                    child: ExpansionTile(
-                                      leading: CircleAvatar(
-                                        radius: 30,
-                                        backgroundColor: Colors.lightBlueAccent,
-                                        child: contact['imagePath'] != null ? Center(
-                                          child: ClipOval(
-                                              child: Image.file(
-                                                File(contact['imagePath']),
-                                                height: 60,
-                                                width: 60,
-                                                fit: BoxFit.fill,
-                                              )
-                                          ),
-                                        ) : Text('${contact['name'][0]}${contact['name'][1]}', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700))
-                                      ),
-                                      title: Text(contact['name'], style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
-                                      subtitle: Text(contact['supply']),
-                                      children: <Widget>[
-                                        Container(
-                                          height: 50,
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                            children: <Widget>[
-                                              FlatButton.icon(onPressed: (){}, icon: Icon(Icons.call, color: Colors.grey[500]), label: Text('Call', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w300))),
-                                              FlatButton.icon(onPressed: (){}, icon: Icon(Icons.message, color: Colors.grey[500]), label: Text('Message', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w300))),
-                                              FlatButton.icon(
-                                                onPressed: (){
-                                                  return showModalBottomSheet(
-                                                    context: context,
-                                                    isScrollControlled: true,
-                                                    builder: (context) => SingleChildScrollView(
-                                                      child:Container(
-                                                        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-                                                        child: EditContactBottomModal(
-                                                          contactUser: {...contact, 'imagePath': contact['imagePath'] == '' ? '' : contact['imagePath']},
-                                                          reupdateContacts: () {
-                                                            setState(() {});
-                                                            _fetchContacts();
-                                                          },
-                                                        ),
-                                                      )
-                                                    )
-                                                  );
-                                                },
-                                                icon: Icon(Icons.edit, color: Colors.grey[500]), label: Text('Edit', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w300))
-                                              ),
-                                            ],
+                  Container(
+                    child: _contacts.length > 0 ? Card(
+                      elevation: 5,
+                      margin: EdgeInsets.symmetric(horizontal: 10),
+                      child: Column(
+                        children: ListTile.divideTiles(
+                          context: context,
+                          tiles: _contacts.map<Widget>((contact) {
+                            return Container(
+                              child: Center(
+                                child: ExpansionTile(
+                                  leading: CircleAvatar(
+                                    radius: 30,
+                                    backgroundColor: Colors.lightBlueAccent,
+                                    child: contact['imagePath'] != null ? Center(
+                                      child: ClipOval(
+                                          child: Image.file(
+                                            File(contact['imagePath']),
+                                            height: 60,
+                                            width: 60,
+                                            fit: BoxFit.fill,
                                           )
-                                        )
-                                      ],
-                                    ),
-                                  )
-                                );
-                              }).toList(),
-                            ).toList(),
-                          )
-                        ) :  Card(
-                          margin: EdgeInsets.symmetric(horizontal: 20),
-                        child: ListTile(
-                          title: Text('No Save Contacts', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
-                          subtitle: Text('Please add Contacts.'),
-                          trailing: Icon(Icons.warning),
-                          )
-                        );
-                      } else {
-                        return CircularProgressIndicator();
-                      }
-                    },
+                                      ),
+                                    ) : Text('${contact['name'][0]}${contact['name'][1]}', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700))
+                                  ),
+                                  title: Text(contact['name'], style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
+                                  subtitle: Text(contact['supply']),
+                                  children: <Widget>[
+                                    Container(
+                                      height: 50,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                        children: <Widget>[
+                                          FlatButton.icon(onPressed: (){}, icon: Icon(Icons.call, color: Colors.grey[500]), label: Text('Call', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w300))),
+                                          FlatButton.icon(onPressed: (){}, icon: Icon(Icons.message, color: Colors.grey[500]), label: Text('Message', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w300))),
+                                          FlatButton.icon(
+                                            onPressed: (){
+                                              return showModalBottomSheet(
+                                                context: context,
+                                                isScrollControlled: true,
+                                                builder: (context) => SingleChildScrollView(
+                                                  child:Container(
+                                                    padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                                                    child: EditContactBottomModal(
+                                                      contactUser: {...contact, 'imagePath': contact['imagePath'] == '' ? '' : contact['imagePath']},
+                                                      reupdateContacts: () {
+                                                        setState(() {});
+                                                        _fetchContacts();
+                                                      },
+                                                    ),
+                                                  )
+                                                )
+                                              );
+                                            },
+                                            icon: Icon(Icons.edit, color: Colors.grey[500]), label: Text('Edit', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w300))
+                                          ),
+                                        ],
+                                      )
+                                    )
+                                  ],
+                                ),
+                              )
+                            );
+                          }).toList(),
+                        ).toList(),
+                      )
+                    ) :  Card(
+                      margin: EdgeInsets.symmetric(horizontal: 20),
+                    child: ListTile(
+                      title: Text('No Save Contacts', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
+                      subtitle: Text('Please add Contacts.'),
+                      trailing: Icon(Icons.warning),
+                      )
+                    )
                   ),
                 ],
               )
