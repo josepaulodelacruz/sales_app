@@ -72,8 +72,6 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
     String formattedDate = DateFormat.yMMMMd().format(now);
-//    DateTime parsedDate = parseDate(_sortDates[0]);
-//    DateTime dateComputation = parsedDate.add(Duration(days: dateCalculation));
 
     String profitDate = 'Current Date';
     List _computeDates = [];
@@ -84,30 +82,21 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
           _computeDates.add(transaction) : 0;
     })?.toList() ?? [];
 
-    List profitReport = _computeDates.isNotEmpty && _computeDates[0]['dates'] != formattedDate ? _transactions?.map((transaction) {
-      DateTime pickDate = parseDate(_computeDates[0]['parseDates']);
-      DateTime dateTransaction = parseDate(transaction['parseDates']);
-      String stringDate = DateFormat.yMMMMd().format(pickDate);
-      DateTime generateProfit = pickDate.add(Duration(days: dateCalculation));
-      profitDate = DateFormat.yMMMMd().format(generateProfit);
-
-//      print('${generateProfit} - ${dateTransaction} = ${generateProfit.isAfter(dateTransaction)}');
-
-      if(generateProfit.isAfter(dateTransaction)) {
-          return double.parse(transaction['amount']);
-      } else {
-        if(stringDate == transaction['dates']) {
+    List _profitReport =  _computeDates.isNotEmpty && _computeDates[0]['dates'] != formattedDate ? _transactions?.map((transaction) {
+      DateTime _findDate = parseDate(_computeDates[0]['parseDates']);
+      DateTime _transactionDates  = parseDate(transaction['parseDates']);
+      DateTime generateReport = _findDate.add(Duration(days: dateCalculation));
+      if(_transactionDates.isAfter(_findDate)) {
+        if(_transactionDates.isBefore(generateReport)) {
           return double.parse(transaction['amount']);
         }
         return 0;
       }
-
-
+      return 0;
     })?.toList() ?? [] : _computeDates?.map((dd) => double.parse(dd['amount']))?.toList() ?? [];
-    print(profitReport);
 
-    double _profitAmount = profitReport.fold(0, (i, j) => i + j);
-    print(_profitAmount);
+    double _profitAmount = _profitReport.fold(0, (i, j) => i + j);
+//    double _profitAmount = 0;
 
     Widget _searchBar () {
       DateTime now = DateTime.now();
