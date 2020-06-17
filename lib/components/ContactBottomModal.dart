@@ -9,10 +9,9 @@ import 'package:provider/provider.dart';
 import 'package:sari_sales/providers/contact_data.dart';
 
 class ContactBottomModal extends StatelessWidget {
-  Map<String, dynamic> contactUser;
   final Function reupdateContacts;
 
-  ContactBottomModal({this.reupdateContacts, this.contactUser});
+  ContactBottomModal({this.reupdateContacts});
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +56,7 @@ class ContactBottomModal extends StatelessWidget {
                             width: MediaQuery.of(context).size.width,
                             child: Card(
                               child: TextField(
-                                controller: TextEditingController(text: contactUser == null ? contactData.persistName : contactUser['name']),
+                                controller: TextEditingController(text: contactData.persistName),
                                 onChanged: (val) {
                                   contactData.persistName = val;
                                 },
@@ -82,7 +81,7 @@ class ContactBottomModal extends StatelessWidget {
                             width: MediaQuery.of(context).size.width,
                             child: Card(
                               child: TextField(
-                                controller: TextEditingController(text: contactUser == null ? contactData.persistPhone : contactUser['contact']),
+                                controller: TextEditingController(text: contactData.persistPhone),
                                 onChanged: (val) {
                                   contactData.persistPhone = val;
                                 },
@@ -132,7 +131,7 @@ class ContactBottomModal extends StatelessWidget {
 
                           ));
                         },
-                        child:  Card(
+                        child: contactData.imagePath == null ? Card(
                           elevation: 5,
                           child: Center(
                             child: Column(
@@ -142,11 +141,11 @@ class ContactBottomModal extends StatelessWidget {
                                 Text('Add Picture', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w300))
                               ],
                             )
-                          ))
-//                            Image.file(
-//                                File(contactData.imagePath),
-//                                fit: BoxFit.fill)
-
+                          )) :
+                            //check if the imagePath has a path
+                            Image.file(
+                                File(contactData.imagePath),
+                                fit: BoxFit.fill)
                       )
                     )
                   )
@@ -165,7 +164,7 @@ class ContactBottomModal extends StatelessWidget {
                     width: MediaQuery.of(context).size.width,
                     child: Card(
                       child: TextField(
-                        controller: TextEditingController(text: contactUser == null ? contactData.persistSupply : contactUser['supply']),
+                        controller: TextEditingController(text: contactData.persistSupply),
                         onChanged: (val) {
                           contactData.persistSupply = val;
                         },

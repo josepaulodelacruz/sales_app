@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sari_sales/components/ContactBottomModal.dart';
 import 'package:provider/provider.dart';
+import 'package:sari_sales/components/EditContactBottomModal.dart';
 import 'package:sari_sales/models/Contact.dart';
 
 import 'package:sari_sales/utils/colorParser.dart';
@@ -27,6 +28,7 @@ class _ContactScreen extends State<ContactScreen>{
 
   @override
   Widget build(BuildContext context) {
+    final contactData = Provider.of<ContactData>(context);
     return Hero(
       tag: 'contacts',
       child: SafeArea(
@@ -123,12 +125,12 @@ class _ContactScreen extends State<ContactScreen>{
                             children: ListTile.divideTiles(
                               context: context,
                               tiles: snapshot.data.map<Widget>((contact) {
-                                print(contact);
                                 return Container(
                                   child: Center(
                                     child: ExpansionTile(
                                       leading: CircleAvatar(
                                         radius: 30,
+                                        backgroundColor: Colors.lightBlueAccent,
                                         child: contact['imagePath'] != null ? Center(
                                           child: ClipOval(
                                               child: Image.file(
@@ -138,7 +140,7 @@ class _ContactScreen extends State<ContactScreen>{
                                                 fit: BoxFit.fill,
                                               )
                                           ),
-                                        ) : Text('${contact['name'][0]}${contact['name'][1]}')
+                                        ) : Text('${contact['name'][0]}${contact['name'][1]}', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700))
                                       ),
                                       title: Text(contact['name'], style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
                                       subtitle: Text(contact['supply']),
@@ -158,8 +160,12 @@ class _ContactScreen extends State<ContactScreen>{
                                                     builder: (context) => SingleChildScrollView(
                                                       child:Container(
                                                         padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-                                                        child: ContactBottomModal(
-                                                          contactUser: contact,
+                                                        child: EditContactBottomModal(
+                                                          contactUser: {...contact, 'imagePath': contact['imagePath'] == '' ? '' : contact['imagePath']},
+                                                          reupdateContacts: () {
+                                                            setState(() {});
+                                                            _fetchContacts();
+                                                          },
                                                         ),
                                                       )
                                                     )

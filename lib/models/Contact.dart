@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:sari_sales/providers/contact_data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
+
 class Contact {
   String name;
   String phone;
@@ -26,12 +28,28 @@ class Contact {
   }
 
   static saveContacts (contacts) async {
+    var uuid = Uuid();
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
     List getContacts = await getContact();
-    getContacts.add(contacts);
+    getContacts.add({...contacts, 'id': uuid.v4()});
     final encode = json.encode(getContacts);
     sharedPrefs.setString('contacts', encode);
     print('succcessfully save in the storage');
+  }
+
+  static editContact (contact) async {
+    final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
+    List<dynamic> contacts = await getContact();
+    List updatedContacts = contacts.map((c) {
+      if(c['id'] == contact['id']) {
+        return contact;
+      }
+      return c;
+    }).toList();
+
+    final encode = json.encode(updatedContacts);
+    sharedPrefs.setString('contacts', encode);
+
   }
 
   Map<String, dynamic> toJson() =>

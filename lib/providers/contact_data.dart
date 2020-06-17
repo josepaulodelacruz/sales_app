@@ -42,5 +42,18 @@ class ContactData extends ChangeNotifier {
     }
   }
 
+  handleEdit (Map<String, dynamic> editContact) async {
+    Map<String, dynamic> user = {
+      'name': editContact['name'].text,
+      'contact': editContact['contact'].text,
+      'imagePath': editContact['imagePath'],
+      'supply': editContact['supply'].text,
+      'id': editContact['id'],
+    };
+    print('edit');
+    await Contact.editContact(user);
+
+  }
+
 
 }

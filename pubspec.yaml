@@ -65,6 +65,7 @@ flutter:
     - images/Hero.png
     - images/gradien-bg.png
     - images/sarisalesLogo.png
+    - images/noImage.png
     - assets/beep.mp3
 
   # To add assets to your application, add an assets section, like this:
