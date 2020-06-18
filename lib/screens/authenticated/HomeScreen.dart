@@ -537,6 +537,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                             RaisedButton(
+                              onPressed: (){},
                               shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
                               elevation: 15,
                               padding: EdgeInsets.all(0),

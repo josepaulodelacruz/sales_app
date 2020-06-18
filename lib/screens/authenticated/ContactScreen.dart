@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:sari_sales/components/ContactBottomModal.dart';
 import 'package:provider/provider.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:sari_sales/components/EditContactBottomModal.dart';
 import 'package:sari_sales/models/Contact.dart';
 
@@ -15,6 +17,7 @@ class ContactScreen extends StatefulWidget {
 }
 
 class _ContactScreen extends State<ContactScreen>{
+  bool _isLoading = false;
   List _contacts = [];
   List _searchContactsList = [];
 
@@ -48,7 +51,9 @@ class _ContactScreen extends State<ContactScreen>{
       child: SafeArea(
         child: Scaffold(
           backgroundColor: getColorFromHex('#f3f3f3'),
-          body: Container(
+          body: ModalProgressHUD(
+          inAsyncCall: _isLoading,
+          child: Container(
             height: MediaQuery.of(context).size.height,
             child: SingleChildScrollView(
               child: Column(
@@ -166,8 +171,33 @@ class _ContactScreen extends State<ContactScreen>{
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                                         children: <Widget>[
-                                          FlatButton.icon(onPressed: (){}, icon: Icon(Icons.call, color: Colors.grey[500]), label: Text('Call', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w300))),
-                                          FlatButton.icon(onPressed: (){}, icon: Icon(Icons.message, color: Colors.grey[500]), label: Text('Message', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w300))),
+                                          FlatButton.icon(
+                                            onPressed: () async {
+                                              var uriMessage = 'tel:${contact['contact']}';
+                                              try {
+                                                await launch(uriMessage);
+                                                setState(() => _isLoading = false);
+                                              } catch(err) {
+                                                print(err);
+                                                setState(() => _isLoading = false);
+                                              }
+                                            },
+                                            icon: Icon(Icons.call, color: Colors.grey[500]), label: Text('Call', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w300))
+                                          ),
+                                          FlatButton.icon(
+                                            onPressed: () async {
+                                              setState(() => _isLoading = true);
+                                              var uriMessage = 'sms:${contact['contact']}';
+                                              try {
+                                                await launch(uriMessage);
+                                                setState(() => _isLoading = false);
+                                              } catch(err) {
+                                                print(err);
+                                                setState(() => _isLoading = false);
+                                              }
+                                            },
+                                            icon: Icon(Icons.message, color: Colors.grey[500]), label: Text('Message', style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w300))
+                                          ),
                                           FlatButton.icon(
                                             onPressed: (){
                                               return showModalBottomSheet(
@@ -211,7 +241,7 @@ class _ContactScreen extends State<ContactScreen>{
                 ],
               )
             ),
-          )
+          ))
         )
       )
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:sari_sales/components/AppDialog.dart';
 import 'package:sari_sales/components/SettingConfirmationModal.dart';
 import 'package:sari_sales/components/MarkdownReader.dart';
@@ -254,15 +255,24 @@ class _SettingScreen extends State<SettingScreen> {
                               onPressed: () {
                                 return showAboutDialog(
                                   context: context,
-                                  applicationVersion: '0.0.1',
+                                  applicationVersion: '1.0.4',
                                   applicationIcon: FlutterLogo(),
-                                  applicationLegalese: 'Hereby using this application avoiding altering data or tampering.'
+                                  applicationLegalese: 'Trial Version'
                                 );
                               },
                               icon: Icon(Icons.arrow_forward_ios),
                             )
                           ),
                           ListTile(
+                            onTap: () async {
+                              var uriMessage = 'mailto:delacruzjosepaulo@gmail.com?subject=Report a Problem';
+                              try {
+                                await launch(uriMessage);
+                              } catch(err) {
+                                print(err);
+
+                              }
+                            },
                             title: Text('Report a problem', style: TextStyle(fontSize: 16, color: Colors.grey[500])),
                             leading: Icon(Icons.bug_report),
                             trailing: IconButton(

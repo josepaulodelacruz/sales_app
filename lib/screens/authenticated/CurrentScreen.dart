@@ -170,15 +170,44 @@ class _CurrentScreenState extends State<CurrentScreenState> {
         ) : null,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       ) : Scaffold(
-        body: Center(
-          child: new SizedBox(
-            height: 50.0,
-            width: 50.0,
-            child: new CircularProgressIndicator(
-              value: null,
-              strokeWidth: 7.0,
+        body: Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  colors: _colors,
+                  stops: [0, 0.7]
+              ),
             ),
-          )
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Image.asset(
+                  'images/sarisalesLogo.png',
+                  fit: BoxFit.contain,
+                  height: 200,
+                ),
+                Align(
+                    alignment: Alignment.topCenter,
+                    child: Text(
+                        'Sari Sales\nApplication',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 32,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                        )
+                    )
+                ),
+                Text('Track your inventory and Sales', style: TextStyle(color: Colors.white, height: 2, fontWeight: FontWeight.w300, fontSize: 18)),
+                Text('Mobile Barcode', style: TextStyle(color: Colors.white, height: 2, fontWeight: FontWeight.w300, fontSize: 18)),
+                SizedBox(height: 30),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: CircularProgressIndicator(backgroundColor: Colors.white),
+                )
+              ],
+            )
         )
       )
     );
