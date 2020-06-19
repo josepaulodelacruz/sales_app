@@ -1,10 +1,14 @@
 import 'package:badges/badges.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:sari_sales/components/Shared.dart';
 import 'package:sari_sales/models/ListProducts.dart';
 import 'package:sari_sales/models/Loans.dart';
 import 'package:sari_sales/models/Transactions.dart';
+import 'package:sari_sales/providers/share_data.dart';
 import 'package:sari_sales/utils/colorParser.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 //models
 import 'package:sari_sales/models/ShareTyped.dart';
@@ -14,11 +18,14 @@ class ShareReports extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final shareData = Provider.of<ShareData>(context);
     // TODO: implement build
     return SafeArea(
       child: Scaffold(
       resizeToAvoidBottomInset: false,
-      body: Stack(
+      body: ModalProgressHUD(
+        inAsyncCall: shareData.isError,
+        child: Stack(
         children: <Widget>[
           Container(
             height: MediaQuery.of(context).size.height,
@@ -51,9 +58,12 @@ class ShareReports extends StatelessWidget {
                           toAnimate: true,
                           animationType: BadgeAnimationType.scale,
                           animationDuration: Duration(milliseconds: 300),
-                          child: Text('Notications', style: TextStyle(color: Colors.white)),
+                          child: Text('Shared', style: TextStyle(color: Colors.white)),
                         ),
                         onPressed: ()  {
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) => Shared(),
+                          ));
                         },
                         shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
                       )
@@ -63,6 +73,9 @@ class ShareReports extends StatelessWidget {
                 Container(
                 padding: EdgeInsets.symmetric(horizontal: 32),
                 child: TextFormField(
+                  onChanged: (val) {
+                    shareData.id = val;
+                  },
                   style: TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     enabledBorder: UnderlineInputBorder(
@@ -101,7 +114,7 @@ class ShareReports extends StatelessWidget {
           ReportList()
         ],
       )
-    ));
+    )));
   }
 }
 
@@ -110,14 +123,15 @@ class FetchRecords extends StatelessWidget{
 
   FetchRecords({this.titleType});
 
+
   Widget buildType(BuildContext context) {
+    final shareData = Provider.of<ShareData>(context);
     switch(titleType) {
       case 'sales':
         return FutureBuilder(
           future: Transactions.getTransactionsDetails(),
           builder: (context, snapshot) {
             if(snapshot.connectionState == ConnectionState.done) {
-              print(snapshot.data.length);
               return Container(
                 child: Column(
                 children: <Widget>[
@@ -125,6 +139,17 @@ class FetchRecords extends StatelessWidget{
                     'Upload all \n${snapshot.data.length} Transactions',
                     style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w300, fontSize: 18),
                   ),
+                  RaisedButton.icon(
+                    color: Colors.greenAccent,
+                    onPressed: ()  async {
+                      shareData.isLoading();
+                      List isError = await shareData.shareTransactions(snapshot.data);
+                      print(isError[0]['error']);
+                      shareData.isLoading();
+                    },
+                    icon: Icon(Icons.cloud_upload, color: Colors.white),
+                    label: Text('Share', style: TextStyle(color: Colors.white)),
+                  )
                 ],
               ));
             } else {
@@ -145,6 +170,17 @@ class FetchRecords extends StatelessWidget{
                       'Upload List of \n${snapshot.data.length} Loan',
                       style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w300, fontSize: 18),
                     ),
+                    RaisedButton.icon(
+                      color: Colors.greenAccent,
+                      onPressed: ()  async {
+                        shareData.isLoading();
+                        List isError = await shareData.shareLoans(snapshot.data);
+                        print(isError[0]['error']);
+                        shareData.isLoading();
+                      },
+                      icon: Icon(Icons.cloud_upload, color: Colors.white),
+                      label: Text('Share', style: TextStyle(color: Colors.white)),
+                    )
                   ],
                 ));
             } else {
@@ -165,6 +201,17 @@ class FetchRecords extends StatelessWidget{
                         'Upload all \n${snapshot.data.length} Inventory',
                         style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w300, fontSize: 18),
                       ),
+                      RaisedButton.icon(
+                        color: Colors.greenAccent,
+                        onPressed: () async {
+                          shareData.isLoading();
+                          List isError = await shareData.shareInventory(snapshot.data);
+                          print(isError[0]['error']);
+                          shareData.isLoading();
+                        },
+                        icon: Icon(Icons.cloud_upload, color: Colors.white),
+                        label: Text('Share', style: TextStyle(color: Colors.white)),
+                      )
                     ],
                   ));
             } else {
@@ -216,17 +263,6 @@ class ReportList extends StatelessWidget{
                       ],
                     )
                   )
-                )
-              ),
-              Positioned(
-                top: MediaQuery.of(context).size.height * 0.15,
-                left: MediaQuery.of(context).size.width * 0.05,
-                child: RaisedButton(
-                  color: Colors.greenAccent,
-                  onPressed: () {
-                    print('press upload');
-                  },
-                  child: Text('Share', style: TextStyle(color: Colors.white))
                 )
               ),
               Container(

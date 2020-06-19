@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:sari_sales/providers/share_data.dart';
 
 //screens
 import 'package:sari_sales/screens/auth/LaunchScreen.dart';
@@ -67,6 +68,9 @@ class MyApp extends StatelessWidget {
           ),
           ChangeNotifierProvider<ContactData>(
             create: (_) => ContactData(),
+          ),
+          ChangeNotifierProvider<ShareData>(
+            create: (_) => ShareData(),
           ),
         ],
         child: MaterialApp(
