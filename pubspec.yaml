@@ -23,7 +23,6 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
-  animations: ^1.0.0+5
   barcode_scan: ^3.0.1
   qr_code_scanner: ^0.0.13
   intl: ^0.16.1
@@ -34,9 +33,7 @@ dependencies:
   uuid: 2.0.4
   shared_preferences: ^0.5.7+2
   badges: ^1.1.1
-  animated_text_kit: ^2.1.0
   signature: ^3.1.1
-  image: ^2.1.12
   audioplayers: ^0.15.1
   flutter_markdown: ^0.4.1
   firebase_core: ^0.4.0+9
@@ -67,6 +64,9 @@ flutter:
     - images/gradien-bg.png
     - images/sarisalesLogo.png
     - images/noImage.png
+    - images/inventory-1.png
+    - images/sales.png
+    - images/list-icon.jpg
     - assets/beep.mp3
 
   # To add assets to your application, add an assets section, like this:

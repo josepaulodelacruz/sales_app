@@ -67,7 +67,7 @@ class Transactions {
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
     dynamic TransactionsDetails = sharedPrefs.getString('TransactionsDetails');
     if(TransactionsDetails == null) {
-      return null;
+      return [];
     } else {
       List<dynamic> decodedFiles = jsonDecode(TransactionsDetails);
       return decodedFiles;

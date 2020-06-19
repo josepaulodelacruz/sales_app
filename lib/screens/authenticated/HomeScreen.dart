@@ -7,6 +7,7 @@ import 'package:sari_sales/models/ListProducts.dart';
 import 'package:sari_sales/models/Transactions.dart';
 import 'package:sari_sales/models/Users.dart';
 import 'package:sari_sales/screens/authenticated/ContactScreen.dart';
+import 'package:sari_sales/screens/authenticated/ShareReports.dart';
 import 'package:sari_sales/utils/colorParser.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:path/path.dart' show join;
@@ -537,7 +538,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                             RaisedButton(
-                              onPressed: (){},
+                              onPressed: (){
+                                Navigator.push(context, MaterialPageRoute(
+                                  builder: (context) => ShareReports(),
+                                ));
+                              },
                               shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
                               elevation: 15,
                               padding: EdgeInsets.all(0),
