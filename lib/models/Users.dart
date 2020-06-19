@@ -15,6 +15,7 @@ class Users extends ChangeNotifier {
   String uuid;
   String imagePath;
   String status;
+  String shortId;
 
   int _counter = 20;
   Map<String, dynamic> loggedUser = {};
@@ -38,15 +39,16 @@ class Users extends ChangeNotifier {
   }
 
 
-  Users({String userName, String userAddress, String userContact, String userEmail, String userPassword, String userConfirmPassword, String uid, String path}) {
+  Users({String userName, String userAddress, String userContact, String userEmail, String userPassword, String userConfirmPassword, String uid, String path, String splitId}) {
     name = userName;
     address = userAddress;
     contact = userContact;
     email = userEmail;
     password = userPassword;
     confirmPassword = userConfirmPassword;
-    uuid: uid;
-    imagePath: path;
+    uuid =  uid;
+    imagePath = path;
+    shortId =  splitId;
   }
 
   validateUserInputs (user) {
@@ -152,6 +154,7 @@ class Users extends ChangeNotifier {
         'contact': contact,
         'address': address,
         'email': email,
+        'shortId': shortId
       };
 
 }

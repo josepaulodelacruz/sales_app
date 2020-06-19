@@ -282,6 +282,7 @@ class _LoginScreenState extends State<LoginScreenState> {
                           userProvider.address = querySnapshot.data['address'];
                           userProvider.contact = querySnapshot.data['contact'];
                           userProvider.email = querySnapshot.data['email'];
+                          userProvider.shortId = querySnapshot.data['shortId'];
 
                           await Users.saveUserInformation(userProvider.toJson());
                           await Users.userSaveStatusPersistent(querySnapshot.data['status']);

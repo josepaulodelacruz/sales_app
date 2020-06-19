@@ -123,7 +123,7 @@ class FetchRecords extends StatelessWidget{
                 children: <Widget>[
                   Text(
                     'Upload all \n${snapshot.data.length} Transactions',
-                    style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w300, fontSize: 22),
+                    style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w300, fontSize: 18),
                   ),
                 ],
               ));
@@ -143,7 +143,7 @@ class FetchRecords extends StatelessWidget{
                   children: <Widget>[
                     Text(
                       'Upload List of \n${snapshot.data.length} Loan',
-                      style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w300, fontSize: 22),
+                      style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w300, fontSize: 18),
                     ),
                   ],
                 ));
@@ -163,7 +163,7 @@ class FetchRecords extends StatelessWidget{
                     children: <Widget>[
                       Text(
                         'Upload all \n${snapshot.data.length} Inventory',
-                        style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w300, fontSize: 22),
+                        style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w300, fontSize: 18),
                       ),
                     ],
                   ));
@@ -226,7 +226,7 @@ class ReportList extends StatelessWidget{
                   onPressed: () {
                     print('press upload');
                   },
-                  child: Text('Upload', style: TextStyle(color: Colors.white))
+                  child: Text('Share', style: TextStyle(color: Colors.white))
                 )
               ),
               Container(

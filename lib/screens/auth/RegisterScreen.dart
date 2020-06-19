@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../utils/colorParser.dart';
 import 'package:sari_sales/models/Users.dart';
@@ -44,6 +45,9 @@ class _RegisterScreenState extends State<RegisterScreenState> {
   }
 
   _handleSignUp (context) async {
+    String shortId = Uuid().v4();
+    List<String> splitId = shortId.split('-');
+
     final Users userProvider = Provider.of<Users>(context, listen: false);
     final _user = Users(
       userName: name,
@@ -52,6 +56,7 @@ class _RegisterScreenState extends State<RegisterScreenState> {
       userEmail: email,
       userPassword: password,
       userConfirmPassword: confirmPassword,
+      splitId: shortId[0],
     );
     userProvider.name = name;
     userProvider.address= address;
@@ -80,6 +85,7 @@ class _RegisterScreenState extends State<RegisterScreenState> {
 
       //sign up
       try {
+
         final newUser = await _auth.createUserWithEmailAndPassword(email: email, password: password);
         await Users.saveUserInformation(_user.toJson());
         await Users.userSaveStatusPersistent('trial');
@@ -93,6 +99,15 @@ class _RegisterScreenState extends State<RegisterScreenState> {
             'contact': _user.contact,
             'status': 'trial',
             'email': _user.email,
+            'shortId': splitId[0]
+          });
+
+          _firestore.collection('shared').document(splitId[0]).setData({
+            'owner': _user.name,
+            'primary_id': uid.uid,
+            'inventory': [],
+            'sales': [],
+            'loans': [],
           });
 
           Navigator.of(context)

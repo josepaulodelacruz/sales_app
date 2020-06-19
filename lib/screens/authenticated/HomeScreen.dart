@@ -689,6 +689,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       )
                     ),
                     ListTile(
+                      leading: Icon(Icons.perm_identity, color: Colors.lightBlue),
+                      title: Text('ID: ${snapshot.data['shortId'].toString()}', style: TextStyle(color: Colors.black38, fontSize: 16, fontWeight: FontWeight.w500)),
+                    ),
+                    ListTile(
                       leading: Icon(Icons.person, color: Colors.lightBlue),
                       title: Text(snapshot.data['name'].toString(), style: TextStyle(color: Colors.black38, fontSize: 16, fontWeight: FontWeight.w500)),
                     ),
