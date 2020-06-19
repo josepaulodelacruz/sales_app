@@ -86,8 +86,16 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
       DateTime _findDate = parseDate(_computeDates[0]['parseDates']);
       DateTime _transactionDates  = parseDate(transaction['parseDates']);
       DateTime generateReport = _findDate.add(Duration(days: dateCalculation));
+      String generateStringReport = DateFormat.yMMMMd().format(generateReport);
+      profitDate = generateStringReport;
+
+      if(_sortDates[0] == transaction['dates']) {
+        return double.parse(transaction['amount']);
+      }
+
       if(_transactionDates.isAfter(_findDate)) {
         if(_transactionDates.isBefore(generateReport)) {
+          print(transaction['dates']);
           return double.parse(transaction['amount']);
         }
         return 0;
@@ -96,7 +104,6 @@ class _SalesTransactionTable extends State<SalesTransactionTable>{
     })?.toList() ?? [] : _computeDates?.map((dd) => double.parse(dd['amount']))?.toList() ?? [];
 
     double _profitAmount = _profitReport.fold(0, (i, j) => i + j);
-//    double _profitAmount = 0;
 
     Widget _searchBar () {
       DateTime now = DateTime.now();
