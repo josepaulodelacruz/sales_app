@@ -389,6 +389,7 @@ class _HomeScreenState extends State<HomeScreen> {
           width: MediaQuery.of(context).size.width,
           child: Wrap(
             children: items.map((product) {
+              print(product['pImagePath']);
               return Stack(
                 children: <Widget>[
                   Container(
@@ -412,8 +413,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   Positioned(
                     top: -10,
                     left: MediaQuery.of(context).size.width * 0.05,
-                    child: Image.file(
+                    child: product['pImagePath'] != null ? Image.file(
                         File(product['pImagePath']),
+                        width: MediaQuery.of(context).size.width * 0.40,
+                        height: MediaQuery.of(context).size.height * 0.20,
+                        fit: BoxFit.cover,
+                      ) : Image.asset(
+                        'images/noImage.png',
                         width: MediaQuery.of(context).size.width * 0.40,
                         height: MediaQuery.of(context).size.height * 0.20,
                         fit: BoxFit.cover,

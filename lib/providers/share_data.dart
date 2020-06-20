@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
 import 'package:sari_sales/models/Categories.dart';
 
 import 'package:sari_sales/models/ListProducts.dart';
@@ -7,6 +8,7 @@ import 'package:sari_sales/models/Transactions.dart';
 import 'package:sari_sales/models/Loans.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sari_sales/models/Users.dart';
 
 class ShareData extends ChangeNotifier {
@@ -36,27 +38,24 @@ class ShareData extends ChangeNotifier {
     final _firestore = Firestore.instance;
     DocumentSnapshot querySnapshot = await _firestore.collection('shared').document(isUser['shortId']).get();
 
-    List <dynamic> staticCategories = await Categories.getCategoryLocalStorage();
-    querySnapshot.data['inventory'].map((item) {
-      staticCategories.add({
-        'cTitle': item['pCategory'],
-        'isValid': true
-      });
-    }).toList();
-
-    await Categories.saveCategoryToLocalStorage(staticCategories);
-
     return querySnapshot.data;
   }
 
   Future<List> shareTransactions (List obj) async {
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat.yMMMMd().format(now);
     if(id != '') {
+      final _auth = FirebaseAuth.instance;
       final _firestore = Firestore.instance;
+      final userId = await _auth.currentUser();
+      DocumentSnapshot senderSnapshot = await Firestore.instance.collection('users').document(userId.uid).get();
       DocumentSnapshot querySnapshot = await Firestore.instance
           .collection('shared')
           .document(id)
           .get();
       _firestore.collection('shared').document(id).setData({
+        'sender': senderSnapshot.data['name'],
+        'date_send': formattedDate.toString(),
         'owner': querySnapshot.data['owner'],
         'primary_id': querySnapshot.data['primary_id'],
         'sales': obj,
@@ -70,17 +69,29 @@ class ShareData extends ChangeNotifier {
   }
 
   Future<List> shareLoans (List obj) async {
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat.yMMMMd().format(now);
     if(id != '') {
+      final _auth = FirebaseAuth.instance;
+      final userId = await _auth.currentUser();
       final _firestore = Firestore.instance;
+      DocumentSnapshot senderSnapshot = await Firestore.instance.collection('users').document(userId.uid).get();
       DocumentSnapshot querySnapshot = await Firestore.instance
           .collection('shared')
           .document(id)
           .get();
       _firestore.collection('shared').document(id).setData({
+        'sender': senderSnapshot.data['name'],
+        'date_send': formattedDate.toString(),
         'owner': querySnapshot.data['owner'],
         'primary_id': querySnapshot.data['primary_id'],
         'sales': querySnapshot.data['sales'],
-        'loans': obj,
+        'loans': obj.map((loan) {
+          return {
+            ...loan,
+            'imagePath': null,
+          };
+        }).toList(),
         'inventory': querySnapshot.data['inventory']
       });
       return [{'error': false}];
@@ -91,18 +102,30 @@ class ShareData extends ChangeNotifier {
   }
 
   Future<List> shareInventory (List obj) async {
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat.yMMMMd().format(now);
     if(id != '') {
+      final _auth = FirebaseAuth.instance;
+      final userId = await _auth.currentUser();
       final _firestore = Firestore.instance;
+      DocumentSnapshot senderSnapshot = await Firestore.instance.collection('users').document(userId.uid).get();
       DocumentSnapshot querySnapshot = await Firestore.instance
           .collection('shared')
           .document(id)
           .get();
       _firestore.collection('shared').document(id).setData({
+        'sender': senderSnapshot.data['name'],
+        'date_send': formattedDate.toString(),
         'owner': querySnapshot.data['owner'],
         'primary_id': querySnapshot.data['primary_id'],
         'sales': querySnapshot.data['sales'],
         'loans': querySnapshot.data['loans'],
-        'inventory': obj
+        'inventory': obj.map((item) {
+          return {
+            ...item,
+            'pImagePath': null,
+          };
+        }).toList(),
       });
       return [{'error': false}];
     }

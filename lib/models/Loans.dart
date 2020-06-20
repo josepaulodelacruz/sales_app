@@ -113,7 +113,13 @@ class Loans {
       final decode = json.encode(_loans);
       sharedPrefs.setString('LoansList', decode);
     }
+  }
 
+  static fetctLoansFromCloud (loans) async {
+    final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
+    final decode = json.encode(loans);
+    sharedPrefs.setString('LoansList', decode);
+    return true;
   }
 
   static resetLoanList () async {

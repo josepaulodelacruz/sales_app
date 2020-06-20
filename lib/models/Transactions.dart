@@ -109,6 +109,13 @@ class Transactions {
     }
   }
 
+  static fetchTransactionsFromCloud (sales) async {
+    final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
+    final encode = json.encode(sales);
+    sharedPrefs.setString('TransactionsDetails', encode);
+    return true;
+  }
+
   static resetTransactionDetails () async {
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
     final decode = json.encode([]);

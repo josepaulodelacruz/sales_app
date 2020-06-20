@@ -51,8 +51,12 @@ class _ProductCardState extends State<ProductCard> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
                           Text((widget.productIndex + 1).toString(), style: TextStyle(color: Colors.white)),
-                          Image.file(
+                          _productInfo['pImagePath'] != null ? Image.file(
                             File(_productInfo['pImagePath']),
+                            height: MediaQuery.of(context).size.height * 0.1,
+                            width: MediaQuery.of(context).size.width,
+                          ) : Image.asset(
+                            'images/noImage.png',
                             height: MediaQuery.of(context).size.height * 0.1,
                             width: MediaQuery.of(context).size.width,
                           ),

@@ -132,12 +132,12 @@ class _LoanList extends State<LoanList>{
                     backgroundColor: Colors.grey[300],
                     child: Center(
                       child: ClipOval(
-                          child: Image.file(
+                          child: _personalLoans[index - 1]['imagePath'] != null ? Image.file(
                             File(_personalLoans[index - 1]['imagePath']),
                             height: 60,
                             width: 60,
                             fit: BoxFit.fill,
-                          )
+                          ) : Text('${_personalLoans[index - 1]['first'][0]}${_personalLoans[index - 1]['first'][1]}'),
                       ),
                     )
                   ),
@@ -453,12 +453,12 @@ class _LoanList extends State<LoanList>{
                     radius: 45,
                     child: Center(
                       child: ClipOval(
-                        child: Image.file(
+                        child: _viewPerson['imagePath'] != null ? Image.file(
                           File(_viewPerson['imagePath']),
                           height: 90,
                           width: 90,
                           fit: BoxFit.fill,
-                        )
+                        ) : Text('${_viewPerson['first'][0]}${_viewPerson['first'][1]}')
                       ),
                     )
                   ),
