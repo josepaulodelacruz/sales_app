@@ -37,8 +37,12 @@ class Shared extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Text('Sender: ${snapshot.data['sender']}', textAlign: TextAlign.start, style: TextStyle(fontSize: 20, color: Colors.grey[500], fontWeight: FontWeight.w500)),
-                        Text('${snapshot.data['date_send']}', textAlign: TextAlign.start, style: TextStyle(fontSize: 20, color: Colors.grey[500], fontWeight: FontWeight.w300))
+                        snapshot.data['sender'] == null
+                            ? Text('Sender: None', textAlign: TextAlign.start, style: TextStyle(fontSize: 20, color: Colors.grey[500], fontWeight: FontWeight.w500))
+                            : Text('Sender: ${snapshot.data['sender']}', textAlign: TextAlign.start, style: TextStyle(fontSize: 20, color: Colors.grey[500], fontWeight: FontWeight.w500)),
+                        snapshot.data['data_send'] != null
+                            ? Text('${snapshot.data['date_send']}', textAlign: TextAlign.start, style: TextStyle(fontSize: 20, color: Colors.grey[500], fontWeight: FontWeight.w300))
+                            : SizedBox(),
                       ],
                     ),
                   ),
