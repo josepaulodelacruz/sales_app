@@ -273,9 +273,12 @@ class _ViewItemsState extends State<ViewItems> {
               onPressed: () => Navigator.of(context).pop(),
             ),
             actions: [
-              IconButton(
-                  icon: Icon(Icons.print, color: Colors.white)
-              )
+              Tooltip(
+                message: 'Will be release on Future updates',
+                child: IconButton(
+                  icon: Icon(Icons.print, color: Colors.white),
+                )
+              ),
             ]
         ),
         body: AnimatedOpacity(
@@ -299,13 +302,17 @@ class _ViewItemsState extends State<ViewItems> {
                           });
                         }
                       ),
-                      Text(
-                        'Generate printed receipt',
-                        style: TextStyle(
-                          color: Colors.grey[500],
-                          fontWeight: FontWeight.w400,
+                      Tooltip(
+                        message: 'Will be release on future updates',
+                        child: Text(
+                            'Generate printed receipt',
+                            style: TextStyle(
+                              color: Colors.grey[500],
+                              fontWeight: FontWeight.w400,
+                            )
                         )
                       )
+
                     ],
                   )
                 ),

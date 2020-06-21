@@ -292,6 +292,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: _frequentlyBuy?.map((b) {
+                  print(b);
                   int index = _frequentlyBuy.indexOf(b);
                   return index  < 7 ? Container(
                       width: 80,
@@ -299,9 +300,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: <Widget>[
                         ClipRRect(
                           borderRadius: BorderRadius.circular(8),
-                          child: Image.file(
+                          child: b['imagePath'] != null ? Image.file(
                             File(b['imagePath']),
                             fit: BoxFit.contain,
+                          ) : Card(
+                            child: Center(child: Text(b['name'], textAlign: TextAlign.center, style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w300))),
                           )
                         ),
                         Positioned(
@@ -389,7 +392,6 @@ class _HomeScreenState extends State<HomeScreen> {
           width: MediaQuery.of(context).size.width,
           child: Wrap(
             children: items.map((product) {
-              print(product['pImagePath']);
               return Stack(
                 children: <Widget>[
                   Container(

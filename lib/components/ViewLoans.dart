@@ -146,12 +146,12 @@ class _ViewLoans extends State<ViewLoans> {
                   radius: 45,
                   child: Center(
                     child: ClipOval(
-                      child: Image.file(
+                      child: _loanInfo['imagePath'] != null ? Image.file(
                         File(_loanInfo['imagePath']),
                         height: 85,
                         width: 100,
                         fit: BoxFit.fill,
-                      )
+                      ) : Text('${_loanInfo['first'][0]}${_loanInfo['first'][1]}')
                     ),
                   )
                 ),
@@ -226,7 +226,7 @@ class _ViewLoans extends State<ViewLoans> {
               ],
             )
           ),
-          FlatButton.icon(onPressed: null, icon: Icon(Icons.info), label: Text('To Delete loans just tap the name of the product.')),
+          FlatButton.icon(onPressed: null, icon: Icon(Icons.info), label: Text('To Delete loans just tap the name of the product.', style: TextStyle(fontSize: 12))),
           Container(
             width: MediaQuery.of(context).size.width,
             margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.25),

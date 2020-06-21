@@ -73,6 +73,7 @@ class ShareReports extends StatelessWidget {
                 Container(
                 padding: EdgeInsets.symmetric(horizontal: 32),
                 child: TextFormField(
+                  controller: TextEditingController(text: shareData.id),
                   onChanged: (val) {
                     shareData.id = val;
                   },
@@ -84,7 +85,7 @@ class ShareReports extends StatelessWidget {
                     focusedBorder: UnderlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),
                     ),
-                    labelText: 'Unique ID',
+                    labelText: 'User ID',
                     labelStyle: TextStyle(color: Colors.white),
                     prefixIcon: Icon(Icons.perm_identity, color: Colors.white),
                     hintStyle: TextStyle(color: Colors.white),
@@ -143,9 +144,13 @@ class FetchRecords extends StatelessWidget{
                     color: Colors.greenAccent,
                     onPressed: ()  async {
                       shareData.isLoading();
-                      List isError = await shareData.shareTransactions(snapshot.data);
-                      print(isError[0]['error']);
+                      Map<String, dynamic> isError = await shareData.shareTransactions(snapshot.data);
+                      print(isError);
                       shareData.isLoading();
+                      return showDialog(
+                        context: context,
+                        builder: (context) => IsDialog(isError: isError),
+                      );
                     },
                     icon: Icon(Icons.cloud_upload, color: Colors.white),
                     label: Text('Share', style: TextStyle(color: Colors.white)),
@@ -174,9 +179,12 @@ class FetchRecords extends StatelessWidget{
                       color: Colors.greenAccent,
                       onPressed: ()  async {
                         shareData.isLoading();
-                        List isError = await shareData.shareLoans(snapshot.data);
-                        print(isError[0]['error']);
+                        Map<String, dynamic> isError = await shareData.shareLoans(snapshot.data);
                         shareData.isLoading();
+                        return showDialog(
+                          context: context,
+                          builder: (context) => IsDialog(isError: isError)
+                        );
                       },
                       icon: Icon(Icons.cloud_upload, color: Colors.white),
                       label: Text('Share', style: TextStyle(color: Colors.white)),
@@ -205,9 +213,12 @@ class FetchRecords extends StatelessWidget{
                         color: Colors.greenAccent,
                         onPressed: () async {
                           shareData.isLoading();
-                          List isError = await shareData.shareInventory(snapshot.data);
-                          print(isError[0]['error']);
+                          Map<String, dynamic> isError = await shareData.shareInventory(snapshot.data);
                           shareData.isLoading();
+                          return showDialog(
+                            context: context,
+                            builder: (context) => IsDialog(isError: isError)
+                          );
                         },
                         icon: Icon(Icons.cloud_upload, color: Colors.white),
                         label: Text('Share', style: TextStyle(color: Colors.white)),
@@ -279,6 +290,39 @@ class ReportList extends StatelessWidget{
           )
         )
       )
+    );
+  }
+}
+
+class IsDialog extends StatelessWidget {
+  Map<String, dynamic> isError;
+
+  IsDialog({this.isError});
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return AlertDialog(
+      title: Text('${isError['titleError']}'),
+      content: Container(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            !isError['error'] ? Icon(Icons.check, color: Colors.green, size: 40) : Icon(Icons.warning, size: 40, color: Colors.red[500]),
+            SizedBox(width: 20),
+            Text('${isError['message']}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300, color: Colors.grey[500]))
+          ]
+        )
+      ),
+      actions: <Widget>[
+        FlatButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(
+            'Close',
+          )
+        )
+      ],
     );
   }
 }

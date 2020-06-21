@@ -94,10 +94,13 @@ class _BottomModal extends State<BottomModal> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: <Widget>[
-                              Image.file(
+                              item['pImagePath'] != null ? Image.file(
                                 File(item['pImagePath']),
                                 fit: BoxFit.contain,
-                              ),
+                              ) : Image.asset(
+                                'images/noImage.png',
+                                fit: BoxFit.contain,
+                              )
                             ],
                           )
                       ),
