@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:sari_sales/providers/share_data.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 
 //screens
 import 'package:sari_sales/screens/auth/LaunchScreen.dart';
@@ -17,9 +18,13 @@ import 'package:sari_sales/models/Users.dart';
 import 'package:sari_sales/providers/contact_data.dart';
 
 
-Future<void> main() async => runApp(MyApp(
-
-));
+Future<void> main() {
+  // For play billing library 2.0 on Android, it is mandatory to call
+  // [enablePendingPurchases](https://developer.android.com/reference/com/android/billingclient/api/BillingClient.Builder.html#enablependingpurchases)
+  // as part of initializing the app.
+  InAppPurchaseConnection.enablePendingPurchases();
+  runApp(MyApp());
+}
 
 //class MyApp extends StatelessWidget {
 //  // This widget is the root of your application.

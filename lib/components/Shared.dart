@@ -18,7 +18,11 @@ class Shared extends StatelessWidget {
       key: _scaffoldKey,
       backgroundColor: getColorFromHex('#f3f3f3'),
       appBar: AppBar(
-        title: Text('Shared data')
+        title: Text('Shared data'),
+        leading: IconButton(
+          onPressed: () => Navigator.of(context).pop(),
+          icon: Icon(Icons.arrow_back_ios, color: Colors.white)
+        ),
       ),
       body: FutureBuilder(
         future: Provider.of<ShareData>(context).fetchData(),
@@ -51,11 +55,13 @@ class Shared extends StatelessWidget {
                       children: <Widget>[
                         _sales.isNotEmpty ? NotificationCards(
                           title: 'Inventory',
+                          itemCount: snapshot.data['inventory'].length,
                           typeIcon: Icon(Icons.table_chart, size: 42),
                           fetchCallBack: () {
                             return showDialog(
                               context: context,
                               builder: (context) => ConfirmationModal(
+                                titleModal: 'Inventory',
                                 applyData: () async {
                                   //default categories
                                   await Categories.saveCategoryToLocalStorage([{'cTitle': 'All', 'isValid': true}]);
@@ -75,11 +81,13 @@ class Shared extends StatelessWidget {
                         ) : Card(child: ListTile(title: Text('No Fetch Invetory.'), subtitle: Text('Please try again'), trailing: Icon(Icons.warning))),
                         _loans.isNotEmpty ? NotificationCards(
                           title: 'Loans',
+                          itemCount: snapshot.data['loans'].length,
                           typeIcon: Icon(Icons.credit_card, size: 42),
                           fetchCallBack: () {
                             return showDialog(
                               context: context,
                               builder: (context) => ConfirmationModal(
+                                titleModal: 'Loans',
                                 applyData: () async {
                                   await Loans.fetctLoansFromCloud(snapshot.data['loans']);
                                   Navigator.pop(context);
@@ -90,15 +98,17 @@ class Shared extends StatelessWidget {
                         ) : Card(child: ListTile(title: Text('No Fetch Loans.'), subtitle: Text('Please try again'), trailing: Icon(Icons.warning))),
                         _inventory.isNotEmpty ? NotificationCards(
                           title: 'Sales',
+                          itemCount: snapshot.data['sales'].length,
                           typeIcon: Icon(Icons.book, size: 42),
                           fetchCallBack: () {
                             return showDialog(
                               context: context,
                               builder: (context) => ConfirmationModal(
-                                  applyData: () async {
-                                    await Transactions.fetchTransactionsFromCloud(snapshot.data['sales']);
-                                    Navigator.pop(context);
-                                  }
+                                titleModal: 'Sales',
+                                applyData: () async {
+                                  await Transactions.fetchTransactionsFromCloud(snapshot.data['sales']);
+                                  Navigator.pop(context);
+                                }
                               )
                             );
                           },
@@ -125,9 +135,10 @@ class Shared extends StatelessWidget {
 class NotificationCards extends StatelessWidget {
   String title;
   Icon typeIcon;
+  int itemCount;
   final Function fetchCallBack;
 
-  NotificationCards({this.title, this.fetchCallBack, this.typeIcon});
+  NotificationCards({this.title, this.fetchCallBack, this.typeIcon, this.itemCount = 0});
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +146,7 @@ class NotificationCards extends StatelessWidget {
     return Card(
       child: ListTile(
         title: Text(title),
-        subtitle: Text('total of'),
+        subtitle: Text('total of ${itemCount}'),
         leading: typeIcon,
         trailing: IconButton(
           onPressed: fetchCallBack,
@@ -148,16 +159,17 @@ class NotificationCards extends StatelessWidget {
 }
 
 class ConfirmationModal extends StatelessWidget {
+  String titleModal;
   final Function applyData;
 
-  ConfirmationModal({this.applyData});
+  ConfirmationModal({this.applyData, this.titleModal});
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return AlertDialog(
-      title: Text('Download inventory data'),
-      content: Text('If you download the data\nall your save inventory will\nbe overwritten.'),
+      title: Text('Download ${titleModal} data'),
+      content: Text('If you download the data\nall your save ${titleModal} will\nbe overwritten.'),
       actions: <Widget>[
         FlatButton(
           onPressed: () {
