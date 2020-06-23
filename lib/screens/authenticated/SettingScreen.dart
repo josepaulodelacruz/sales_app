@@ -1,13 +1,21 @@
+import 'dart:async';
+import 'dart:io';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:flutter/material.dart';
+import 'package:sari_sales/providers/in_app_purchase.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:provider/provider.dart';
 import 'package:sari_sales/components/AppDialog.dart';
 import 'package:sari_sales/components/SettingConfirmationModal.dart';
 import 'package:sari_sales/components/MarkdownReader.dart';
+import 'package:sari_sales/components/PurchaseModal.dart';
 import 'package:sari_sales/models/Users.dart';
 
 import 'package:sari_sales/utils/colorParser.dart';
 import 'package:sari_sales/models/Categories.dart';
 import 'package:sari_sales/models/ListProducts.dart';
+
+const String inAppId = '1_monthly';
 
 class SettingScreen extends StatefulWidget {
   @override
@@ -17,6 +25,7 @@ class SettingScreen extends StatefulWidget {
 class _SettingScreen extends State<SettingScreen> {
   String _status;
   List _categories;
+  var _productDetails;
 
   @override
   void initState () {
@@ -27,14 +36,18 @@ class _SettingScreen extends State<SettingScreen> {
   _fetchCategories () async {
     List<Future> futures = [
       Categories.getCategoryLocalStorage(),
-      Users.userGetStatusPersistent()
+      Users.userGetStatusPersistent(),
+//      Provider.of<InApp>(context, listen: false).getProducts(),
     ];
     List results = await Future.wait(futures);
     setState(() {
       _categories = results[0];
       _status = results[1];
+//      _productDetails = results[2];
     });
+//    print(_productDetails.skuDetail.title);
   }
+
 
   @override
    _buildShowModal(BuildContext context, type) {
@@ -110,6 +123,27 @@ class _SettingScreen extends State<SettingScreen> {
                             )
                           ),
                           ListTile(
+                            onTap: () {
+                              print('making a purchase');
+                              return showGeneralDialog(
+                                barrierDismissible: true,
+                                barrierColor: Colors.black.withOpacity(0.5),
+                                transitionBuilder: (context, a1, a2, widget) {
+                                  final curvedValue = Curves.easeInOutBack.transform(a1.value) - 1.0;
+                                  return Transform(
+                                      transform: Matrix4.translationValues(0.0, curvedValue * 200, 0.0),
+                                      child: Opacity(
+                                          opacity: a1.value,
+                                          child: ConfirmPurchase(),
+                                      ),
+                                  );
+                                },
+                                transitionDuration: Duration(milliseconds: 500),
+                                barrierLabel: '',
+                                context: context,
+                                pageBuilder: (context, animation1, animation2) {}
+                              );
+                            },
                             title: Text('Subscription', style: TextStyle(fontSize: 16, color: Colors.grey[500])),
                             leading: Icon(Icons.card_membership),
                             trailing: FlatButton(
@@ -299,3 +333,4 @@ class _SettingScreen extends State<SettingScreen> {
     );
   }
 }
+

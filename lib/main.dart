@@ -16,7 +16,7 @@ import 'package:sari_sales/screens/authenticated/HomeScreen.dart';
 //models
 import 'package:sari_sales/models/Users.dart';
 import 'package:sari_sales/providers/contact_data.dart';
-
+import 'package:sari_sales/providers/in_app_purchase.dart';
 
 Future<void> main() {
   // For play billing library 2.0 on Android, it is mandatory to call
@@ -77,6 +77,9 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider<ShareData>(
             create: (_) => ShareData(),
           ),
+          ChangeNotifierProvider<InApp>(
+            create: (_) => InApp(),
+          )
         ],
         child: MaterialApp(
             title: 'Sari Sales Application',
