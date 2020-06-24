@@ -28,9 +28,6 @@ class Shared extends StatelessWidget {
         future: Provider.of<ShareData>(context).fetchData(),
         builder: (context, snapshot) {
           if(snapshot.connectionState == ConnectionState.done) {
-            List _inventory = snapshot.data['inventory'];
-            List _loans = snapshot.data['loans'];
-            List _sales = snapshot.data['sales'];
             return  Container(
               margin: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
               child: Column(
@@ -42,18 +39,15 @@ class Shared extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         snapshot.data['sender'] == null
-                            ? Text('Sender: None', textAlign: TextAlign.start, style: TextStyle(fontSize: 20, color: Colors.grey[500], fontWeight: FontWeight.w500))
-                            : Text('Sender: ${snapshot.data['sender']}', textAlign: TextAlign.start, style: TextStyle(fontSize: 20, color: Colors.grey[500], fontWeight: FontWeight.w500)),
-                        snapshot.data['data_send'] == null
-                            ? Text('${snapshot.data['date_send']}', textAlign: TextAlign.start, style: TextStyle(fontSize: 20, color: Colors.grey[500], fontWeight: FontWeight.w300))
-                            : SizedBox(),
+                          ? Text('Sender: None', textAlign: TextAlign.start, style: TextStyle(fontSize: 20, color: Colors.grey[500], fontWeight: FontWeight.w500))
+                          : Text('Sender: ${snapshot.data['sender']}\nReceived: ${snapshot.data['date_send']}', textAlign: TextAlign.start, style: TextStyle(fontSize: 20, color: Colors.grey[500], fontWeight: FontWeight.w500)),
                       ],
                     ),
                   ),
                   Container(
                     child: Column(
                       children: <Widget>[
-                        _sales.isNotEmpty ? NotificationCards(
+                        snapshot.data['inventory'].isNotEmpty ? NotificationCards(
                           title: 'Inventory',
                           itemCount: snapshot.data['inventory'].length,
                           typeIcon: Icon(Icons.table_chart, size: 42),
@@ -79,7 +73,7 @@ class Shared extends StatelessWidget {
                             );
                           },
                         ) : Card(child: ListTile(title: Text('No Fetch Invetory.'), subtitle: Text('Please try again'), trailing: Icon(Icons.warning))),
-                        _loans.isNotEmpty ? NotificationCards(
+                        snapshot.data['loans'].isNotEmpty ? NotificationCards(
                           title: 'Loans',
                           itemCount: snapshot.data['loans'].length,
                           typeIcon: Icon(Icons.credit_card, size: 42),
@@ -96,7 +90,7 @@ class Shared extends StatelessWidget {
                             );
                           },
                         ) : Card(child: ListTile(title: Text('No Fetch Loans.'), subtitle: Text('Please try again'), trailing: Icon(Icons.warning))),
-                        _inventory.isNotEmpty ? NotificationCards(
+                        snapshot.data['sales'].isNotEmpty ? NotificationCards(
                           title: 'Sales',
                           itemCount: snapshot.data['sales'].length,
                           typeIcon: Icon(Icons.book, size: 42),

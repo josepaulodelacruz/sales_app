@@ -34,7 +34,6 @@ class ShareData extends ChangeNotifier {
 
   Future<Map<String, dynamic>> fetchData () async {
     Map<String, dynamic> isUser = await Users.getUserInformation();
-    print(isUser);
     final _firestore = Firestore.instance;
     DocumentSnapshot querySnapshot = await _firestore.collection('shared').document(isUser['shortId']).get();
 
@@ -73,6 +72,7 @@ class ShareData extends ChangeNotifier {
   }
 
   Future<Map<String,dynamic>> shareLoans (List obj) async {
+    Map<String, dynamic > _user = await Users.getUserInformation();
     DateTime now = DateTime.now();
     String formattedDate = DateFormat.yMMMMd().format(now);
     if(id != '') {
@@ -94,7 +94,8 @@ class ShareData extends ChangeNotifier {
           'loans': obj.map((loan) {
             return {
               ...loan,
-              'imagePath': null,
+              'imagePath': _user['shortId'] == id ? loan['imagePath'] : null,
+              'signature': _user['shortId'] == id ? loan['signature'] : null,
             };
           }).toList(),
           'inventory': querySnapshot.data['inventory']
@@ -110,6 +111,7 @@ class ShareData extends ChangeNotifier {
   Future<Map<String, dynamic>> shareInventory (List obj) async {
     DateTime now = DateTime.now();
     String formattedDate = DateFormat.yMMMMd().format(now);
+    Map<String, dynamic > _user = await Users.getUserInformation();
     if(id != '') {
       try {
         final _auth = FirebaseAuth.instance;
@@ -130,7 +132,7 @@ class ShareData extends ChangeNotifier {
           'inventory': obj.map((item) {
             return {
               ...item,
-              'pImagePath': null,
+              'pImagePath': _user['shortId'] == id ? item : null,
             };
           }).toList(),
         });

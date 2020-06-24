@@ -30,61 +30,61 @@ class _LaunchScreenState extends State<LaunchScreenState> {
   List<Color> _colors = [getColorFromHex('#5433FF '), getColorFromHex('#20BDFF')];
   double curvedEdge = 100.0;
 
-  /// Is the API available on the device
-  bool available = true;
-
-  /// The In App Purchase plugin
-  InAppPurchaseConnection _iap = InAppPurchaseConnection.instance;
-
-  /// Products for sale
-  List<ProductDetails> _products = [];
-
-  /// Past purchases
-  List<PurchaseDetails> _purchases = [];
-
-  /// Updates to purchases
-  StreamSubscription _subscription;
-
-  /// Consumable credits the user can buy
-  int credits = 0;
-  @override
-  void initState() {
-    _initialize();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _subscription.cancel();
-    super.dispose();
-  }
-
-  /// Initialize data
-  void _initialize() async {
-
-    available = await _iap.isAvailable();
-
-    if(available) {
-      await _getProducts();
-      print('new');
-      print(_products);
-    }
-
-  }
-
-  /// Get all products available for sale
-  Future<void> _getProducts() async {
-    Set<String> ids = Set.from(['1_monthly']);
-    ProductDetailsResponse response = await _iap.queryProductDetails(ids);
-    print(response.productDetails[0].skuDetail.title);
-    print(response.productDetails[0].skuDetail.price);
-    print(response.productDetails[0].skuDetail.description);
-    print(response.productDetails[0].skuDetail.sku);
-
-    setState(() {
-      _products = response.productDetails;
-    });
-  }
+//  /// Is the API available on the device
+//  bool available = true;
+//
+//  /// The In App Purchase plugin
+//  InAppPurchaseConnection _iap = InAppPurchaseConnection.instance;
+//
+//  /// Products for sale
+//  List<ProductDetails> _products = [];
+//
+//  /// Past purchases
+//  List<PurchaseDetails> _purchases = [];
+//
+//  /// Updates to purchases
+//  StreamSubscription _subscription;
+//
+//  /// Consumable credits the user can buy
+//  int credits = 0;
+//  @override
+//  void initState() {
+//    _initialize();
+//    super.initState();
+//  }
+//
+//  @override
+//  void dispose() {
+//    _subscription.cancel();
+//    super.dispose();
+//  }
+//
+//  /// Initialize data
+//  void _initialize() async {
+//
+//    available = await _iap.isAvailable();
+//
+//    if(available) {
+//      await _getProducts();
+//      print('new');
+//      print(_products);
+//    }
+//
+//  }
+//
+//  /// Get all products available for sale
+//  Future<void> _getProducts() async {
+//    Set<String> ids = Set.from(['1_monthly']);
+//    ProductDetailsResponse response = await _iap.queryProductDetails(ids);
+//    print(response.productDetails[0].skuDetail.title);
+//    print(response.productDetails[0].skuDetail.price);
+//    print(response.productDetails[0].skuDetail.description);
+//    print(response.productDetails[0].skuDetail.sku);
+//
+//    setState(() {
+//      _products = response.productDetails;
+//    });
+//  }
 
 
   Widget _logoContainer () {

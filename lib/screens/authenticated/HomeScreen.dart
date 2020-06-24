@@ -292,7 +292,6 @@ class _HomeScreenState extends State<HomeScreen> {
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: _frequentlyBuy?.map((b) {
-                  print(b);
                   int index = _frequentlyBuy.indexOf(b);
                   return index  < 7 ? Container(
                       width: 80,

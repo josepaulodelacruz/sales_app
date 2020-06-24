@@ -145,7 +145,6 @@ class FetchRecords extends StatelessWidget{
                     onPressed: ()  async {
                       shareData.isLoading();
                       Map<String, dynamic> isError = await shareData.shareTransactions(snapshot.data);
-                      print(isError);
                       shareData.isLoading();
                       return showDialog(
                         context: context,
@@ -167,7 +166,6 @@ class FetchRecords extends StatelessWidget{
           future: Loans.getLoanInformation(),
           builder: (context, snapshot) {
             if(snapshot.connectionState == ConnectionState.done) {
-              print(snapshot.data.length);
               return Container(
                 child: Column(
                   children: <Widget>[
@@ -201,7 +199,6 @@ class FetchRecords extends StatelessWidget{
           future: ListProducts.getProductLocalStorage(),
           builder: (context, snapshot) {
             if(snapshot.connectionState == ConnectionState.done) {
-              print(snapshot.data.length);
               return Container(
                   child: Column(
                     children: <Widget>[

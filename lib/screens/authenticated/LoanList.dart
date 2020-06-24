@@ -341,12 +341,14 @@ class _LoanList extends State<LoanList>{
                           quarterTurns: 3,
                           child: _signature != null ? Image.file(File(_signature), fit: BoxFit.contain) : null,
                         )
-                      ) : Card(
+                      ) : _viewPerson['signature'] != null
+                          ? Card(
                           child: RotatedBox(
                             quarterTurns: 3,
-                            child: Image.file(File(_viewPerson['signature']), fit: BoxFit.contain)
-                          )
-                      ),
+                            child: Image.file(File(_viewPerson['signature']), fit: BoxFit.contain)))
+                          : Card(
+                        child: Center(
+                          child: Text('Not the official Copy of the loan')))
                     )
                   )
                 ),
