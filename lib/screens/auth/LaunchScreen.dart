@@ -5,6 +5,8 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:sari_sales/services/AuthService.dart';
 import 'file:///D:/Projects/sari_sales/lib/screens/auth/LoginScreen.dart';
 
 

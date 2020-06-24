@@ -17,6 +17,7 @@ import 'package:sari_sales/screens/authenticated/HomeScreen.dart';
 import 'package:sari_sales/models/Users.dart';
 import 'package:sari_sales/providers/contact_data.dart';
 import 'package:sari_sales/providers/in_app_purchase.dart';
+import 'package:sari_sales/services/AuthService.dart';
 
 Future<void> main() {
   // For play billing library 2.0 on Android, it is mandatory to call
@@ -26,72 +27,84 @@ Future<void> main() {
   runApp(MyApp());
 }
 
-//class MyApp extends StatelessWidget {
-//  // This widget is the root of your application.
-//  @override
-//  Widget build(BuildContext context) {
-//    return MultiProvider(
-//      providers: [
-//        ChangeNotifierProvider<Users>(
-//          create: (_) => Users(),
-//        ),
-//        ChangeNotifierProvider<ContactData>(
-//          create: (_) => ContactData(),
-//        ),
-//      ],
-//      child: FutureBuilder(
-//          future: Users.getSession(),
-//          builder: (context, snapshot) {
-//            if(snapshot.connectionState == ConnectionState.done) {
-//              return MaterialApp(
-//                  title: 'Sari Sales Application',
-//                  initialRoute: !snapshot.data['isLoggedIn'] ? '/' : '/home',
-//                  routes: {
-//                    '/': (context) => LaunchScreen(),
-//                    '/register': (context) => RegisterScreen(),
-//                    '/login': (context) => LoginScreen(),
-//                    '/home': (context) => CurrentScreen(),
-//                    '/dashboard': (context) => HomeScreen(),
-//                  }
-//              );
-//            } else {
-//              return CircularProgressIndicator();
-//            }
-//          }
-//      ),
-//    );
-//  }
-//}
-
 class MyApp extends StatelessWidget {
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-        providers: [
-          ChangeNotifierProvider<Users>(
-            create: (_) => Users(),
-          ),
-          ChangeNotifierProvider<ContactData>(
-            create: (_) => ContactData(),
-          ),
-          ChangeNotifierProvider<ShareData>(
-            create: (_) => ShareData(),
-          ),
-          ChangeNotifierProvider<InApp>(
-            create: (_) => InApp(),
-          )
-        ],
-        child: MaterialApp(
-            title: 'Sari Sales Application',
-            initialRoute: '/',
-            routes: {
-              '/': (context) => LaunchScreen(),
-              '/register': (context) => RegisterScreen(),
-              '/login': (context) => LoginScreen(),
-              '/home': (context) => CurrentScreen(),
-              '/dashboard': (context) => HomeScreen(),
-            }
+      providers: [
+        ChangeNotifierProvider<Users>(
+          create: (_) => Users(),
+        ),
+        ChangeNotifierProvider<ContactData>(
+          create: (_) => ContactData(),
+        ),
+        ChangeNotifierProvider<ShareData>(
+          create: (_) => ShareData(),
+        ),
+        ChangeNotifierProvider<InApp>(
+          create: (_) => InApp(),
+        ),
+        ChangeNotifierProvider<AuthService>(
+          create: (_) => AuthService(),
         )
+      ],
+      child: FutureBuilder(
+          future: Users.getSession(),
+          builder: (context, snapshot) {
+            if(snapshot.connectionState == ConnectionState.done) {
+              return MaterialApp(
+                  title: 'Sari Sales Application',
+                  initialRoute: !snapshot.data['isLoggedIn'] ? '/' : '/home',
+                  routes: {
+                    '/': (context) => LaunchScreen(),
+                    '/register': (context) => RegisterScreen(),
+                    '/login': (context) => LoginScreen(),
+                    '/home': (context) => CurrentScreen(),
+                    '/dashboard': (context) => HomeScreen(),
+                  }
+              );
+            } else {
+              return CircularProgressIndicator();
+            }
+          }
+      ),
     );
   }
 }
+
+//class MyApp extends StatelessWidget {
+//  @override
+//  Widget build(BuildContext context) {
+//    return MultiProvider(
+//        providers: [
+//          ChangeNotifierProvider<Users>(
+//            create: (_) => Users(),
+//          ),
+//          ChangeNotifierProvider<ContactData>(
+//            create: (_) => ContactData(),
+//          ),
+//          ChangeNotifierProvider<ShareData>(
+//            create: (_) => ShareData(),
+//          ),
+//          ChangeNotifierProvider<InApp>(
+//            create: (_) => InApp(),
+//          ),
+//          ChangeNotifierProvider<AuthService>(
+//            create: (_) => AuthService(),
+//          )
+//        ],
+//        child: MaterialApp(
+//            title: 'Sari Sales Application',
+//            initialRoute: '/',
+//            routes: {
+//              '/': (context) => LaunchScreen(),
+//              '/register': (context) => RegisterScreen(),
+//              '/login': (context) => LoginScreen(),
+//              '/home': (context) => CurrentScreen(),
+//              '/dashboard': (context) => HomeScreen(),
+//            }
+//        )
+//    );
+//  }
+//}

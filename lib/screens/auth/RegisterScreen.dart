@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:provider/provider.dart';
+import 'package:sari_sales/services/AuthService.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../utils/colorParser.dart';
@@ -45,6 +46,7 @@ class _RegisterScreenState extends State<RegisterScreenState> {
   }
 
   _handleSignUp (context) async {
+    final AuthService auth = Provider.of<AuthService>(context, listen: false);
     String shortId = Uuid().v4();
     List<String> splitId = shortId.split('-');
 
@@ -58,13 +60,8 @@ class _RegisterScreenState extends State<RegisterScreenState> {
       userConfirmPassword: confirmPassword,
       splitId: shortId[0],
     );
-    userProvider.name = name;
-    userProvider.address= address;
-    userProvider.contact = contact;
-    userProvider.email = email;
-    userProvider.password = password;
-    userProvider.confirmPassword = password;
 
+    //input validation checking.
     bool isValidate = userProvider.validateUserInputs(_user);
     if(!isValidate) {
       //failed
@@ -82,52 +79,18 @@ class _RegisterScreenState extends State<RegisterScreenState> {
       setState(() {
         showSpinner = true;
       });
-
-      //sign up
-      try {
-
-        final newUser = await _auth.createUserWithEmailAndPassword(email: email, password: password);
-        await Users.saveUserInformation(_user.toJson());
-        await Users.userSaveStatusPersistent('trial');
-        if(newUser != null) {
-          final uid = await FirebaseAuth.instance.currentUser();
-          _user.uuid = uid.uid;
-          //saving information to database
-          _firestore.collection('users').document(uid.uid).setData({
-            'name': _user.name,
-            'address': _user.address,
-            'contact': _user.contact,
-            'status': 'trial',
-            'email': _user.email,
-            'shortId': splitId[0]
-          });
-
-          _firestore.collection('shared').document(splitId[0]).setData({
-            'owner': _user.name,
-            'primary_id': uid.uid,
-            'inventory': [],
-            'sales': [],
-            'loans': [],
-          });
-
+      //authentication registration.
+      bool _isSuccess = await auth.registration(_user, email, password);
+      if(_isSuccess) {
           Navigator.of(context)
             .pushNamedAndRemoveUntil('/home', (Route<dynamic> route) => false);
-
-          setState(() {
-            showSpinner = false;
-          });
-
-        }
-      } catch(e) {
-        setState(() {
-          showSpinner = false;
-        });
+            setState(() => showSpinner = false);
+      } else {
+        setState(() => showSpinner = false);
         _scaffoldKey.currentState.showSnackBar(new SnackBar(backgroundColor: Colors.redAccent, content: new Text('Something went wrong')));
         return null;
       }
     }
-
-
   }
 
   @override

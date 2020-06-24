@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sari_sales/models/Users.dart';
+import 'package:sari_sales/services/AuthService.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -264,45 +265,18 @@ class _LoginScreenState extends State<LoginScreenState> {
                 child: RaisedButton(
                   onPressed: () async {
                     final Users userProvider = Provider.of<Users>(context, listen: false);
-                    try {
-                      setState(() {
-                        showSpinner = true;
-                      });
-                      final signUser = await _auth.signInWithEmailAndPassword(email: email, password: password);
-
-                      if(signUser != null) {
-                        final userId = await _auth.currentUser();
-                        DocumentSnapshot querySnapshot = await Firestore.instance
-                            .collection('users')
-                            .document(userId.uid)
-                            .get();
-
-                        if (querySnapshot.exists) {
-                          print('success');
-                          userProvider.name = querySnapshot.data['name'];
-                          userProvider.address = querySnapshot.data['address'];
-                          userProvider.contact = querySnapshot.data['contact'];
-                          userProvider.email = querySnapshot.data['email'];
-                          userProvider.shortId = querySnapshot.data['shortId'];
-
-                          await Users.saveUserInformation(userProvider.toJson());
-                          await Users.userSaveStatusPersistent(querySnapshot.data['status']);
-                          userProvider.loginUser(userProvider.toJson());
-                        }
-
+                    final AuthService auth = Provider.of<AuthService>(context, listen: false);
+                    setState(() => showSpinner = true);
+                    bool _isSuccess = await auth.login(userProvider, email, password);
+                    if(_isSuccess) {
+                      setState(() => showSpinner = false);
                         Navigator.of(context)
                             .pushNamedAndRemoveUntil('/home', (Route<dynamic> route) => false);
 
-                        setState(() {
-                          showSpinner = false;
-                        });
-                      }
-
-                    } catch (e) {
-                      setState(() {
-                        showSpinner = false;
-                      });
+                    } else {
+                      setState(() => showSpinner = false);
                       _scaffoldKey.currentState.showSnackBar(new SnackBar(backgroundColor: Colors.redAccent, content: new Text('Something went wrong please try again.')));
+                      return null;
                     }
                   },
                   textColor: Colors.white,
