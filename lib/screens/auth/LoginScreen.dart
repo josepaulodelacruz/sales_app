@@ -172,14 +172,15 @@ class _LoginScreenState extends State<LoginScreenState> {
                                   Container(
                                     padding: EdgeInsets.symmetric(horizontal: 32),
                                     child: TextFormField(
+                                      keyboardType: TextInputType.emailAddress,
                                       onChanged: (val) {
                                         setState(() {
                                           email = val;
                                         });
                                       },
                                       decoration: InputDecoration(
-                                          labelText: 'Email',
-                                          labelStyle: TextStyle(color: Colors.grey[500])
+                                        labelText: 'Email',
+                                        labelStyle: TextStyle(color: Colors.grey[500])
                                       )
                                     ),
                                   ),

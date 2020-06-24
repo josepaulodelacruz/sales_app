@@ -20,6 +20,7 @@ import 'package:provider/provider.dart';
 //components
 import '../../components/TakePhoto.dart';
 import '../../components/Search.dart';
+import '../../components/PurchaseModal.dart';
 //models
 import '../../models/Categories.dart';
 
@@ -716,6 +717,24 @@ class _HomeScreenState extends State<HomeScreen> {
                       title: Text(snapshot.data['contact'].toString(), style: TextStyle(color: Colors.black38, fontSize: 16, fontWeight: FontWeight.w500)),
                     ),
                     ListTile(
+                      onTap: () => showGeneralDialog(
+                          barrierDismissible: true,
+                          barrierColor: Colors.black.withOpacity(0.5),
+                          transitionBuilder: (context, a1, a2, widget) {
+                            final curvedValue = Curves.easeInOutBack.transform(a1.value) - 1.0;
+                            return Transform(
+                              transform: Matrix4.translationValues(0.0, curvedValue * 200, 0.0),
+                              child: Opacity(
+                                opacity: a1.value,
+                                child: ConfirmPurchase(),
+                              ),
+                            );
+                          },
+                          transitionDuration: Duration(milliseconds: 500),
+                          barrierLabel: '',
+                          context: context,
+                          pageBuilder: (context, animation1, animation2) {}
+                      ),
                       leading: Icon(Icons.card_membership, color: Colors.lightBlue),
                       title: Text('Subscription: $_status', style: TextStyle(color: Colors.black38, fontSize: 16, fontWeight: FontWeight.w500)),
                     ),

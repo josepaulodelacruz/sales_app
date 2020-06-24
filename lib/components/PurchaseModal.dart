@@ -35,7 +35,7 @@ class _ConfirmPurchase extends State<ConfirmPurchase>{
 
   @override
   void dispose () {
-//    _subscription.cancel();
+    _subscription.cancel();
     super.dispose();
   }
 
@@ -70,12 +70,15 @@ class _ConfirmPurchase extends State<ConfirmPurchase>{
   void _buyProduct() {
     final PurchaseParam purchaseParam = PurchaseParam(productDetails: _products[0]);
     // _iap.buyNonConsumable(purchaseParam: purchaseParam);
-    _iap.buyConsumable(purchaseParam: purchaseParam, autoConsume: false);
+    _iap.buyNonConsumable(purchaseParam: purchaseParam);
   }
 
 
   @override
   Widget build(BuildContext context) {
+    _products.map((x) {
+      print(x.title);
+    }).toList();
     return AlertDialog(
       scrollable: true,
       contentPadding: EdgeInsets.all(0),
