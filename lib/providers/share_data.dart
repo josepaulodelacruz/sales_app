@@ -17,8 +17,6 @@ class ShareData extends ChangeNotifier {
   List _products = [
     Products(productName: 'test')
   ];
-  List _transactions = [];
-  List _loans = [];
 
   bool get isError => _isError;
   String get searchId => id;

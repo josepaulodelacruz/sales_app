@@ -40,19 +40,21 @@ class ListProducts {
     }
   }
 
+  ///Error duplicate categories when fetching
   static fetchProductFromCloud (products) async {
     if(products.isEmpty) return false;
-
     List<dynamic> _categories = await Categories.getCategoryLocalStorage();
-    products.map((product) {
-      _categories.add({
-        'cTitle': product['pCategory'],
+    List<dynamic> _updateCategories = products.map((p) => p['pCategory']).toList();
+    List<dynamic> _removeDuplicateCategories = _updateCategories.toSet().toList();
+    List<dynamic> categories =  _removeDuplicateCategories.map((cc) {
+      return {
+        'cTitle': cc,
         'isValid': true,
-      });
-
+      };
     }).toList();
-
-    await Categories.saveCategoryToLocalStorage(_categories);
+    //default category
+    categories.insert(0, {'cTitle': 'All', 'isValid': true});
+    await Categories.saveCategoryToLocalStorage(categories);
     await ListProducts.saveProductToLocalStorage(products);
 
     return true;
